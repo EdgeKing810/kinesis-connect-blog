@@ -1,6 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import App from './App';
+import { HashRouter as Router } from 'react-router-dom';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import App from './App';
+import { LocalContextProvider } from './LocalContext';
+
+ReactDOM.render(
+  <LocalContextProvider>
+    <Router>
+      <App />
+    </Router>
+  </LocalContextProvider>,
+  document.getElementById('root')
+);
