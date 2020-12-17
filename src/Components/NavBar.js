@@ -8,7 +8,7 @@ export default function NavBar() {
   return (
     <div className="w-full bg-gray-800 flex items-center justify-between sm:border-b-2 sm:border-blue-500 py-2 sm:px-8 px-4 h-1/12">
       <button
-        className="sm:text-2xl text-lg tracking-widest text-blue-300 hover:text-blue-100 focus:text-blue-100 font-open font-bold border-b-2 border-blue-200"
+        className="sm:text-2xl text-lg tracking-widest text-blue-300 hover:text-blue-200 focus:text-blue-200 font-open font-bold border-b-2 border-blue-200 hover:border-yellow-300 focus:border-yellow-300"
         onClick={() => (pathname !== '/' ? history.push('/') : null)}
       >
         Kinesis Blog
