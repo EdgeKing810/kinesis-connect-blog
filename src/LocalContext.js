@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
+import axios from 'axios';
 
 const LocalContext = React.createContext();
 
@@ -9,6 +11,61 @@ function LocalContextProvider({ props }) {
   const [myPosts, setMyPosts] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState([]);
   const [blogProfiles, setBlogProfiles] = useState([]);
+
+  useEffect(() => {
+    if (localStorage.getItem('_userData')) {
+      if (
+        loggedInUser.jwt !== undefined &&
+        loggedInUser.jwt &&
+        myPosts &&
+        myPosts.length > 0
+      ) {
+        return;
+      }
+
+      const { uid, jwt } = JSON.parse(localStorage.getItem('_userData'));
+
+      const data = {
+        uid,
+        profileID: uid,
+      };
+
+      axios
+        .post(`${APIURL}/api/blog/posts/fetch`, data, {
+          headers: { Authorization: `Bearer ${jwt}` },
+        })
+        .then((res) => {
+          if (res.data.error === 0) {
+            setPosts(res.data.blog_posts);
+          }
+        });
+
+      axios
+        .post(`${APIURL}/api/blog/users/fetch`, data, {
+          headers: { Authorization: `Bearer ${jwt}` },
+        })
+        .then((res) => {
+          if (res.data.error === 0) {
+            setBlogProfiles(res.data.users);
+
+            const currentUser = res.data.users.find((u) => u.uid === uid);
+            if (currentUser) {
+              setLoggedInUser({ ...currentUser, uid, jwt });
+            }
+          }
+        });
+
+      axios
+        .post(`${APIURL}/api/blog/user/posts/fetch`, data, {
+          headers: { Authorization: `Bearer ${jwt}` },
+        })
+        .then((res) => {
+          if (res.data.error === 0) {
+            setMyPosts(res.data.blog_posts);
+          }
+        });
+    }
+  }, []);
 
   return (
     <LocalContext.Provider
