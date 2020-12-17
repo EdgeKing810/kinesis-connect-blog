@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const LocalContext = React.createContext();
 
-function LocalContextProvider({ props }) {
+function LocalContextProvider({ children }) {
   const APIURL = 'https://api.connect.kinesis.games';
 
   const [posts, setPosts] = useState([]);
@@ -65,6 +65,7 @@ function LocalContextProvider({ props }) {
           }
         });
     }
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -81,7 +82,7 @@ function LocalContextProvider({ props }) {
         setBlogProfiles,
       }}
     >
-      {props}
+      {children}
     </LocalContext.Provider>
   );
 }

@@ -1,9 +1,36 @@
 import React from 'react';
+import { Redirect, Switch, Route } from 'react-router-dom';
+
+import NavBar from './Components/NavBar';
+
+import Admin from './Screens/Admin';
+
+const Home = () => {
+  return null;
+};
 
 export default function App() {
   return (
-    <div className="w-full h-screen overflow-hidden flex justify-center items-center tracking-widest font-mono text-bold sm:text-6xl text-4xl bg-gray-300 text-blue-800">
-      Kinesis Blog
+    <div className="w-full">
+      <Switch>
+        <Route exact path="/">
+          <Home />
+        </Route>
+
+        <Route>
+          <div className="w-screen h-screen">
+            <NavBar />
+
+            <Switch>
+              <Route exact path="/admin">
+                <Admin />
+              </Route>
+
+              <Route render={() => <Redirect to="/" />} />
+            </Switch>
+          </div>
+        </Route>
+      </Switch>
     </div>
   );
 }
