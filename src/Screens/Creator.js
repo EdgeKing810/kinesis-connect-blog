@@ -8,7 +8,9 @@ export default function Creator() {
   useEffect(() => {
     const data = [
       '# This is Markdown',
+      ' ',
       '#### You can edit me!',
+      ' ',
       'Markdown lets you write content in a really natural way.',
       ' ',
       '* You can have lists, like this one',
