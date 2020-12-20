@@ -4,6 +4,7 @@ import { Redirect, Switch, Route } from 'react-router-dom';
 import NavBar from './Components/NavBar';
 
 import Admin from './Screens/Admin';
+import Creator from './Screens/Creator';
 
 const Home = () => {
   return null;
@@ -19,6 +20,10 @@ export default function App() {
           <Switch>
             <Route exact path="/">
               <Home />
+            </Route>
+
+            <Route exact path="/create">
+              <Creator />
             </Route>
 
             <Route exact path="/admin">
