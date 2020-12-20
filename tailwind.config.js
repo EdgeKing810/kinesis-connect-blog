@@ -189,6 +189,11 @@ module.exports = {
       'gradient-to-tl':
         'linear-gradient(to top left, var(--gradient-color-stops))',
     },
+    extend: {
+      backgroundImage: (theme) => ({
+        'admin-bg': "url('/background.jpg')",
+      }),
+    },
     gradientColorStops: (theme) => theme('colors'),
     backgroundOpacity: (theme) => theme('opacity'),
     backgroundPosition: {

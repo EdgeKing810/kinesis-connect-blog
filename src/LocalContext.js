@@ -6,10 +6,11 @@ const LocalContext = React.createContext();
 
 function LocalContextProvider({ children }) {
   const APIURL = 'https://api.connect.kinesis.games';
+  const UPLOADSURL = 'https://uploads.connect.kinesis.games';
 
   const [posts, setPosts] = useState([]);
   const [myPosts, setMyPosts] = useState([]);
-  const [loggedInUser, setLoggedInUser] = useState([]);
+  const [loggedInUser, setLoggedInUser] = useState({});
   const [blogProfiles, setBlogProfiles] = useState([]);
 
   useEffect(() => {
@@ -72,6 +73,7 @@ function LocalContextProvider({ children }) {
     <LocalContext.Provider
       value={{
         APIURL,
+        UPLOADSURL,
         posts,
         setPosts,
         myPosts,

@@ -12,25 +12,23 @@ const Home = () => {
 export default function App() {
   return (
     <div className="w-full">
-      <Switch>
-        <Route exact path="/">
-          <Home />
-        </Route>
+      <Route>
+        <div className="w-screen h-screen">
+          <NavBar />
 
-        <Route>
-          <div className="w-screen h-screen">
-            <NavBar />
+          <Switch>
+            <Route exact path="/">
+              <Home />
+            </Route>
 
-            <Switch>
-              <Route exact path="/admin">
-                <Admin />
-              </Route>
+            <Route exact path="/admin">
+              <Admin />
+            </Route>
 
-              <Route render={() => <Redirect to="/" />} />
-            </Switch>
-          </div>
-        </Route>
-      </Switch>
+            <Route render={() => <Redirect to="/" />} />
+          </Switch>
+        </div>
+      </Route>
     </div>
   );
 }
