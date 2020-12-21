@@ -19,7 +19,7 @@ const heading = (props) => {
 
 const link = (props) => {
   return (
-    <a href={props.href} className="text-blue-300 bg-blue-900 underline">
+    <a href={props.href} className="text-blue-300 bg-blue-900 underline text-sm">
       {props.children}
     </a>
   );
@@ -27,24 +27,24 @@ const link = (props) => {
 
 const text = (props) => {
   return (
-    <span className="text-gray-300" style={{ whiteSpace: 'pre-line' }}>
+    <span className="text-gray-300 text-sm" style={{ whiteSpace: 'pre-line' }}>
       {props.children}
     </span>
   );
 };
 
 const list = (props) => {
-  return <ul className="list-disc pl-8 my-4">{props.children}</ul>;
+  return <ul className="list-disc pl-8 my-4 text-sm">{props.children}</ul>;
 };
 
 const listItem = (props) => {
-  return <li className="text-blue-300">{props.children}</li>;
+  return <li className="text-blue-300 text-sm">{props.children}</li>;
 };
 
 const code = (props) => {
   return (
     <div
-      className="text-blue-300 font-mono p-1 bg-gray-900 rounded-lg border-2 border-gray-500 text-sm tracking-wider my-2"
+      className="text-blue-300 font-mono p-1 bg-gray-900 rounded-lg border-2 border-gray-500 text-xs tracking-wider my-2"
       style={{ whiteSpace: 'pre' }}
     >
       {props.node.value}
@@ -67,7 +67,7 @@ const image = (props) => {
 const blockquote = (props) => {
   return (
     <div className="rounded py-1 px-2 bg-gray-800 w-full">
-      <div className="w-full border-l-4 border-gray-100 pl-2">
+      <div className="w-full border-l-4 border-gray-100 pl-2 text-sm">
         {props.children}
       </div>
     </div>
