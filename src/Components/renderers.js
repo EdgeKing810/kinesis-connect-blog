@@ -27,7 +27,7 @@ const link = (props) => {
 
 const text = (props) => {
   return (
-    <span className="text-gray-300 text-sm" style={{ whiteSpace: 'pre-line' }}>
+    <span className="text-gray-300" style={{ whiteSpace: 'pre-line' }}>
       {props.children}
     </span>
   );
@@ -67,7 +67,7 @@ const image = (props) => {
 const blockquote = (props) => {
   return (
     <div className="rounded py-1 px-2 bg-gray-800 w-full">
-      <div className="w-full border-l-4 border-gray-100 pl-2 text-sm">
+      <div className="w-full border-l-4 border-gray-100 pl-2 text-sm my-2">
         {props.children}
       </div>
     </div>
