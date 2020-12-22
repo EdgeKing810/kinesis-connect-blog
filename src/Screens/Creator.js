@@ -33,15 +33,30 @@ export default function Creator() {
   }, []);
 
   return (
-    <div className="h-11/12 w-full bg-gray-800 flex sm:flex-row flex-col justify-around items-center">
-      <textarea
-        className="sm:w-9/20 w-5/6 sm:h-4/5 sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-900 text-gray-300 p-4"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
+    <div className="w-full h-11/12 bg-gray-800 flex flex-col items-center sm:px-20 px-2">
+      <div className="h-full w-full bg-gray-800 flex sm:flex-row flex-col justify-between items-center">
+        <div className="sm:w-49/100 w-5/6 sm:h-4/5">
+          <div className="w-full sm:text-3xl text-xl font-sans font-bold tracking-wider text-gray-300 my-2">
+            Content
+          </div>
 
-      <div className="sm:w-9/20 w-5/6 sm:h-4/5 sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-700 text-gray-300 p-4 sm:overflow-y-scroll">
-        <Parser content={input} />
+          <textarea
+            className="w-full h-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-900 text-gray-300 p-4 placeholder-gray-500"
+            value={input}
+            placeholder="Write something..."
+            onChange={(e) => setInput(e.target.value)}
+          />
+        </div>
+
+        <div className="sm:w-49/100 w-5/6 sm:h-4/5">
+          <div className="w-full sm:text-3xl text-xl font-sans font-bold tracking-wider text-gray-300 my-2">
+            Preview
+          </div>
+
+          <div className="w-full h-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-700 text-gray-300 p-4 sm:overflow-y-scroll">
+            <Parser content={input} />
+          </div>
+        </div>
       </div>
     </div>
   );
