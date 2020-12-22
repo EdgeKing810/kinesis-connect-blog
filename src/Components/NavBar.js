@@ -38,7 +38,7 @@ export default function NavBar() {
                   : tmpAvatar
               }
               alt="p.pic"
-              className="fixed sm:h-10 sm:w-10 h-8 w-8 z-0 object-cover border-2 border-blue-400 rounded-full"
+              className="sm:h-10 sm:w-10 h-8 w-8 z-0 object-cover border-2 border-blue-400 rounded-full"
             />
           </div>
 
