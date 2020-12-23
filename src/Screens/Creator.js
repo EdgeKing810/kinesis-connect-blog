@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import axios from 'axios';
+import { useAlert } from 'react-alert';
 
 import { Parser } from '../Components/renderers';
 import { LocalContext } from '../LocalContext';
@@ -9,7 +10,9 @@ import { LocalContext } from '../LocalContext';
 import { v4 } from 'uuid';
 
 export default function Creator() {
-  const { APIURL, UPLOADSURL, loggedInUser } = useContext(LocalContext);
+  const { APIURL, UPLOADSURL, loggedInUser, setMyPosts } = useContext(
+    LocalContext
+  );
 
   const [blogID] = useState(v4());
 
@@ -18,6 +21,7 @@ export default function Creator() {
   const [preview, setPreview] = useState('_empty');
 
   const history = useHistory();
+  const alert = useAlert();
 
   useEffect(() => {
     if (!loggedInUser.username || loggedInUser.username === undefined) {
@@ -48,9 +52,12 @@ export default function Creator() {
     ];
 
     setContent(data.join('\r\n'));
+    // eslint-disable-next-line
   }, []);
 
-  const slug = title.split(' ').join('-').toString() + '-' + blogID.slice(-10);
+  const slug = (title.split(' ').join('-').toString() + '-' + blogID.slice(-10))
+    .toString()
+    .toLowerCase();
 
   const uploadImage = (e) => {
     if (e.target.files[0]) {
@@ -75,11 +82,56 @@ export default function Creator() {
     }
   };
 
+  const checkValid = () => {
+    return title && title.length > 3 && content && content.length > 3;
+  };
+
+  const savePost = (e) => {
+    let d = new Date();
+    const timestamp = new Date(
+      d.getUTCFullYear(),
+      d.getUTCMonth(),
+      d.getUTCDate(),
+      d.getUTCHours(),
+      d.getUTCMinutes(),
+      d.getUTCSeconds()
+    );
+
+    const data = {
+      uid: loggedInUser.uid,
+      blogID: blogID,
+      title: title,
+      preview: preview,
+      status: 'DRAFT',
+      created_on: timestamp,
+      updated_on: timestamp,
+      content: content,
+    };
+
+    axios
+      .post(
+        `${APIURL}/api/blog/post/create`,
+        { ...data },
+        { headers: { Authorization: `Bearer ${loggedInUser.jwt}` } }
+      )
+      .then((res) => {
+        if (res.data.error === 0) {
+          alert.success('Successfully Created!');
+        } else {
+          console.log(res.data);
+        }
+      });
+
+    setMyPosts((prev) => [...prev, { ...data }]);
+
+    history.push('/admin');
+  };
+
   return (
     <div className="w-full flex flex-col items-center sm:px-20 px-2">
       <div className="w-full flex flex-col sm:mt-8 mt-4 bg-gray-900 sm:p-2 pb-4 pt-2 rounded-lg sm:items-end items-center">
-        <div className="w-full flex sm:flex-row flex-col justify-between sm:items-start items-center">
-          <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2 sm:h-full flex items-center">
+        <div className="w-full flex sm:flex-row flex-col justify-between items-center">
+          <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">
             Title
           </div>
 
@@ -96,7 +148,7 @@ export default function Creator() {
         </div>
 
         {title && (
-          <div className="sm:w-49/100 w-11/12 font-sans sm:text-sm text-xs text-green-300 sm:text-left sm:mt-2 mt-4">
+          <div className="sm:w-49/100 w-11/12 font-sans sm:text-xs text-xss text-green-300 sm:text-left sm:mt-2 mt-4">
             Blog post will be available on{' '}
             <a
               href={`https://blog.connect.kinesis.games/${loggedInUser.username}/${slug}`}
@@ -112,8 +164,8 @@ export default function Creator() {
       </div>
 
       <div className="w-full flex flex-col sm:mt-8 mt-4 bg-gray-900 sm:p-2 pb-4 pt-2 rounded-lg sm:items-end items-center">
-        <div className="w-full flex sm:flex-row flex-col justify-between sm:items-start items-center">
-          <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2 sm:h-full flex items-center">
+        <div className="w-full flex sm:flex-row flex-col justify-between items-center">
+          <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">
             Preview Image (optional)
           </div>
 
@@ -121,7 +173,7 @@ export default function Creator() {
             <input
               type="file"
               id="preview"
-              className="w-full rounded-lg sm:p-2 p-1 bg-gray-400 placeholder-gray-700 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
+              className="w-full rounded-lg sm:p-2 p-1 bg-gray-400 placeholder-gray-700 text-gray-900 font-open border-2 border-blue-200 sm:h-full sm:text-md text-sm"
               onChange={(e) => {
                 e.persist();
                 uploadImage(e);
@@ -158,7 +210,7 @@ export default function Creator() {
             value={content}
             placeholder="Write something..."
             onChange={(e) => setContent(e.target.value)}
-            style={{ minHeight: '20rem', maxHeight: '40rem' }}
+            style={{ height: '30rem', minHeight: '20rem', maxHeight: '40rem' }}
           />
         </div>
 
@@ -168,8 +220,8 @@ export default function Creator() {
           </div>
 
           <div
-            className="w-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-700 text-gray-300 p-4 sm:overflow-y-scroll"
-            style={{ minHeight: '20rem', maxHeight: '40rem' }}
+            className="w-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-700 text-gray-300 p-4 overflow-y-scroll"
+            style={{ height: '30rem', minHeight: '20rem', maxHeight: '40rem' }}
           >
             <Parser content={content} />
           </div>
@@ -184,11 +236,18 @@ export default function Creator() {
           Publish
         </button> */}
 
-        <button className="sm:w-1/4 w-5/6 p-2 font-rale tracking-wide font-sans sm:text-lg text-sm rounded-lg bg-green-400 hover:bg-green-500 focus:bg-green-500">
+        <button
+          className={`sm:w-1/4 w-5/6 p-2 font-rale tracking-wide font-sans sm:text-lg text-sm rounded-lg bg-green-400 ${
+            checkValid()
+              ? 'hover:bg-green-500 focus:bg-green-500'
+              : 'opacity-50'
+          }`}
+          onClick={() => (checkValid() ? savePost() : null)}
+        >
           Save
         </button>
 
-        <button className="sm:w-1/4 w-5/6 p-2 font-rale tracking-wide font-sans sm:text-lg text-sm rounded-lg bg-red-400 hover:bg-red-500 focus:bg-red-500">
+        <button className="sm:w-1/4 w-5/6 p-2 font-rale tracking-wide font-sans sm:text-lg text-sm rounded-lg bg-red-400 hover:bg-red-500 focus:bg-red-500 sm:mt-0 mt-2">
           Discard
         </button>
       </div>

@@ -12,7 +12,7 @@ import { LocalContextProvider } from './LocalContext';
 const options = {
   position: positions.BOTTOM_CENTER,
   timeout: 2000,
-  offset: '30px',
+  offset: '10px',
   transition: transitions.SCALE,
 };
 
