@@ -37,7 +37,7 @@ function LocalContextProvider({ children }) {
         })
         .then((res) => {
           if (res.data.error === 0) {
-            setPosts(res.data.blog_posts);
+            setPosts(res.data.blog_posts.reverse());
           }
         });
 
@@ -62,7 +62,7 @@ function LocalContextProvider({ children }) {
         })
         .then((res) => {
           if (res.data.error === 0) {
-            setMyPosts(res.data.blog_posts);
+            setMyPosts(res.data.blog_posts.reverse());
           }
         });
     }

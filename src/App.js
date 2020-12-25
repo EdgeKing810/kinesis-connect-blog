@@ -26,6 +26,10 @@ export default function App() {
               <Creator />
             </Route>
 
+            <Route exact path="/edit/:id">
+              <Creator />
+            </Route>
+
             <Route exact path="/admin">
               <Admin />
             </Route>
