@@ -59,7 +59,7 @@ export default function View() {
     blogProfile &&
     blogProfile !== undefined ? (
     <div className="w-full flex flex-col items-center sm:px-20 px-2">
-      <div className="sm:w-1/4 w-full bg-gray-700 rounded-lg mt-2 flex p-2 border-2 border-gray-900">
+      <div className="sm:w-1/4 w-full bg-gray-700 rounded-lg mt-2 flex p-2 border-4 border-gray-900">
         <div className="w-1/5 h-full flex justify-center items-center">
           <img
             src={
