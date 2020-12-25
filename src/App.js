@@ -3,6 +3,7 @@ import { Redirect, Switch, Route } from 'react-router-dom';
 
 import NavBar from './Components/NavBar';
 
+import View from './Screens/View';
 import Admin from './Screens/Admin';
 import Creator from './Screens/Creator';
 
@@ -20,6 +21,10 @@ export default function App() {
           <Switch>
             <Route exact path="/">
               <Home />
+            </Route>
+
+            <Route exact path="/:username/:slug">
+              <View />
             </Route>
 
             <Route exact path="/create">

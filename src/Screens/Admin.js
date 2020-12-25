@@ -309,14 +309,6 @@ export default function Admin() {
         {myPosts && myPosts.length > 0 ? (
           <div className="w-full px-2 border-2 border-gray-700 rounded-lg">
             {myPosts.map((post, i) => {
-              const slug = (
-                post.title.split(' ').join('-').toString() +
-                '-' +
-                post.blogID.slice(-10)
-              )
-                .toString()
-                .toLowerCase();
-
               const published = post.status === 'PUBLISHED';
 
               return (
@@ -338,15 +330,17 @@ export default function Admin() {
                     ></button>
 
                     <div className="w-full flex flex-col">
-                      <a
-                        className="w-full font-open text-blue-200 underline hover:no-underline focus:no-underline sm:text-lg text-xs"
+                      <button
+                        className="w-full font-open text-blue-200 underline hover:no-underline focus:no-underline sm:text-sm text-xs text-left"
                         title="View Blog Post"
-                        href={`/${loggedInUser.username}/${slug}`}
+                        onClick={() =>
+                          history.push(`/${loggedInUser.username}/${post.slug}`)
+                        }
                       >
                         {post.title.length > 20
                           ? `${post.title.substring(0, 20)}...`
                           : post.title}
-                      </a>
+                      </button>
                       <div
                         className={`w-full font-open text-${
                           published ? 'green' : 'yellow'

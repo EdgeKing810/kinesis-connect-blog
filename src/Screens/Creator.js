@@ -4,8 +4,8 @@ import { useHistory, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAlert } from 'react-alert';
 
-import { Parser } from '../Components/renderers';
 import { LocalContext } from '../LocalContext';
+import { Parser } from '../Components/renderers';
 
 import { v4 } from 'uuid';
 
