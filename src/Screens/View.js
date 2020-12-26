@@ -1,33 +1,60 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
+import axios from 'axios';
+import { useAlert } from 'react-alert';
+
 import { LocalContext } from '../LocalContext';
 import { Parser } from '../Components/renderers';
 
 import tmpAvatar from '../Assets/images/avatar_tmp.png';
 
 export default function View() {
-  const { UPLOADSURL, loggedInUser, posts, myPosts, blogProfiles } = useContext(
-    LocalContext
-  );
+  const {
+    APIURL,
+    UPLOADSURL,
+    loggedInUser,
+    posts,
+    setPosts,
+    myPosts,
+    setMyPosts,
+    blogProfiles,
+  } = useContext(LocalContext);
 
   const [blogPost, setBlogPost] = useState(undefined);
   const [blogProfile, setBlogProfile] = useState(undefined);
 
+  const [followingAuthor, setFollowingAuthor] = useState(false);
+  const [postLiked, setPostLiked] = useState(false);
+  const [favorited, setPostFavorited] = useState(false);
+
   const history = useHistory();
   const { username, slug } = useParams();
+  const alert = useAlert();
 
   useEffect(() => {
-    if (!loggedInUser.username || loggedInUser.username === undefined) {
-      history.push('/');
+    if (loggedInUser.username && loggedInUser.username !== undefined) {
+      const data = {
+        uid: loggedInUser.uid,
+        profileID: loggedInUser.uid,
+        slug: slug,
+        jwt: loggedInUser.jwt,
+      };
+
+      axios.post(`${APIURL}/api/blog/post/view`, data, {
+        headers: { Authorization: `Bearer ${data.jwt}` },
+      });
     }
 
     if (!username || username === undefined || !slug || slug === undefined) {
       history.push('/');
     }
 
+    let post;
+
     [...posts, ...myPosts].forEach((p) => {
       if (p.slug === slug) {
+        post = { ...p };
         setBlogPost({ ...p });
       }
     });
@@ -35,10 +62,28 @@ export default function View() {
     [loggedInUser, ...blogProfiles].forEach((u) => {
       if (u.username === username) {
         setBlogProfile({ ...u });
+
+        if (loggedInUser.username && loggedInUser.username !== undefined) {
+          if (loggedInUser.blog_following_amount > 0) {
+            setFollowingAuthor(
+              loggedInUser.blog_following.some((a) => a.uid === u.uid)
+            );
+          }
+
+          if (post.likes && post.likes.length > 0) {
+            setPostLiked(post.likes.some((l) => l.uid === loggedInUser.uid));
+          }
+
+          if (loggedInUser.favorites && loggedInUser.favorites.length > 0) {
+            setPostFavorited(
+              loggedInUser.favorites.some((f) => f.uid === post.blogID)
+            );
+          }
+        }
       }
     });
     // eslint-disable-next-line
-  }, []);
+  }, [posts, myPosts]);
 
   const convertDate = (date) => {
     const oldDate = new Date(date);
@@ -54,11 +99,72 @@ export default function View() {
     ).toString();
   };
 
+  const likePost = () => {
+    const data = {
+      uid: loggedInUser.uid,
+      profileID: loggedInUser.uid,
+      blogID: blogPost.blogID,
+      jwt: loggedInUser.jwt,
+      like: postLiked ? 'false' : 'true',
+    };
+
+    axios
+      .post(`${APIURL}/api/blog/post/like`, data, {
+        headers: { Authorization: `Bearer ${data.jwt}` },
+      })
+      .then((res) => {
+        if (res.data.error === 0) {
+          alert.success(`Post successfully ${postLiked ? 'un' : ''}liked!`);
+        } else {
+          console.log(res.data);
+        }
+      });
+
+    let updatedBlogPost = {};
+
+    setBlogPost((previous) => {
+      let update = { ...previous };
+
+      if (postLiked) {
+        update.likes = previous.likes.filter((l) => l.uid !== loggedInUser.uid);
+      } else {
+        update.likes = [...previous.likes, { uid: loggedInUser.uid }];
+      }
+
+      updatedBlogPost = { ...update };
+      return update;
+    });
+
+    if (blogPost.authorID === loggedInUser.uid) {
+      setMyPosts((pr) =>
+        pr.map((p) => {
+          if (p.blogID === blogPost.blogID) {
+            return updatedBlogPost;
+          } else {
+            return p;
+          }
+        })
+      );
+    } else {
+      setPosts((pr) =>
+        pr.map((p) => {
+          if (p.blogID === blogPost.blogID) {
+            return updatedBlogPost;
+          } else {
+            return p;
+          }
+        })
+      );
+    }
+
+    setPostLiked((prev) => !prev);
+  };
+
   return blogPost &&
     blogPost !== undefined &&
     blogProfile &&
     blogProfile !== undefined ? (
-    <div className="w-full flex flex-col items-center sm:px-20 px-2">
+    <div className="w-full flex flex-col items-center h-full sm:px-20 px-2">
       <div className="sm:w-1/4 w-full bg-gray-700 rounded-lg mt-2 flex p-2 border-4 border-gray-900">
         <div className="w-1/5 h-full flex justify-center items-center">
           <img
@@ -75,19 +181,26 @@ export default function View() {
         </div>
         <div className="flex-1 flex-col w-full">
           <div className="w-full flex items-center">
-            <div className="flex-1 text-left text-blue-500 font-open sm:text-lg text-sm bg-gray-900 hover:bg-blue-900 focus:bg-blue-900 px-2 rounded-lg">
+            <button
+              className="flex-1 text-left text-blue-500 font-open sm:text-lg text-sm bg-gray-900 hover:bg-teal-900 focus:bg-teal-900 px-2 rounded-lg"
+              onClick={() => history.push(`/profile/${blogProfile.username}`)}
+            >
               {blogProfile.username.length > 12
                 ? `${blogProfile.username.substring(0, 12)}...`
                 : blogProfile.username}
-            </div>
-            <div
-              title={1 === 1 ? 'Follow user' : 'Unfollow user'}
-              className={`sm:w-10 sm:h-10 w-6 h-6 flex items-center justify-center ri-user-${
-                1 === 1 ? 'add' : 'unfollow'
-              }-fill mx-2 sm:text-lg text-sm text-${
-                1 === 1 ? 'blue' : 'red'
-              }-400 hover:bg-gray-900 focus:bg-gray-900 p-2 rounded-full`}
-            ></div>
+            </button>
+            {loggedInUser.username &&
+              loggedInUser.username !== undefined &&
+              blogProfile.uid !== loggedInUser.uid && (
+                <div
+                  title={followingAuthor ? 'Unfollow user' : 'Follow user'}
+                  className={`sm:w-10 sm:h-10 w-6 h-6 flex items-center justify-center ri-user-${
+                    followingAuthor ? 'unfollow' : 'add'
+                  }-fill mx-2 sm:text-lg text-sm text-${
+                    followingAuthor ? 'red' : 'blue'
+                  }-400 hover:bg-gray-900 focus:bg-gray-900 p-2 rounded-full`}
+                ></div>
+              )}
           </div>
           <div className="w-full text-left text-blue-200 font-open sm:text-md text-xs ml-2 mt-1">
             Posted on{' '}
@@ -105,6 +218,20 @@ export default function View() {
           <Parser content={blogPost.content} />
         </div>
       </div>
+
+      {loggedInUser.username && loggedInUser.username !== undefined && (
+        <div className="w-full flex my-2 bg-gray-900 sm:p-2 p-2 rounded-lg items-center justify-around">
+          <button
+            title={postLiked ? 'Unlike' : 'Like Post'}
+            onClick={() => likePost()}
+            className={`w-2/5 text-center rounded-lg p-2 hover:bg-gray-800
+             focus:bg-gray-800
+             text-blue-300 ri-thumb-up-${postLiked ? 'fill' : 'line'} ${
+              postLiked ? 'bg-blue-800' : ''
+            }`}
+          ></button>
+        </div>
+      )}
     </div>
   ) : null;
 }

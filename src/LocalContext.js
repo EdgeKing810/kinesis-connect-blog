@@ -65,7 +65,24 @@ function LocalContextProvider({ children }) {
             setMyPosts(res.data.blog_posts.reverse());
           }
         });
+    } else {
+      axios.post(`${APIURL}/api/blog/posts/fetch`, {}).then((resp) => {
+        if (resp.data.error === 0) {
+          setPosts(resp.data.blog_posts);
+        } else {
+          console.log(resp.data);
+        }
+      });
+
+      axios.post(`${APIURL}/api/blog/users/fetch`, {}).then((resp) => {
+        if (resp.data.error === 0) {
+          setBlogProfiles(resp.data.users);
+        } else {
+          console.log(resp.data);
+        }
+      });
     }
+
     // eslint-disable-next-line
   }, []);
 
