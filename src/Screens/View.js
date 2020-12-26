@@ -50,14 +50,28 @@ export default function View() {
       history.push('/');
     }
 
-    let post;
+    const tmpPosts = [...posts, ...myPosts];
+    for (let i = 0; i < tmpPosts.length; i++) {
+      if (tmpPosts[i].slug === slug) {
+        setBlogPost({ ...tmpPosts[i] });
 
-    [...posts, ...myPosts].forEach((p) => {
-      if (p.slug === slug) {
-        post = { ...p };
-        setBlogPost({ ...p });
+        if (
+          tmpPosts[i].likes &&
+          tmpPosts[i].likes !== undefined &&
+          tmpPosts[i].likes.length > 0
+        ) {
+          setPostLiked(
+            tmpPosts[i].likes.some((l) => l.uid === loggedInUser.uid)
+          );
+        }
+
+        if (loggedInUser.favorites && loggedInUser.favorites.length > 0) {
+          setPostFavorited(
+            loggedInUser.favorites.some((f) => f.uid === tmpPosts[i].blogID)
+          );
+        }
       }
-    });
+    }
 
     [loggedInUser, ...blogProfiles].forEach((u) => {
       if (u.username === username) {
@@ -67,16 +81,6 @@ export default function View() {
           if (loggedInUser.blog_following_amount > 0) {
             setFollowingAuthor(
               loggedInUser.blog_following.some((a) => a.uid === u.uid)
-            );
-          }
-
-          if (post.likes && post.likes.length > 0) {
-            setPostLiked(post.likes.some((l) => l.uid === loggedInUser.uid));
-          }
-
-          if (loggedInUser.favorites && loggedInUser.favorites.length > 0) {
-            setPostFavorited(
-              loggedInUser.favorites.some((f) => f.uid === post.blogID)
             );
           }
         }
@@ -120,42 +124,35 @@ export default function View() {
         }
       });
 
-    let updatedBlogPost = {};
+    let update = { ...blogPost };
+    if (postLiked) {
+      update.likes = update.likes.filter((l) => l.uid !== loggedInUser.uid);
+    } else {
+      update.likes = [...update.likes, { uid: loggedInUser.uid }];
+    }
 
-    setBlogPost((previous) => {
-      let update = { ...previous };
-
-      if (postLiked) {
-        update.likes = previous.likes.filter((l) => l.uid !== loggedInUser.uid);
+    const updatedPosts = posts.map((p) => {
+      if (p.blogID === blogPost.blogID) {
+        return update;
       } else {
-        update.likes = [...previous.likes, { uid: loggedInUser.uid }];
+        return p;
       }
-
-      updatedBlogPost = { ...update };
-      return update;
     });
 
-    if (blogPost.authorID === loggedInUser.uid) {
-      setMyPosts((pr) =>
-        pr.map((p) => {
-          if (p.blogID === blogPost.blogID) {
-            return updatedBlogPost;
-          } else {
-            return p;
-          }
-        })
-      );
-    } else {
-      setPosts((pr) =>
-        pr.map((p) => {
-          if (p.blogID === blogPost.blogID) {
-            return updatedBlogPost;
-          } else {
-            return p;
-          }
-        })
-      );
-    }
+    const updatedMyPosts = myPosts.map((p) => {
+      if (p.blogID === blogPost.blogID) {
+        return update;
+      } else {
+        return p;
+      }
+    });
+
+    console.log(updatedMyPosts);
+
+    setTimeout(() => {
+      setPosts(updatedPosts);
+      setMyPosts(updatedMyPosts);
+    }, 500);
 
     setPostLiked((prev) => !prev);
   };
