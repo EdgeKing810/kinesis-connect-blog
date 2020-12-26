@@ -14,6 +14,7 @@ export default function View() {
     APIURL,
     UPLOADSURL,
     loggedInUser,
+    setLoggedInUser,
     posts,
     setPosts,
     myPosts,
@@ -26,7 +27,7 @@ export default function View() {
 
   const [followingAuthor, setFollowingAuthor] = useState(false);
   const [postLiked, setPostLiked] = useState(false);
-  const [favorited, setPostFavorited] = useState(false);
+  const [postFavorited, setPostFavorited] = useState(false);
 
   const history = useHistory();
   const { username, slug } = useParams();
@@ -147,14 +148,56 @@ export default function View() {
       }
     });
 
-    console.log(updatedMyPosts);
-
     setTimeout(() => {
       setPosts(updatedPosts);
       setMyPosts(updatedMyPosts);
     }, 500);
 
     setPostLiked((prev) => !prev);
+  };
+
+  const favoritePost = () => {
+    const data = {
+      uid: loggedInUser.uid,
+      profileID: loggedInUser.uid,
+      blogID: blogPost.blogID,
+      jwt: loggedInUser.jwt,
+      favorite: postFavorited ? 'false' : 'true',
+    };
+
+    axios
+      .post(`${APIURL}/api/blog/post/favorite`, data, {
+        headers: { Authorization: `Bearer ${data.jwt}` },
+      })
+      .then((res) => {
+        if (res.data.error === 0) {
+          alert.success(
+            `Post successfully ${
+              postFavorited ? 'removed from' : 'added to'
+            } favorites!`
+          );
+        } else {
+          console.log(res.data);
+        }
+      });
+
+    const updatedLoggedInUser = { ...loggedInUser };
+    if (postFavorited) {
+      updatedLoggedInUser.favorites = updatedLoggedInUser.favorites.filter(
+        (f) => f.uid !== blogPost.blogID
+      );
+    } else {
+      updatedLoggedInUser.favorites = [
+        ...updatedLoggedInUser.favorites,
+        { uid: blogPost.blogID },
+      ];
+    }
+
+    setTimeout(() => {
+      setLoggedInUser({ ...updatedLoggedInUser });
+    }, 500);
+
+    setPostFavorited((prev) => !prev);
   };
 
   return blogPost &&
@@ -225,7 +268,19 @@ export default function View() {
              focus:bg-gray-800
              text-blue-300 ri-thumb-up-${postLiked ? 'fill' : 'line'} ${
               postLiked ? 'bg-blue-800' : ''
-            }`}
+            } sm:text-lg text-sm`}
+          ></button>
+
+          <button
+            title={
+              postFavorited ? 'Remove from favorites' : 'Add post to favorites'
+            }
+            onClick={() => favoritePost()}
+            className={`w-2/5 text-center rounded-lg p-2 hover:bg-gray-800
+             focus:bg-gray-800
+             text-red-300 ri-heart-3-${postFavorited ? 'fill' : 'line'} ${
+              postFavorited ? 'bg-red-800' : ''
+            } sm:text-lg text-sm`}
           ></button>
         </div>
       )}
