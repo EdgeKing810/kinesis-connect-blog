@@ -271,14 +271,14 @@ export default function View() {
     }
 
     if (
-      !comment.likes ||
-      comment.likes === undefined ||
-      comment.likes.length <= 0
+      !comment.reacts ||
+      comment.reacts === undefined ||
+      comment.reacts.length <= 0
     ) {
       return false;
     }
 
-    return comment.likes.some((l) => l.uid === loggedInUser.uid);
+    return comment.reacts.some((l) => l.uid === loggedInUser.uid);
   };
 
   const getCommentOwner = (profileID) => {
@@ -289,6 +289,68 @@ export default function View() {
     }
 
     return profile;
+  };
+
+  const likeComment = (commentID) => {
+    const data = {
+      uid: loggedInUser.uid,
+      profileID: loggedInUser.uid,
+      blogID: blogPost.blogID,
+      commentID: commentID,
+      like: !checkCommentLike(commentID) ? 'true' : 'false',
+    };
+
+    axios
+      .post(`${APIURL}/api/blog/post/comment/like`, data, {
+        headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
+      })
+      .then((res) => {
+        if (res.data.error !== 0) {
+          console.log(res.data);
+        }
+      });
+
+    let update = { ...blogPost };
+    update.comments = update.comments.map((c) => {
+      if (c.commentID === commentID) {
+        const updatedComment = { ...c };
+        if (data.like === 'true') {
+          updatedComment.reacts = [
+            ...updatedComment.reacts,
+            { uid: loggedInUser.uid },
+          ];
+        } else {
+          updatedComment.reacts = updatedComment.reacts.filter(
+            (l) => l.uid !== loggedInUser.uid
+          );
+        }
+        return updatedComment;
+      } else {
+        return c;
+      }
+    });
+
+    const updatedPosts = posts.map((p) => {
+      if (p.blogID === blogPost.blogID) {
+        return update;
+      } else {
+        return p;
+      }
+    });
+
+    const updatedMyPosts = myPosts.map((p) => {
+      if (p.blogID === blogPost.blogID) {
+        return update;
+      } else {
+        return p;
+      }
+    });
+
+    setTimeout(() => {
+      setPosts(updatedPosts);
+      setMyPosts(updatedMyPosts);
+      setBlogPost({ ...update });
+    }, 500);
   };
 
   return blogPost &&
@@ -358,7 +420,7 @@ export default function View() {
             className={`w-2/5 text-center rounded-lg p-2 hover:bg-gray-800
              focus:bg-gray-800
              text-blue-300 ri-thumb-up-${postLiked ? 'fill' : 'line'} ${
-              postLiked ? 'bg-blue-800' : ''
+              postLiked ? 'bg-gray-700' : ''
             } sm:text-lg text-sm`}
           ></button>
 
@@ -370,7 +432,7 @@ export default function View() {
             className={`w-2/5 text-center rounded-lg p-2 hover:bg-gray-800
              focus:bg-gray-800
              text-red-300 ri-heart-3-${postFavorited ? 'fill' : 'line'} ${
-              postFavorited ? 'bg-red-800' : ''
+              postFavorited ? 'bg-gray-700' : ''
             } sm:text-lg text-sm`}
           ></button>
         </div>
@@ -459,8 +521,9 @@ export default function View() {
              text-blue-300 ri-thumb-up-${
                checkCommentLike(comm.commentID) ? 'fill' : 'line'
              } ${
-                      checkCommentLike(comm.commentID) ? 'bg-blue-800' : ''
+                      checkCommentLike(comm.commentID) ? 'bg-gray-700' : ''
                     } sm:text-lg text-xs`}
+                    onClick={() => likeComment(comm.commentID)}
                   ></button>
                   {comm.uid === loggedInUser.uid && (
                     <button
@@ -469,7 +532,7 @@ export default function View() {
              text-yellow-300 ri-pencil-${
                editComment === comm.commentID ? 'fill' : 'line'
              } ${
-                        editComment === comm.commentID ? 'bg-yellow-800' : ''
+                        editComment === comm.commentID ? 'bg-gray-700' : ''
                       } sm:text-lg text-xs`}
                     ></button>
                   )}
@@ -480,7 +543,7 @@ export default function View() {
              text-red-300 ri-delete-bin-${
                deleteComment === comm.commentID ? 'fill' : 'line'
              } ${
-                        deleteComment === comm.commentID ? 'bg-red-800' : ''
+                        deleteComment === comm.commentID ? 'bg-gray-700' : ''
                       } sm:text-lg text-xs`}
                     ></button>
                   )}
