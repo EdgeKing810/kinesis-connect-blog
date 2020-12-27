@@ -474,10 +474,10 @@ export default function View() {
               <div className="sm:w-4/5 w-full flex pr-2">
                 <img
                   src={
-                    blogProfile.profile_pic &&
-                    blogProfile.profile_pic !== undefined &&
-                    blogProfile.profile_pic.length > 3
-                      ? `${UPLOADSURL}/${blogProfile.profile_pic}`
+                    getCommentOwner(comm.uid).profile_pic &&
+                    getCommentOwner(comm.uid).profile_pic !== undefined &&
+                    getCommentOwner(comm.uid).profile_pic.length > 3
+                      ? `${UPLOADSURL}/${getCommentOwner(comm.uid).profile_pic}`
                       : tmpAvatar
                   }
                   alt="p.c.pic"
