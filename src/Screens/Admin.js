@@ -72,12 +72,11 @@ export default function Admin() {
         const data = {
           uid: res.data.uid,
           profileID: res.data.uid,
-          jwt: res.data.jwt,
         };
 
         axios
           .post(`${APIURL}/api/blog/posts/fetch`, data, {
-            headers: { Authorization: `Bearer ${data.jwt}` },
+            headers: { Authorization: `Bearer ${res.data.jwt}` },
           })
           .then((resp) => {
             if (resp.data.error === 0) {
@@ -87,7 +86,7 @@ export default function Admin() {
 
         axios
           .post(`${APIURL}/api/blog/users/fetch`, data, {
-            headers: { Authorization: `Bearer ${data.jwt}` },
+            headers: { Authorization: `Bearer ${res.data.jwt}` },
           })
           .then((resp) => {
             if (resp.data.error === 0) {
@@ -109,7 +108,7 @@ export default function Admin() {
 
         axios
           .post(`${APIURL}/api/blog/user/posts/fetch`, data, {
-            headers: { Authorization: `Bearer ${data.jwt}` },
+            headers: { Authorization: `Bearer ${res.data.jwt}` },
           })
           .then((resp) => {
             if (resp.data.error === 0) {

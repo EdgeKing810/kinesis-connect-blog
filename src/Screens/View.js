@@ -8,6 +8,7 @@ import { LocalContext } from '../LocalContext';
 import { Parser } from '../Components/renderers';
 
 import tmpAvatar from '../Assets/images/avatar_tmp.png';
+import { v4 } from 'uuid';
 
 export default function View() {
   const {
@@ -29,6 +30,10 @@ export default function View() {
   const [postLiked, setPostLiked] = useState(false);
   const [postFavorited, setPostFavorited] = useState(false);
 
+  const [comment, setComment] = useState('');
+  const [editComment, setEditComment] = useState('');
+  const [deleteComment, setDeleteComment] = useState('');
+
   const history = useHistory();
   const { username, slug } = useParams();
   const alert = useAlert();
@@ -39,11 +44,10 @@ export default function View() {
         uid: loggedInUser.uid,
         profileID: loggedInUser.uid,
         slug: slug,
-        jwt: loggedInUser.jwt,
       };
 
       axios.post(`${APIURL}/api/blog/post/view`, data, {
-        headers: { Authorization: `Bearer ${data.jwt}` },
+        headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
       });
     }
 
@@ -109,13 +113,12 @@ export default function View() {
       uid: loggedInUser.uid,
       profileID: loggedInUser.uid,
       blogID: blogPost.blogID,
-      jwt: loggedInUser.jwt,
       like: postLiked ? 'false' : 'true',
     };
 
     axios
       .post(`${APIURL}/api/blog/post/like`, data, {
-        headers: { Authorization: `Bearer ${data.jwt}` },
+        headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
       })
       .then((res) => {
         if (res.data.error === 0) {
@@ -151,6 +154,7 @@ export default function View() {
     setTimeout(() => {
       setPosts(updatedPosts);
       setMyPosts(updatedMyPosts);
+      setBlogPost({ ...update });
     }, 500);
 
     setPostLiked((prev) => !prev);
@@ -161,13 +165,12 @@ export default function View() {
       uid: loggedInUser.uid,
       profileID: loggedInUser.uid,
       blogID: blogPost.blogID,
-      jwt: loggedInUser.jwt,
       favorite: postFavorited ? 'false' : 'true',
     };
 
     axios
       .post(`${APIURL}/api/blog/post/favorite`, data, {
-        headers: { Authorization: `Bearer ${data.jwt}` },
+        headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
       })
       .then((res) => {
         if (res.data.error === 0) {
@@ -200,13 +203,101 @@ export default function View() {
     setPostFavorited((prev) => !prev);
   };
 
+  const postComment = () => {
+    let d = new Date();
+    const timestamp = new Date(
+      d.getUTCFullYear(),
+      d.getUTCMonth(),
+      d.getUTCDate(),
+      d.getUTCHours(),
+      d.getUTCMinutes(),
+      d.getUTCSeconds()
+    );
+
+    const data = {
+      uid: loggedInUser.uid,
+      profileID: loggedInUser.uid,
+      blogID: blogPost.blogID,
+      commentID: v4(),
+      comment: comment,
+      timestamp: timestamp,
+    };
+
+    axios
+      .post(`${APIURL}/api/blog/post/comment/add`, data, {
+        headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
+      })
+      .then((res) => {
+        if (res.data.error === 0) {
+          alert.success(`Comment successfully posted`);
+        } else {
+          console.log(res.data);
+        }
+      });
+
+    let update = { ...blogPost };
+    update.comments = [...update.comments, { ...data }];
+
+    const updatedPosts = posts.map((p) => {
+      if (p.blogID === blogPost.blogID) {
+        return update;
+      } else {
+        return p;
+      }
+    });
+
+    const updatedMyPosts = myPosts.map((p) => {
+      if (p.blogID === blogPost.blogID) {
+        return update;
+      } else {
+        return p;
+      }
+    });
+
+    setTimeout(() => {
+      setPosts(updatedPosts);
+      setMyPosts(updatedMyPosts);
+      setBlogPost({ ...update });
+
+      setComment('');
+    }, 500);
+  };
+
+  const checkCommentLike = (commentID) => {
+    const comment = blogPost.comments.find((c) => c.commentID === commentID);
+
+    if (!comment || comment === undefined) {
+      return false;
+    }
+
+    if (
+      !comment.likes ||
+      comment.likes === undefined ||
+      comment.likes.length <= 0
+    ) {
+      return false;
+    }
+
+    return comment.likes.some((l) => l.uid === loggedInUser.uid);
+  };
+
+  const getCommentOwner = (profileID) => {
+    const profile = blogProfiles.find((p) => p.uid === profileID);
+
+    if (!profile || profile === undefined) {
+      return 'Unknown User';
+    }
+
+    return profile;
+  };
+
   return blogPost &&
     blogPost !== undefined &&
     blogProfile &&
     blogProfile !== undefined ? (
-    <div className="w-full flex flex-col items-center h-full sm:px-20 px-2">
-      <div className="sm:w-1/4 w-full bg-gray-700 rounded-lg mt-2 flex p-2 border-4 border-gray-900">
-        <div className="w-1/5 h-full flex justify-center items-center">
+    <div className="w-full flex flex-col items-center h-full sm:px-20 px-2 pb-4">
+      <div className="w-full bg-gray-700 rounded-lg mt-2 flex p-2 border-4 border-gray-900">
+        <div className="sm:w-1/12 w-1/5 h-full flex justify-center items-center">
           <img
             src={
               blogProfile.profile_pic &&
@@ -216,13 +307,13 @@ export default function View() {
                 : tmpAvatar
             }
             alt="p.pic"
-            className="sm:h-16 sm:w-16 h-10 w-10 z-0 object-cover border-2 border-blue-400 rounded-full"
+            className="h-16 w-16 z-0 object-cover border-2 border-blue-400 rounded-full"
           />
         </div>
-        <div className="flex-1 flex-col w-full">
+        <div className="flex-col flex-1">
           <div className="w-full flex items-center">
             <button
-              className="flex-1 text-left text-blue-500 font-open sm:text-lg text-sm bg-gray-900 hover:bg-teal-900 focus:bg-teal-900 px-2 rounded-lg"
+              className="text-left text-blue-500 font-open sm:text-lg text-sm bg-gray-900 hover:bg-gray-800 focus:bg-gray-800 px-2 py-1 rounded-lg sm:w-1/3 w-full"
               onClick={() => history.push(`/profile/${blogProfile.username}`)}
             >
               {blogProfile.username.length > 12
@@ -284,6 +375,125 @@ export default function View() {
           ></button>
         </div>
       )}
+
+      <div className="w-full flex flex-col my-2 bg-gray-900 sm:p-2 p-2 rounded-lg items-center">
+        {loggedInUser.username && loggedInUser.username !== undefined && (
+          <div className="w-full my-2 p-2 flex justify-between items-center">
+            <textarea
+              title="CommentBox"
+              className="sm:w-5/6 w-4/5 p-2 rounded-lg bg-gray-700 text-gray-400 placeholder-gray-500 sm:text-md text-xs"
+              placeholder="Enter a comment..."
+              onChange={(e) => setComment(e.target.value)}
+              style={{ minHeight: '3rem' }}
+            />
+            <button
+              className={`sm:w-1/5 w-1/6 rounded-lg bg-gray-800 ${
+                comment.length > 0
+                  ? 'hover:bg-gray-700 focus:bg-gray-700'
+                  : 'opacity-50'
+              } sm:h-10 h-8 sm:text-lg text-sm font-open text-gray-400 sm:ml-2`}
+              onClick={() => (comment.length > 0 ? postComment() : null)}
+            >
+              Post
+            </button>
+          </div>
+        )}
+        <span className="w-full mb-2 bg-blue-800 flex justify-between items-center p-1 rounded"></span>
+        {blogPost.comments &&
+        blogPost.comments !== undefined &&
+        blogPost.comments.length > 0 ? (
+          blogPost.comments.map((comm, i) => (
+            <div
+              className={`w-full bg-gray-800 rounded-lg p-2 flex sm:flex-row flex-col sm:items-end items-center ${
+                i < blogPost.comments.length - 1 ? 'mb-2' : 'mb-0'
+              }`}
+              key={comm.commentID}
+            >
+              <div className="sm:w-4/5 w-full flex pr-2">
+                <img
+                  src={
+                    blogProfile.profile_pic &&
+                    blogProfile.profile_pic !== undefined &&
+                    blogProfile.profile_pic.length > 3
+                      ? `${UPLOADSURL}/${blogProfile.profile_pic}`
+                      : tmpAvatar
+                  }
+                  alt="p.c.pic"
+                  className="sm:h-16 sm:w-16 h-10 w-10 z-0 object-cover border-2 border-blue-400 rounded-full mr-2"
+                />
+                <div className="w-full flex flex-col">
+                  <button
+                    className="font-open sm:text-lg text-md text-left text-blue-400 underline hover:no-underline focus:no-underline"
+                    onClick={() =>
+                      history.push(
+                        `/profile/${getCommentOwner(comm.uid).username}`
+                      )
+                    }
+                  >
+                    {getCommentOwner(comm.uid).username.length > 12
+                      ? `${getCommentOwner(comm.uid).username.substring(
+                          0,
+                          12
+                        )}...`
+                      : getCommentOwner(comm.uid).username}
+                  </button>
+
+                  <div className="sm:text-sm text-xs text-yellow-400 font-rale">
+                    Last Modified on{' '}
+                    {convertDate(comm.timestamp)
+                      .split(' ')
+                      .slice(0, 5)
+                      .join(' ')}
+                  </div>
+
+                  <div className="font-open sm:text-sm text-xs text-blue-200 w-full bg-gray-700 rounded p-1">
+                    {comm.comment}
+                  </div>
+                </div>
+              </div>
+              {loggedInUser.username && loggedInUser.username !== undefined && (
+                <div className="sm:w-1/5 w-full sm:h-16 sm:mt-0 mt-2 rounded-lg bg-gray-900 flex justify-between items-center p-2">
+                  <button
+                    className={`w-3/10 h-full text-center rounded-lg p-2 hover:bg-gray-800
+             focus:bg-gray-800
+             text-blue-300 ri-thumb-up-${
+               checkCommentLike(comm.commentID) ? 'fill' : 'line'
+             } ${
+                      checkCommentLike(comm.commentID) ? 'bg-blue-800' : ''
+                    } sm:text-lg text-xs`}
+                  ></button>
+                  {comm.uid === loggedInUser.uid && (
+                    <button
+                      className={`w-3/10 h-full text-center rounded-lg p-2 hover:bg-gray-800
+             focus:bg-gray-800
+             text-yellow-300 ri-pencil-${
+               editComment === comm.commentID ? 'fill' : 'line'
+             } ${
+                        editComment === comm.commentID ? 'bg-yellow-800' : ''
+                      } sm:text-lg text-xs`}
+                    ></button>
+                  )}
+                  {comm.uid === loggedInUser.uid && (
+                    <button
+                      className={`w-3/10 h-full text-center rounded-lg p-2 hover:bg-gray-800
+             focus:bg-gray-800
+             text-red-300 ri-delete-bin-${
+               deleteComment === comm.commentID ? 'fill' : 'line'
+             } ${
+                        deleteComment === comm.commentID ? 'bg-red-800' : ''
+                      } sm:text-lg text-xs`}
+                    ></button>
+                  )}
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className="w-full text-center sm:text-xl text-md font-rale tracking-wider text-yellow-300 my-2">
+            No comments yet.
+          </div>
+        )}
+      </div>
     </div>
   ) : null;
 }
