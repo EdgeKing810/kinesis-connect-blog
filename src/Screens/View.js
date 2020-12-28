@@ -34,7 +34,6 @@ export default function View() {
   const [editingComment, setEditingComment] = useState('');
 
   const [editComment, setEditComment] = useState('');
-  const [deleteComment, setDeleteComment] = useState('');
 
   const history = useHistory();
   const { username, slug } = useParams();
@@ -366,16 +365,47 @@ export default function View() {
     updatePosts({ ...update });
     cancelEditComment();
   };
+
   const cancelEditComment = () => {
     setEditComment('');
     setEditingComment('');
+  };
+
+  const deleteComment = (commentID) => {
+    if (window.confirm('Are you sure you want to delete this comment?')) {
+      const data = {
+        uid: loggedInUser.uid,
+        profileID: loggedInUser.uid,
+        blogID: blogPost.blogID,
+        commentID: editComment,
+      };
+
+      axios
+        .post(`${APIURL}/api/blog/post/comment/delete`, data, {
+          headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
+        })
+        .then((res) => {
+          if (res.data.error === 0) {
+            alert.success(`Comment successfully deleted!`);
+          } else {
+            console.log(res.data);
+          }
+        });
+
+      let update = { ...blogPost };
+      update.comments = update.comments.filter(
+        (c) => c.commentID !== commentID
+      );
+
+      updatePosts({ ...update });
+    }
   };
 
   return blogPost &&
     blogPost !== undefined &&
     blogProfile &&
     blogProfile !== undefined ? (
-    <div className="w-full flex flex-col items-center h-full sm:px-20 px-2 pb-4">
+    <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4">
       <div className="w-full bg-gray-700 rounded-lg mt-2 flex p-2 border-4 border-gray-900">
         <div className="sm:w-1/12 w-1/5 h-full flex justify-center items-center">
           <img
@@ -566,13 +596,8 @@ export default function View() {
                   )}
                   {comm.uid === loggedInUser.uid && (
                     <button
-                      className={`w-3/10 h-full text-center rounded-lg p-2 hover:bg-gray-800
-             focus:bg-gray-800
-             text-red-300 ri-delete-bin-${
-               deleteComment === comm.commentID ? 'fill' : 'line'
-             } ${
-                        deleteComment === comm.commentID ? 'bg-gray-700' : ''
-                      } sm:text-lg text-xs`}
+                      className={`w-3/10 h-full text-center rounded-lg p-2 hover:bg-gray-800 focus:bg-gray-800 text-red-300 ri-delete-bin-line sm:text-lg text-xs`}
+                      onClick={() => deleteComment(comm.commentID)}
                     ></button>
                   )}
                 </div>
