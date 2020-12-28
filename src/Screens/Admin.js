@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import axios from 'axios';
@@ -17,6 +17,7 @@ export default function Admin() {
     myPosts,
     setMyPosts,
     setBlogProfiles,
+    setWidth,
   } = useContext(LocalContext);
 
   const [username, setUsername] = useState('');
@@ -27,6 +28,11 @@ export default function Admin() {
 
   const history = useHistory();
   const alert = useAlert();
+
+  useEffect(() => {
+    setWidth(100);
+    // eslint-disable-next-line
+  }, []);
 
   const submitForm = (e) => {
     e.preventDefault();
@@ -294,7 +300,7 @@ export default function Admin() {
   );
 
   const adminInterface = (
-    <div className="w-full flex flex-col items-center sm:px-16 px-4">
+    <div className="w-full flex flex-col items-center sm:px-16 px-4 sm:pt-28 pt-24">
       <div className="w-full p-2 rounded-lg bg-gray-900 my-4 sm:mx-8">
         <div className="sm:text-2xl  font-sans tracking-wide text-bold text-gray-300 w-full mb-2 flex items-center justify-between">
           Manage Blog Posts
@@ -315,6 +321,7 @@ export default function Admin() {
                   className={`w-full flex justify-between flex h-full items-center py-2 ${
                     i < myPosts.length - 1 ? 'border-b-2 border-gray-700' : ''
                   }`}
+                  key={post.blogID}
                 >
                   <div className="sm:w-3/4 w-3/5 flex items-center">
                     <button
@@ -393,7 +400,7 @@ export default function Admin() {
   return loggedInUser.username && loggedInUser.username !== undefined ? (
     adminInterface
   ) : (
-    <div className="h-11/12 w-full bg-admin-bg bg-cover bg-center flex justify-center items-center">
+    <div className="h-11/12 w-full bg-admin-bg bg-cover bg-center flex justify-center items-center h-screen sm:pt-28 pt-24">
       {LoginScreen}
     </div>
   );

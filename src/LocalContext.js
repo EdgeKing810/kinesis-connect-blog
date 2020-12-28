@@ -13,6 +13,8 @@ function LocalContextProvider({ children }) {
   const [loggedInUser, setLoggedInUser] = useState({});
   const [blogProfiles, setBlogProfiles] = useState([]);
 
+  const [width, setWidth] = useState(100);
+
   useEffect(() => {
     if (localStorage.getItem('_userData')) {
       if (
@@ -99,6 +101,8 @@ function LocalContextProvider({ children }) {
         setLoggedInUser,
         blogProfiles,
         setBlogProfiles,
+        width,
+        setWidth,
       }}
     >
       {children}

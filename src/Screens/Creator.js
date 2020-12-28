@@ -10,14 +10,20 @@ import { Parser } from '../Components/renderers';
 import { v4 } from 'uuid';
 
 export default function Creator() {
-  const { APIURL, UPLOADSURL, loggedInUser, myPosts, setMyPosts } = useContext(
-    LocalContext
-  );
+  const {
+    APIURL,
+    UPLOADSURL,
+    loggedInUser,
+    myPosts,
+    setMyPosts,
+    setWidth,
+  } = useContext(LocalContext);
 
   const [blogID, setBlogID] = useState(v4());
 
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
+  const [tags, setTags] = useState('');
 
   const [slug, setSlug] = useState('');
 
@@ -30,6 +36,8 @@ export default function Creator() {
   const { id } = useParams();
 
   useEffect(() => {
+    setWidth(100);
+
     if (!loggedInUser.username || loggedInUser.username === undefined) {
       history.push('/admin');
     }
@@ -65,6 +73,7 @@ export default function Creator() {
           setBlogID(id);
           setTitle(p.title);
           setSubtitle(p.subtitle);
+          setTags(p.tags);
           setSlug(p.slug);
           setPreviewImage(p.preview_img);
           setContent(p.content);
@@ -114,6 +123,8 @@ export default function Creator() {
       title.length > 3 &&
       subtitle &&
       subtitle.length > 3 &&
+      tags &&
+      tags.length > 3 &&
       slug &&
       slug.length > 3 &&
       content &&
@@ -150,6 +161,7 @@ export default function Creator() {
       slug: refPost !== undefined ? refPost.slug : slug,
       preview_img: previewImage,
       status: refPost !== undefined ? refPost.status : 'DRAFT',
+      tags: tags,
       created_on: refPost !== undefined ? refPost.created_on : timestamp,
       updated_on: timestamp,
       content: content,
@@ -210,7 +222,7 @@ export default function Creator() {
             <input
               type="text"
               id="title"
-              className="w-full rounded-lg sm:p-2 p-1 bg-gray-400 placeholder-gray-700 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
+              className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
               placeholder="Type something..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -244,10 +256,29 @@ export default function Creator() {
             <input
               type="text"
               id="subtitle"
-              className="w-full rounded-lg sm:p-2 p-1 bg-gray-400 placeholder-gray-700 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
+              className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
               placeholder="Type something..."
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full flex flex-col mt-4 bg-gray-900 sm:p-2 pb-4 pt-2 rounded-lg sm:items-end items-center">
+        <div className="w-full flex sm:flex-row flex-col justify-between items-center">
+          <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">
+            Comma-separated tags
+          </div>
+
+          <div className="sm:w-49/100 w-11/12 flex flex-col justify-center items-center">
+            <input
+              type="text"
+              id="tags"
+              className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
+              placeholder="e.g docker, ansible, automation"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
             />
           </div>
         </div>
@@ -263,7 +294,7 @@ export default function Creator() {
             <input
               type="file"
               id="preview"
-              className="w-full rounded-lg p-1 bg-gray-400 placeholder-gray-700 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
+              className="w-full rounded-lg p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
               onChange={(e) => {
                 e.persist();
                 uploadImage(e);

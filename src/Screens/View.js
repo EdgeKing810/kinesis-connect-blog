@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
 import axios from 'axios';
@@ -21,6 +21,7 @@ export default function View() {
     myPosts,
     setMyPosts,
     blogProfiles,
+    setWidth,
   } = useContext(LocalContext);
 
   const [blogPost, setBlogPost] = useState(undefined);
@@ -37,9 +38,62 @@ export default function View() {
 
   const [showComments, setShowComments] = useState(false);
 
+  const [initialScroll, setInitialScroll] = useState(9999);
+
   const history = useHistory();
   const { username, slug } = useParams();
   const alert = useAlert();
+  const contentRef = useRef(null);
+
+  const tags =
+    blogPost &&
+    blogPost !== undefined &&
+    blogPost.tags &&
+    blogPost.tags !== undefined
+      ? blogPost.tags
+          .split(',')
+          .map((e) => e.trim())
+          .filter((e) => e.length > 0)
+      : [];
+
+  const handleScroll = () => {
+    const { bottom } = contentRef.current.getBoundingClientRect();
+    const scrolled = 1.0 - bottom / initialScroll;
+
+    const winScroll =
+      document.body.scrollTop || document.documentElement.scrollTop;
+
+    const height =
+      document.documentElement.scrollHeight -
+      document.documentElement.clientHeight;
+
+    const pageScrolled = winScroll / height + 0.05;
+
+    const averageScrolled = (scrolled + pageScrolled) / 2;
+
+    averageScrolled <= 0
+      ? setWidth(0)
+      : averageScrolled >= 1
+      ? setWidth(100)
+      : setWidth(averageScrolled * 100);
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    setTimeout(
+      () => {
+        setInitialScroll(contentRef.current.getBoundingClientRect().bottom);
+        handleScroll();
+      },
+      blogPost && blogPost !== undefined ? 0 : 1500
+    );
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     if (loggedInUser.username && loggedInUser.username !== undefined) {
@@ -56,7 +110,9 @@ export default function View() {
         .then((res) => {
           if (res.data.error === 0) {
             let update = { ...blogPost };
-            update.views = [...update.views, { uid: loggedInUser.uid }];
+            update.views = update.views
+              ? [...update.views, { uid: loggedInUser.uid }]
+              : [{ uid: loggedInUser.uid }];
             updatePosts({ ...update });
           }
         });
@@ -167,7 +223,9 @@ export default function View() {
     if (postLiked) {
       update.likes = update.likes.filter((l) => l.uid !== loggedInUser.uid);
     } else {
-      update.likes = [...update.likes, { uid: loggedInUser.uid }];
+      update.likes = update.likes
+        ? [...update.likes, { uid: loggedInUser.uid }]
+        : [{ uid: loggedInUser.uid }];
     }
 
     updatePosts({ ...update });
@@ -250,7 +308,9 @@ export default function View() {
       });
 
     let update = { ...blogPost };
-    update.comments = [...update.comments, { ...data }];
+    update.comments = update.comments
+      ? [...update.comments, { ...data }]
+      : [{ uid: loggedInUser.uid }];
 
     updatePosts({ ...update });
     setComment('');
@@ -416,9 +476,12 @@ export default function View() {
     blogPost !== undefined &&
     blogProfile &&
     blogProfile !== undefined ? (
-    <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4">
+    <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-28 pt-24">
       <div className="w-full flex flex-col my-2 bg-gray-900 sm:p-2 p-2 rounded-lg sm:items-end items-center">
-        <div className="w-full rounded-lg sm:text-sm text-xs text-gray-300 p-2 h-full">
+        <div
+          className="w-full rounded-lg sm:text-sm text-xs text-gray-300 p-2"
+          ref={contentRef}
+        >
           <Parser content={blogPost.content} />
         </div>
       </div>
@@ -449,17 +512,33 @@ export default function View() {
         </div>
       )}
 
-      <div className="w-full flex justify-start">
-        <div className="flex items-center rounded-lg bg-gray-900 p-1">
-          <div className="text-left text-blue-200 font-open sm:text-md text-xs mr-1 rounded py-2 px-4 bg-gray-800">
-            Views: {blogPost.views.length}
+      <div className="w-full flex justify-start flex-wrap	">
+        <div className="flex items-center rounded-lg bg-gray-900 p-1 flex-wrap	">
+          <div className="text-left text-blue-200 font-open sm:text-base text-xs mr-1 rounded py-2 px-4 bg-gray-800 my-1">
+            Views: {blogPost.views !== undefined ? blogPost.views.length : 0}
           </div>
-          <div className="text-left text-blue-200 font-open sm:text-md text-xs mr-1 rounded py-2 px-4 bg-gray-800">
-            Likes: {blogPost.likes.length}
+          <div className="text-left text-blue-200 font-open sm:text-base text-xs mr-1 rounded py-2 px-4 bg-gray-800 my-1">
+            Likes: {blogPost.likes !== undefined ? blogPost.likes.length : 0}
           </div>
-          <div className="text-left text-blue-200 font-open sm:text-md text-xs rounded py-2 px-4 bg-gray-800">
-            Comments: {blogPost.comments.length}
+          <div className="text-left text-blue-200 font-open sm:text-base text-xs mr-1 rounded py-2 px-4 bg-gray-800 my-1">
+            Comments:{' '}
+            {blogPost.comments !== undefined ? blogPost.comments.length : 0}
           </div>
+          {tags.length > 0 && (
+            <div className="text-left text-blue-200 font-open sm:text-base text-xs rounded py-1 bg-blue-600 my-1">
+              {tags.map((t, i) => (
+                <button
+                  className={`text-left text-blue-200 font-open sm:text-base text-xs ml-1 rounded py-1 px-4 bg-gray-800 hover:bg-gray-700 focus:bg-gray-700 ${
+                    i === tags.length - 1 && 'mr-1'
+                  }`}
+                  key={`tag-${i}}`}
+                  onClick={() => console.log(t)}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -481,7 +560,7 @@ export default function View() {
           <div className="flex-col flex-1">
             <div className="w-full flex items-center">
               <button
-                className="text-left text-blue-500 font-open sm:text-lg text-sm bg-gray-900 hover:bg-gray-800 focus:bg-gray-800 px-2 py-1 rounded-lg w-full"
+                className="text-left text-blue-500 font-open sm:text-base text-sm bg-gray-900 hover:bg-gray-800 focus:bg-gray-800 px-2 py-1 rounded-lg w-full"
                 onClick={() => history.push(`/profile/${blogProfile.username}`)}
               >
                 {blogProfile.username.length > 12
@@ -501,14 +580,14 @@ export default function View() {
                   ></div>
                 )}
             </div>
-            <div className="w-full text-left text-blue-200 font-open sm:text-md text-xs ml-2 mt-1">
+            <div className="w-full text-left text-blue-200 font-open text-xs ml-2 mt-1">
               Posted on{' '}
               {convertDate(blogPost.created_on)
                 .split(' ')
                 .slice(0, 5)
                 .join(' ')}
             </div>
-            <div className="w-full text-left text-blue-200 font-open sm:text-md text-xs ml-2 mt-1">
+            <div className="w-full text-left text-blue-200 font-open text-xs ml-2 mt-1">
               Last updated on{' '}
               {convertDate(blogPost.updated_on)
                 .split(' ')
@@ -521,12 +600,12 @@ export default function View() {
 
       <div className="w-full flex flex-col my-2 bg-gray-900 sm:p-2 p-2 rounded-lg items-center">
         <div className="w-full flex items-center">
-          <div className="sm:text-3xl text-lg font-sans tracking-wider font-bold text-blue-200 ml-6 mr-4">
+          <div className="sm:text-3xl text-lg font-sans tracking-wider font-bold text-blue-200 ml-2 mr-4">
             Comments
           </div>
           {blogPost.comments.length > 0 && (
             <button
-              className="p-2 sm:w-1/6 w-2/3 rounded-lg sm:text-md text-xs bg-gray-800 hover:bg-gray-700 focus:bg-gray-700 font-open text-gray-100"
+              className="p-2 sm:w-1/6 w-2/3 rounded-lg sm:text-sm text-xs bg-gray-800 hover:bg-gray-700 focus:bg-gray-700 font-open text-gray-100"
               onClick={() => setShowComments((prev) => !prev)}
             >
               {showComments ? 'Hide' : 'Show'} Comments
@@ -539,7 +618,7 @@ export default function View() {
             <div className="w-full mb-2 p-2 flex justify-between items-center">
               <textarea
                 title="CommentBox"
-                className="sm:w-5/6 w-4/5 p-2 rounded-lg bg-gray-700 text-gray-400 placeholder-gray-500 sm:text-md text-xs"
+                className="sm:w-5/6 w-4/5 p-2 rounded-lg bg-gray-700 text-gray-400 placeholder-gray-500 sm:text-base text-xs"
                 placeholder="Enter a comment..."
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
@@ -584,7 +663,7 @@ export default function View() {
                 />
                 <div className="w-full flex flex-col">
                   <button
-                    className="font-open sm:text-lg text-md text-left text-blue-400 underline hover:no-underline focus:no-underline"
+                    className="font-open sm:text-lg text-base text-left text-blue-400 underline hover:no-underline focus:no-underline"
                     onClick={() =>
                       history.push(
                         `/profile/${getCommentOwner(comm.uid).username}`
@@ -599,7 +678,7 @@ export default function View() {
                       : getCommentOwner(comm.uid).username}
                   </button>
 
-                  <div className="sm:text-sm text-xs text-yellow-400 font-rale">
+                  <div className="text-xs text-yellow-400 font-rale">
                     Last Modified on{' '}
                     {convertDate(comm.timestamp)
                       .split(' ')
@@ -607,7 +686,7 @@ export default function View() {
                       .join(' ')}
                   </div>
 
-                  <div className="font-open sm:text-sm text-xs text-blue-200 w-full bg-gray-700 rounded p-1">
+                  <div className="font-open sm:text-sm text-xs text-blue-200 w-full bg-gray-700 rounded p-1 mt-1">
                     {comm.comment}
                   </div>
                 </div>
@@ -652,7 +731,7 @@ export default function View() {
           <div className="w-full mb-2 p-2 flex justify-between items-center">
             <textarea
               title="EditCommentBox"
-              className="sm:w-5/6 w-4/5 p-2 rounded-lg bg-gray-700 text-gray-400 placeholder-gray-500 sm:text-md text-xs"
+              className="sm:w-5/6 w-4/5 p-2 rounded-lg bg-gray-700 text-gray-400 placeholder-gray-500 sm:text-base text-xs"
               placeholder="Enter a comment..."
               value={editingComment}
               onChange={(e) => setEditingComment(e.target.value)}
@@ -683,7 +762,7 @@ export default function View() {
             </div>
           </div>
         ) : (
-          <div className="w-full text-center sm:text-xl text-md font-rale tracking-wider text-yellow-300 my-2">
+          <div className="w-full text-center sm:text-xl text-base font-rale tracking-wider text-yellow-300 my-2">
             No comments yet.
           </div>
         )}
