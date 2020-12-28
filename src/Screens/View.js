@@ -3,12 +3,12 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import axios from 'axios';
 import { useAlert } from 'react-alert';
+import { v4 } from 'uuid';
 
 import { LocalContext } from '../LocalContext';
 import { Parser } from '../Components/renderers';
 
 import tmpAvatar from '../Assets/images/avatar_tmp.png';
-import { v4 } from 'uuid';
 
 export default function View() {
   const {
@@ -31,6 +31,8 @@ export default function View() {
   const [postFavorited, setPostFavorited] = useState(false);
 
   const [comment, setComment] = useState('');
+  const [editingComment, setEditingComment] = useState('');
+
   const [editComment, setEditComment] = useState('');
   const [deleteComment, setDeleteComment] = useState('');
 
@@ -108,6 +110,30 @@ export default function View() {
     ).toString();
   };
 
+  const updatePosts = (update) => {
+    const updatedPosts = posts.map((p) => {
+      if (p.blogID === blogPost.blogID) {
+        return update;
+      } else {
+        return p;
+      }
+    });
+
+    const updatedMyPosts = myPosts.map((p) => {
+      if (p.blogID === blogPost.blogID) {
+        return update;
+      } else {
+        return p;
+      }
+    });
+
+    setTimeout(() => {
+      setPosts(updatedPosts);
+      setMyPosts(updatedMyPosts);
+      setBlogPost({ ...update });
+    }, 500);
+  };
+
   const likePost = () => {
     const data = {
       uid: loggedInUser.uid,
@@ -135,28 +161,7 @@ export default function View() {
       update.likes = [...update.likes, { uid: loggedInUser.uid }];
     }
 
-    const updatedPosts = posts.map((p) => {
-      if (p.blogID === blogPost.blogID) {
-        return update;
-      } else {
-        return p;
-      }
-    });
-
-    const updatedMyPosts = myPosts.map((p) => {
-      if (p.blogID === blogPost.blogID) {
-        return update;
-      } else {
-        return p;
-      }
-    });
-
-    setTimeout(() => {
-      setPosts(updatedPosts);
-      setMyPosts(updatedMyPosts);
-      setBlogPost({ ...update });
-    }, 500);
-
+    updatePosts({ ...update });
     setPostLiked((prev) => !prev);
   };
 
@@ -229,7 +234,7 @@ export default function View() {
       })
       .then((res) => {
         if (res.data.error === 0) {
-          alert.success(`Comment successfully posted`);
+          alert.success(`Comment successfully posted!`);
         } else {
           console.log(res.data);
         }
@@ -238,29 +243,8 @@ export default function View() {
     let update = { ...blogPost };
     update.comments = [...update.comments, { ...data }];
 
-    const updatedPosts = posts.map((p) => {
-      if (p.blogID === blogPost.blogID) {
-        return update;
-      } else {
-        return p;
-      }
-    });
-
-    const updatedMyPosts = myPosts.map((p) => {
-      if (p.blogID === blogPost.blogID) {
-        return update;
-      } else {
-        return p;
-      }
-    });
-
-    setTimeout(() => {
-      setPosts(updatedPosts);
-      setMyPosts(updatedMyPosts);
-      setBlogPost({ ...update });
-
-      setComment('');
-    }, 500);
+    updatePosts({ ...update });
+    setComment('');
   };
 
   const checkCommentLike = (commentID) => {
@@ -330,27 +314,61 @@ export default function View() {
       }
     });
 
-    const updatedPosts = posts.map((p) => {
-      if (p.blogID === blogPost.blogID) {
-        return update;
+    updatePosts({ ...update });
+  };
+
+  const prepareEditComment = (commentID, content) => {
+    setEditComment(commentID);
+    setEditingComment(content);
+  };
+
+  const submitEditComment = () => {
+    let d = new Date();
+    const timestamp = new Date(
+      d.getUTCFullYear(),
+      d.getUTCMonth(),
+      d.getUTCDate(),
+      d.getUTCHours(),
+      d.getUTCMinutes(),
+      d.getUTCSeconds()
+    );
+
+    const data = {
+      uid: loggedInUser.uid,
+      profileID: loggedInUser.uid,
+      blogID: blogPost.blogID,
+      commentID: editComment,
+      comment: editingComment,
+      timestamp: timestamp,
+    };
+
+    axios
+      .post(`${APIURL}/api/blog/post/comment/edit`, data, {
+        headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
+      })
+      .then((res) => {
+        if (res.data.error === 0) {
+          alert.success(`Comment successfully edited!`);
+        } else {
+          console.log(res.data);
+        }
+      });
+
+    let update = { ...blogPost };
+    update.comments = update.comments.map((c) => {
+      if (c.commentID === editComment) {
+        return { ...data };
       } else {
-        return p;
+        return { ...c };
       }
     });
 
-    const updatedMyPosts = myPosts.map((p) => {
-      if (p.blogID === blogPost.blogID) {
-        return update;
-      } else {
-        return p;
-      }
-    });
-
-    setTimeout(() => {
-      setPosts(updatedPosts);
-      setMyPosts(updatedMyPosts);
-      setBlogPost({ ...update });
-    }, 500);
+    updatePosts({ ...update });
+    cancelEditComment();
+  };
+  const cancelEditComment = () => {
+    setEditComment('');
+    setEditingComment('');
   };
 
   return blogPost &&
@@ -439,30 +457,37 @@ export default function View() {
       )}
 
       <div className="w-full flex flex-col my-2 bg-gray-900 sm:p-2 p-2 rounded-lg items-center">
-        {loggedInUser.username && loggedInUser.username !== undefined && (
-          <div className="w-full my-2 p-2 flex justify-between items-center">
-            <textarea
-              title="CommentBox"
-              className="sm:w-5/6 w-4/5 p-2 rounded-lg bg-gray-700 text-gray-400 placeholder-gray-500 sm:text-md text-xs"
-              placeholder="Enter a comment..."
-              onChange={(e) => setComment(e.target.value)}
-              style={{ minHeight: '3rem' }}
-            />
-            <button
-              className={`sm:w-1/5 w-1/6 rounded-lg bg-gray-800 ${
-                comment.length > 0
-                  ? 'hover:bg-gray-700 focus:bg-gray-700'
-                  : 'opacity-50'
-              } sm:h-10 h-8 sm:text-lg text-sm font-open text-gray-400 sm:ml-2`}
-              onClick={() => (comment.length > 0 ? postComment() : null)}
-            >
-              Post
-            </button>
-          </div>
-        )}
+        <div className="w-full sm:text-3xl text-lg font-sans tracking-wider font-bold text-blue-200 ml-6">
+          Comments
+        </div>
+        {loggedInUser.username &&
+          loggedInUser.username !== undefined &&
+          editComment.length <= 0 && (
+            <div className="w-full mb-2 p-2 flex justify-between items-center">
+              <textarea
+                title="CommentBox"
+                className="sm:w-5/6 w-4/5 p-2 rounded-lg bg-gray-700 text-gray-400 placeholder-gray-500 sm:text-md text-xs"
+                placeholder="Enter a comment..."
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                style={{ minHeight: '3rem' }}
+              />
+              <button
+                className={`sm:w-1/5 w-1/6 rounded-lg bg-gray-800 ${
+                  comment.length > 0
+                    ? 'hover:bg-gray-700 focus:bg-gray-700'
+                    : 'opacity-50'
+                } sm:h-10 h-8 sm:text-lg text-sm font-open text-gray-400 sm:ml-2`}
+                onClick={() => (comment.length > 0 ? postComment() : null)}
+              >
+                Post
+              </button>
+            </div>
+          )}
         <span className="w-full mb-2 bg-blue-800 flex justify-between items-center p-1 rounded"></span>
         {blogPost.comments &&
         blogPost.comments !== undefined &&
+        editComment.length <= 0 &&
         blogPost.comments.length > 0 ? (
           blogPost.comments.map((comm, i) => (
             <div
@@ -534,6 +559,9 @@ export default function View() {
              } ${
                         editComment === comm.commentID ? 'bg-gray-700' : ''
                       } sm:text-lg text-xs`}
+                      onClick={() =>
+                        prepareEditComment(comm.commentID, comm.comment)
+                      }
                     ></button>
                   )}
                   {comm.uid === loggedInUser.uid && (
@@ -551,6 +579,40 @@ export default function View() {
               )}
             </div>
           ))
+        ) : editComment.length > 0 ? (
+          <div className="w-full mb-2 p-2 flex justify-between items-center">
+            <textarea
+              title="EditCommentBox"
+              className="sm:w-5/6 w-4/5 p-2 rounded-lg bg-gray-700 text-gray-400 placeholder-gray-500 sm:text-md text-xs"
+              placeholder="Enter a comment..."
+              value={editingComment}
+              onChange={(e) => setEditingComment(e.target.value)}
+              style={{ minHeight: '5rem' }}
+            />
+            <div className="sm:w-1/5 w-1/6 h-full flex flex-col items-center justify-end">
+              <button
+                className={`w-4/5 rounded-lg bg-gray-800 ${
+                  editingComment.length > 0
+                    ? 'hover:bg-gray-700 focus:bg-gray-700'
+                    : 'opacity-50'
+                } sm:h-10 h-8 sm:text-lg text-sm font-open text-gray-400`}
+                onClick={() =>
+                  editingComment.length > 0 ? submitEditComment() : null
+                }
+              >
+                Submit
+              </button>
+              <button
+                className={`w-4/5 rounded-lg bg-gray-800 hover:bg-gray-700 focus:bg-gray-700
+                  } sm:h-10 h-8 sm:text-lg text-sm font-open text-gray-400 mt-2`}
+                onClick={() =>
+                  editingComment.length > 0 ? cancelEditComment() : null
+                }
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         ) : (
           <div className="w-full text-center sm:text-xl text-md font-rale tracking-wider text-yellow-300 my-2">
             No comments yet.
