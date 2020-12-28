@@ -35,6 +35,8 @@ export default function View() {
 
   const [editComment, setEditComment] = useState('');
 
+  const [showComments, setShowComments] = useState(false);
+
   const history = useHistory();
   const { username, slug } = useParams();
   const alert = useAlert();
@@ -47,9 +49,17 @@ export default function View() {
         slug: slug,
       };
 
-      axios.post(`${APIURL}/api/blog/post/view`, data, {
-        headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
-      });
+      axios
+        .post(`${APIURL}/api/blog/post/view`, data, {
+          headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
+        })
+        .then((res) => {
+          if (res.data.error === 0) {
+            let update = { ...blogPost };
+            update.views = [...update.views, { uid: loggedInUser.uid }];
+            updatePosts({ ...update });
+          }
+        });
     }
 
     if (!username || username === undefined || !slug || slug === undefined) {
@@ -244,6 +254,7 @@ export default function View() {
 
     updatePosts({ ...update });
     setComment('');
+    setShowComments(true);
   };
 
   const checkCommentLike = (commentID) => {
@@ -406,54 +417,6 @@ export default function View() {
     blogProfile &&
     blogProfile !== undefined ? (
     <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4">
-      <div className="w-full bg-gray-700 rounded-lg mt-2 flex p-2 border-4 border-gray-900">
-        <div className="sm:w-1/12 w-1/5 h-full flex justify-center items-center">
-          <img
-            src={
-              blogProfile.profile_pic &&
-              blogProfile.profile_pic !== undefined &&
-              blogProfile.profile_pic.length > 3
-                ? `${UPLOADSURL}/${blogProfile.profile_pic}`
-                : tmpAvatar
-            }
-            alt="p.pic"
-            className="h-16 w-16 z-0 object-cover border-2 border-blue-400 rounded-full"
-          />
-        </div>
-        <div className="flex-col flex-1">
-          <div className="w-full flex items-center">
-            <button
-              className="text-left text-blue-500 font-open sm:text-lg text-sm bg-gray-900 hover:bg-gray-800 focus:bg-gray-800 px-2 py-1 rounded-lg sm:w-1/3 w-full"
-              onClick={() => history.push(`/profile/${blogProfile.username}`)}
-            >
-              {blogProfile.username.length > 12
-                ? `${blogProfile.username.substring(0, 12)}...`
-                : blogProfile.username}
-            </button>
-            {loggedInUser.username &&
-              loggedInUser.username !== undefined &&
-              blogProfile.uid !== loggedInUser.uid && (
-                <div
-                  title={followingAuthor ? 'Unfollow user' : 'Follow user'}
-                  className={`sm:w-10 sm:h-10 w-6 h-6 flex items-center justify-center ri-user-${
-                    followingAuthor ? 'unfollow' : 'add'
-                  }-fill mx-2 sm:text-lg text-sm text-${
-                    followingAuthor ? 'red' : 'blue'
-                  }-400 hover:bg-gray-900 focus:bg-gray-900 p-2 rounded-full`}
-                ></div>
-              )}
-          </div>
-          <div className="w-full text-left text-blue-200 font-open sm:text-md text-xs ml-2 mt-1">
-            Posted on{' '}
-            {convertDate(blogPost.created_on).split(' ').slice(0, 5).join(' ')}
-          </div>
-          <div className="w-full text-left text-blue-200 font-open sm:text-md text-xs ml-2 mt-1">
-            Last modification on{' '}
-            {convertDate(blogPost.updated_on).split(' ').slice(0, 5).join(' ')}
-          </div>
-        </div>
-      </div>
-
       <div className="w-full flex flex-col my-2 bg-gray-900 sm:p-2 p-2 rounded-lg sm:items-end items-center">
         <div className="w-full rounded-lg sm:text-sm text-xs text-gray-300 p-2 h-full">
           <Parser content={blogPost.content} />
@@ -461,7 +424,7 @@ export default function View() {
       </div>
 
       {loggedInUser.username && loggedInUser.username !== undefined && (
-        <div className="w-full flex my-2 bg-gray-900 sm:p-2 p-2 rounded-lg items-center justify-around">
+        <div className="w-full flex mb-2 bg-gray-900 sm:p-2 p-2 rounded-lg items-center justify-around">
           <button
             title={postLiked ? 'Unlike' : 'Like Post'}
             onClick={() => likePost()}
@@ -486,9 +449,89 @@ export default function View() {
         </div>
       )}
 
+      <div className="w-full flex justify-start">
+        <div className="flex items-center rounded-lg bg-gray-900 p-1">
+          <div className="text-left text-blue-200 font-open sm:text-md text-xs mr-1 rounded py-2 px-4 bg-gray-800">
+            Views: {blogPost.views.length}
+          </div>
+          <div className="text-left text-blue-200 font-open sm:text-md text-xs mr-1 rounded py-2 px-4 bg-gray-800">
+            Likes: {blogPost.likes.length}
+          </div>
+          <div className="text-left text-blue-200 font-open sm:text-md text-xs rounded py-2 px-4 bg-gray-800">
+            Comments: {blogPost.comments.length}
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full">
+        <div className="sm:w-100 w-full flex items-center bg-gray-700 rounded-lg mt-2 flex p-2 border-2 border-gray-900">
+          <div className="w-1/5 h-full flex justify-center items-center">
+            <img
+              src={
+                blogProfile.profile_pic &&
+                blogProfile.profile_pic !== undefined &&
+                blogProfile.profile_pic.length > 3
+                  ? `${UPLOADSURL}/${blogProfile.profile_pic}`
+                  : tmpAvatar
+              }
+              alt="p.pic"
+              className="h-16 w-16 z-0 object-cover border-2 border-blue-400 rounded-full"
+            />
+          </div>
+          <div className="flex-col flex-1">
+            <div className="w-full flex items-center">
+              <button
+                className="text-left text-blue-500 font-open sm:text-lg text-sm bg-gray-900 hover:bg-gray-800 focus:bg-gray-800 px-2 py-1 rounded-lg w-full"
+                onClick={() => history.push(`/profile/${blogProfile.username}`)}
+              >
+                {blogProfile.username.length > 12
+                  ? `${blogProfile.username.substring(0, 12)}...`
+                  : blogProfile.username}
+              </button>
+              {loggedInUser.username &&
+                loggedInUser.username !== undefined &&
+                blogProfile.uid !== loggedInUser.uid && (
+                  <div
+                    title={followingAuthor ? 'Unfollow user' : 'Follow user'}
+                    className={`sm:w-10 sm:h-10 w-6 h-6 flex items-center justify-center ri-user-${
+                      followingAuthor ? 'unfollow' : 'add'
+                    }-fill mx-2 sm:text-lg text-sm text-${
+                      followingAuthor ? 'red' : 'blue'
+                    }-400 hover:bg-gray-900 focus:bg-gray-900 p-2 rounded-full`}
+                  ></div>
+                )}
+            </div>
+            <div className="w-full text-left text-blue-200 font-open sm:text-md text-xs ml-2 mt-1">
+              Posted on{' '}
+              {convertDate(blogPost.created_on)
+                .split(' ')
+                .slice(0, 5)
+                .join(' ')}
+            </div>
+            <div className="w-full text-left text-blue-200 font-open sm:text-md text-xs ml-2 mt-1">
+              Last updated on{' '}
+              {convertDate(blogPost.updated_on)
+                .split(' ')
+                .slice(0, 5)
+                .join(' ')}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="w-full flex flex-col my-2 bg-gray-900 sm:p-2 p-2 rounded-lg items-center">
-        <div className="w-full sm:text-3xl text-lg font-sans tracking-wider font-bold text-blue-200 ml-6">
-          Comments
+        <div className="w-full flex items-center">
+          <div className="sm:text-3xl text-lg font-sans tracking-wider font-bold text-blue-200 ml-6 mr-4">
+            Comments
+          </div>
+          {blogPost.comments.length > 0 && (
+            <button
+              className="p-2 sm:w-1/6 w-2/3 rounded-lg sm:text-md text-xs bg-gray-800 hover:bg-gray-700 focus:bg-gray-700 font-open text-gray-100"
+              onClick={() => setShowComments((prev) => !prev)}
+            >
+              {showComments ? 'Hide' : 'Show'} Comments
+            </button>
+          )}
         </div>
         {loggedInUser.username &&
           loggedInUser.username !== undefined &&
@@ -519,6 +562,7 @@ export default function View() {
         blogPost.comments !== undefined &&
         editComment.length <= 0 &&
         blogPost.comments.length > 0 ? (
+          showComments &&
           blogPost.comments.map((comm, i) => (
             <div
               className={`w-full bg-gray-800 rounded-lg p-2 flex sm:flex-row flex-col sm:items-end items-center ${
