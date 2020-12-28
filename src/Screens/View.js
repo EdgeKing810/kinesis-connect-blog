@@ -81,13 +81,15 @@ export default function View() {
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    setTimeout(
-      () => {
-        setInitialScroll(contentRef.current.getBoundingClientRect().bottom);
-        handleScroll();
-      },
-      blogPost && blogPost !== undefined ? 0 : 1500
-    );
+    if (blogPost && blogPost !== undefined) {
+      setInitialScroll(contentRef.current.getBoundingClientRect().bottom);
+      handleScroll();
+    }
+
+    setTimeout(() => {
+      setInitialScroll(contentRef.current.getBoundingClientRect().bottom);
+      handleScroll();
+    }, 1500);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
