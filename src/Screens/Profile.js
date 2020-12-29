@@ -25,6 +25,9 @@ export default function View() {
   const [followingAuthor, setFollowingAuthor] = useState(false);
   const [currentPosts, setCurrentPosts] = useState([]);
 
+  const [isEditingBio, setIsEditingBio] = useState(false);
+  const [bio, setBio] = useState('');
+
   const history = useHistory();
   const { username } = useParams();
   const alert = useAlert();
@@ -70,6 +73,57 @@ export default function View() {
     setCurrentPosts(authorPosts);
     // eslint-disable-next-line
   }, [posts, myPosts]);
+
+  const prepareEditingBio = (currentBio) => {
+    setIsEditingBio(true);
+    setBio(currentBio);
+  };
+
+  const submitBio = () => {
+    const data = {
+      uid: loggedInUser.uid,
+      profileID: loggedInUser.uid,
+      description: bio,
+    };
+
+    axios
+      .post(`${APIURL}/api/blog/user/update`, data, {
+        headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
+      })
+      .then((res) => {
+        if (res.data.error === 0) {
+          alert.success('Bio updated successfully!');
+        } else {
+          console.log(res.data);
+        }
+      });
+
+    setLoggedInUser((prev) => {
+      let update = { ...prev };
+
+      update.blog_description = data.description;
+
+      return update;
+    });
+
+    setBlogProfile((prev) => {
+      if (prev.uid === loggedInUser.uid) {
+        let update = { ...prev };
+
+        update.blog_description = data.description;
+
+        return update;
+      } else {
+        return prev;
+      }
+    });
+
+    cancelBio();
+  };
+
+  const cancelBio = () => {
+    setIsEditingBio(false);
+  };
 
   const followUser = (uid) => {
     const data = {
@@ -180,11 +234,54 @@ export default function View() {
         </div>
 
         {blogProfile.blog_description &&
-          blogProfile.blog_description.length > 0 && (
-            <div className="sm:w-2/3 w-4/5 flex justify-center py-2 my-2 bg-gray-400 sm:text-lg text-xs rounded-lg text-gray-800 tracking-wide font-sans">
-              {blogProfile.blog_description}
+        blogProfile.blog_description.length > 0 ? (
+          isEditingBio ? (
+            <div className="w-full flex justify-center items-center my-2">
+              <textarea
+                className="sm:w-2/3 w-4/5 flex justify-center p-2 bg-gray-400 sm:text-lg text-xs placeholder-gray-600 rounded-lg text-gray-800 tracking-wide font-sans"
+                placeholder="Enter something..."
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                style={{ minHeight: '4rem', maxHeight: '6rem' }}
+              />
+
+              <button
+                title="Discard"
+                className={`sm:w-12 sm:h-12 w-10 h-10 ml-2 p-2 sm:text-2xl text-md rounded-full ri-close-line bg-gray-600 hover:bg-gray-900 focus:bg-gray-900 flex justify-center items-center text-red-300`}
+                onClick={() => cancelBio()}
+              />
+
+              <button
+                title="Save"
+                className={`sm:w-12 sm:h-12 w-10 h-10 ml-2 p-2 sm:text-2xl text-md rounded-full ri-check-line bg-gray-600 ${
+                  bio.length > 0
+                    ? 'hover:bg-gray-900 focus:bg-gray-900'
+                    : 'opacity-50'
+                } flex justify-center items-center text-green-300`}
+                onClick={() => (bio.length > 0 ? submitBio() : null)}
+              />
             </div>
-          )}
+          ) : (
+            <div className="w-full flex justify-center items-center my-2">
+              <div className="sm:w-2/3 w-4/5 flex justify-center py-2 bg-gray-400 sm:text-lg text-xs rounded-lg text-gray-800 tracking-wide font-sans">
+                {blogProfile.blog_description}
+              </div>
+              {loggedInUser.username &&
+                loggedInUser.username !== undefined &&
+                loggedInUser.uid === blogProfile.uid && (
+                  <button
+                    title="Edit bio"
+                    className={`sm:w-12 sm:h-12 w-10 h-10 ml-2 p-2 sm:text-2xl text-md rounded-full ri-pencil-line bg-gray-600 hover:bg-gray-900 focus:bg-gray-900 flex justify-center items-center text-yellow-300`}
+                    onClick={() =>
+                      prepareEditingBio(blogProfile.blog_description)
+                    }
+                  />
+                )}
+            </div>
+          )
+        ) : (
+          ''
+        )}
 
         {loggedInUser.username &&
           loggedInUser.username !== undefined &&
@@ -232,9 +329,12 @@ export default function View() {
         <div className="w-full sm:text-4xl text-lg text-gray-100 font-bold tracking-widest mt-4 ">
           Blog Posts
           {currentPosts.map((post) => (
-            <div
+            <button
               className="w-full my-2 border-4 border-gray-200 hover:border-blue-500 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 focus:from-pink-500 focus:to-yellow-500 rounded-lg sm:h-40 h-32 p-2 flex flex-col justify-end"
               key={post.blogID}
+              onClick={() =>
+                history.push(`/view/${blogProfile.username}/${post.slug}`)
+              }
               style={
                 post.preview_img && post.preview_img.length > 8
                   ? {
@@ -251,7 +351,7 @@ export default function View() {
               <div className="sm:text-lg text-sm tracking-wide font-normal mt-1 text-blue-200 bg-blue-900 opacity-75 rounded px-2">
                 {post.subtitle}
               </div>
-            </div>
+            </button>
           ))}
         </div>
       ) : (

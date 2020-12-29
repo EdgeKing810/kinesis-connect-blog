@@ -211,7 +211,7 @@ export default function Creator() {
   };
 
   return (
-    <div className="w-full flex flex-col items-center sm:px-20 px-2">
+    <div className="w-full flex flex-col items-center sm:px-20 px-2 sm:pt-20 pt-20">
       <div className="w-full flex flex-col sm:mt-8 mt-4 bg-gray-900 sm:p-2 pb-4 pt-2 rounded-lg sm:items-end items-center">
         <div className="w-full flex sm:flex-row flex-col justify-between items-center">
           <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">

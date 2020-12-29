@@ -40,7 +40,7 @@ export default function App() {
               <Profile />
             </Route>
 
-            <Route exact path="/:username/:slug">
+            <Route exact path="/view/:username/:slug">
               <View />
             </Route>
 

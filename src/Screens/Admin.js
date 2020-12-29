@@ -339,7 +339,9 @@ export default function Admin() {
                         className="w-full font-open text-blue-200 underline hover:no-underline focus:no-underline sm:text-sm text-xs text-left"
                         title="View Blog Post"
                         onClick={() =>
-                          history.push(`/${loggedInUser.username}/${post.slug}`)
+                          history.push(
+                            `/view/${loggedInUser.username}/${post.slug}`
+                          )
                         }
                       >
                         {post.title.length > 20
