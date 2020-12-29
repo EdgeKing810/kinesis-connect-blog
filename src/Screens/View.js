@@ -81,21 +81,22 @@ export default function View() {
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    if (blogPost && blogPost !== undefined && blogPost !== null) {
+    if (
+      blogPost &&
+      blogPost !== undefined &&
+      blogPost !== null &&
+      contentRef &&
+      contentRef !== null
+    ) {
       setInitialScroll(contentRef.current.getBoundingClientRect().bottom);
       handleScroll();
     }
-
-    setTimeout(() => {
-      setInitialScroll(contentRef.current.getBoundingClientRect().bottom);
-      handleScroll();
-    }, 1500);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
     // eslint-disable-next-line
-  }, []);
+  }, [blogPost, contentRef]);
 
   useEffect(() => {
     if (loggedInUser.username && loggedInUser.username !== undefined) {
@@ -148,7 +149,7 @@ export default function View() {
     }
 
     [loggedInUser, ...blogProfiles].forEach((u) => {
-      if (u.username === username) {
+      if (u.username && u.username.toLowerCase() === username.toLowerCase()) {
         setBlogProfile({ ...u });
 
         if (loggedInUser.username && loggedInUser.username !== undefined) {
@@ -161,7 +162,7 @@ export default function View() {
       }
     });
     // eslint-disable-next-line
-  }, [posts, myPosts]);
+  }, [posts, myPosts, blogProfiles]);
 
   const convertDate = (date) => {
     const oldDate = new Date(date);
@@ -180,7 +181,7 @@ export default function View() {
   const updatePosts = (update) => {
     const updatedPosts = posts.map((p) => {
       if (p.blogID === blogPost.blogID) {
-        return update;
+        return { ...update };
       } else {
         return p;
       }
@@ -573,11 +574,13 @@ export default function View() {
                 loggedInUser.username !== undefined &&
                 blogProfile.uid !== loggedInUser.uid && (
                   <div
-                    title={followingAuthor ? 'Unfollow user' : 'Follow user'}
+                    title={
+                      followingAuthor ? 'Following user' : 'Not Following user'
+                    }
                     className={`sm:w-10 sm:h-10 w-6 h-6 flex items-center justify-center ri-user-${
-                      followingAuthor ? 'unfollow' : 'add'
+                      followingAuthor ? 'add' : 'unfollow'
                     }-fill mx-2 sm:text-lg text-sm text-${
-                      followingAuthor ? 'red' : 'blue'
+                      followingAuthor ? 'blue' : 'red'
                     }-400 hover:bg-gray-900 focus:bg-gray-900 p-2 rounded-full`}
                   ></div>
                 )}

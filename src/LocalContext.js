@@ -70,7 +70,7 @@ function LocalContextProvider({ children }) {
     } else {
       axios.post(`${APIURL}/api/blog/posts/fetch`, {}).then((resp) => {
         if (resp.data.error === 0) {
-          setPosts(resp.data.blog_posts);
+          setPosts(resp.data.blog_posts.reverse());
         } else {
           console.log(resp.data);
         }

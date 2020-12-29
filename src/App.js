@@ -36,7 +36,7 @@ export default function App() {
               <Admin />
             </Route>
 
-            <Route exact path="/:username">
+            <Route exact path="/profile/:username">
               <Profile />
             </Route>
 

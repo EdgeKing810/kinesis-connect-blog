@@ -86,7 +86,7 @@ export default function Admin() {
           })
           .then((resp) => {
             if (resp.data.error === 0) {
-              setPosts(resp.data.blog_posts);
+              setPosts(resp.data.blog_posts.reverse());
             }
           });
 
@@ -102,7 +102,6 @@ export default function Admin() {
                 (u) => u.uid === data.uid
               );
               if (currentUser) {
-                console.log(currentUser);
                 setLoggedInUser({
                   ...currentUser,
                   uid: data.uid,
