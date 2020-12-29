@@ -81,7 +81,7 @@ export default function View() {
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    if (blogPost && blogPost !== undefined) {
+    if (blogPost && blogPost !== undefined && blogPost !== null) {
       setInitialScroll(contentRef.current.getBoundingClientRect().bottom);
       handleScroll();
     }

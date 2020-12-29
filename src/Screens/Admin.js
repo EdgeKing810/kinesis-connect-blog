@@ -363,6 +363,16 @@ export default function Admin() {
 
                   <div className="sm:w-1/5 w-1/3 bg-gray-800 rounded-lg flex justify-end p-2">
                     <button
+                      className={`sm:text-xl text-lg ri-inbox-${
+                        published ? '' : 'un'
+                      }archive-line rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 text-gray-100 flex items-center justify-center text-gray-100 hover:text-${
+                        published ? 'yellow' : 'green'
+                      }-300 focus:text-${published ? 'yellow' : 'green'}-300`}
+                      title={published ? 'Mark as Draft' : 'Publish'}
+                      onClick={() => changePostStatus(!published, post.blogID)}
+                    ></button>
+
+                    <button
                       className="sm:text-xl text-lg ri-edit-2-line rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 text-gray-100 flex items-center justify-center text-gray-100 hover:text-blue-300 focus:text-blue-300"
                       title="Edit"
                       onClick={() => history.push(`/edit/${post.blogID}`)}
@@ -372,16 +382,6 @@ export default function Admin() {
                       className="sm:text-xl text-lg ri-delete-bin-2-line rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 text-gray-100 flex items-center justify-center text-gray-100 hover:text-red-300 focus:text-red-300"
                       title="Delete"
                       onClick={() => deletePost(post.blogID)}
-                    ></button>
-
-                    <button
-                      className={`sm:text-xl text-lg ri-inbox-${
-                        published ? '' : 'un'
-                      }archive-line rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 text-gray-100 flex items-center justify-center text-gray-100 hover:text-${
-                        published ? 'yellow' : 'green'
-                      }-300 focus:text-${published ? 'yellow' : 'green'}-300`}
-                      title={published ? 'Mark as Draft' : 'Publish'}
-                      onClick={() => changePostStatus(!published, post.blogID)}
                     ></button>
                   </div>
                 </div>

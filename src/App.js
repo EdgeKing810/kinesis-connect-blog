@@ -3,9 +3,10 @@ import { Redirect, Switch, Route } from 'react-router-dom';
 
 import NavBar from './Components/NavBar';
 
-import View from './Screens/View';
 import Admin from './Screens/Admin';
 import Creator from './Screens/Creator';
+import Profile from './Screens/Profile';
+import View from './Screens/View';
 
 const Home = () => {
   return null;
@@ -23,10 +24,6 @@ export default function App() {
               <Home />
             </Route>
 
-            <Route exact path="/:username/:slug">
-              <View />
-            </Route>
-
             <Route exact path="/create">
               <Creator />
             </Route>
@@ -37,6 +34,14 @@ export default function App() {
 
             <Route exact path="/admin">
               <Admin />
+            </Route>
+
+            <Route exact path="/:username">
+              <Profile />
+            </Route>
+
+            <Route exact path="/:username/:slug">
+              <View />
             </Route>
 
             <Route render={() => <Redirect to="/" />} />
