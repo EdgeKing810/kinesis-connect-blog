@@ -100,7 +100,7 @@ export default function Creator() {
 
   const uploadImage = (e, isPreview) => {
     if (e.target.files[0]) {
-      if (e.target.files[0].size > 5000000) {
+      if (e.target.files[0].size > 10485760) {
         alert.error('File too large!');
       } else {
         e.preventDefault();
@@ -329,6 +329,7 @@ export default function Creator() {
               type="file"
               id="preview"
               name="preview"
+              accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
               className="w-full rounded-lg p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
               onChange={(e) => {
                 e.persist();
@@ -419,6 +420,7 @@ export default function Creator() {
                   title="Upload a new image"
                   id="image"
                   name="image"
+                  accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
                   className="sm:w-2/5 w-9/20 bg-blue-300 text-blue-900 hover:bg-blue-400 focus:bg-blue-400 rounded-lg p-4 sm:text-xl text-sm overflow-hidden"
                   onChange={(e) => {
                     e.persist();
