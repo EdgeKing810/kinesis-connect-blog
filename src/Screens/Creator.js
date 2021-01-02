@@ -48,23 +48,23 @@ export default function Creator() {
 
     const data = [
       '# This is Markdown',
-      ' ',
+      '',
       '#### You can edit me!',
-      ' ',
+      '',
       'Markdown lets you write content in a really natural way.',
-      ' ',
+      '',
       '* You can have lists, like this one',
       '* Make things **bold** or *italic*',
       '* Embed snippets of `code`',
       '* Create [links](https://hub.kinesis.games)',
-      ' ',
+      '',
       '> A block quote with ~strikethrough~ and a URL: https://hub.kinesis.games.',
-      ' ',
+      '',
       '```js',
       'const sayHelloWorld = () => {',
       "    console.log('Hello World!');",
       '}',
-      ' ',
+      '',
       'sayHelloWorld();',
       '```',
     ];
@@ -253,6 +253,7 @@ export default function Creator() {
             <input
               type="text"
               id="title"
+              name="title"
               className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
               placeholder="Type something..."
               value={title}
@@ -287,6 +288,7 @@ export default function Creator() {
             <input
               type="text"
               id="subtitle"
+              name="subtitle"
               className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
               placeholder="Type something..."
               value={subtitle}
@@ -306,6 +308,7 @@ export default function Creator() {
             <input
               type="text"
               id="tags"
+              name="tags"
               className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
               placeholder="e.g docker, ansible, automation"
               value={tags}
@@ -325,6 +328,7 @@ export default function Creator() {
             <input
               type="file"
               id="preview"
+              name="preview"
               className="w-full rounded-lg p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
               onChange={(e) => {
                 e.persist();
@@ -414,6 +418,7 @@ export default function Creator() {
                   type="file"
                   title="Upload a new image"
                   id="image"
+                  name="image"
                   className="sm:w-2/5 w-9/20 bg-blue-300 text-blue-900 hover:bg-blue-400 focus:bg-blue-400 rounded-lg p-4 sm:text-xl text-sm overflow-hidden"
                   onChange={(e) => {
                     e.persist();
