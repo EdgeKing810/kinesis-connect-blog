@@ -16,6 +16,8 @@ export default function Creator() {
     loggedInUser,
     myPosts,
     setMyPosts,
+    links,
+    setLinks,
     setWidth,
   } = useContext(LocalContext);
 
@@ -29,6 +31,8 @@ export default function Creator() {
 
   const [content, setContent] = useState('');
   const [previewImage, setPreviewImage] = useState('_empty');
+
+  const [imageAdd, setImageAdd] = useState(false);
 
   const history = useHistory();
   const alert = useAlert();
@@ -94,7 +98,7 @@ export default function Creator() {
     // eslint-disable-next-line
   }, [title]);
 
-  const uploadImage = (e) => {
+  const uploadImage = (e, isPreview) => {
     if (e.target.files[0]) {
       if (e.target.files[0].size > 5000000) {
         alert.error('File too large!');
@@ -105,13 +109,40 @@ export default function Creator() {
         data.append('file', e.target.files[0]);
 
         axios.post(`${APIURL}/api/user/upload`, data).then((res) => {
-          setPreviewImage(`${UPLOADSURL}/${res.data.url}`);
+          if (isPreview) {
+            setPreviewImage(`${UPLOADSURL}/${res.data.url}`);
+          }
 
-          axios.post(
-            `${APIURL}/api/links/create`,
-            { uid: loggedInUser.uid, link: res.data.url, linkID: v4() },
-            { headers: { Authorization: `Bearer ${loggedInUser.jwt}` } }
-          );
+          const postData = {
+            uid: loggedInUser.uid,
+            link: res.data.url,
+            linkID: v4(),
+          };
+
+          axios
+            .post(
+              `${APIURL}/api/links/create`,
+              { ...postData },
+              { headers: { Authorization: `Bearer ${loggedInUser.jwt}` } }
+            )
+            .then((response) => {
+              if (response.data.error !== 0) {
+                console.log(response.data.message);
+                alert.error(response.data.message);
+              } else {
+                setLinks((prev) =>
+                  prev === undefined
+                    ? [{ ...postData }]
+                    : [...prev, { ...postData }]
+                );
+
+                setContent(
+                  (prev) => prev + `\n![](${UPLOADSURL}/${res.data.url})`
+                );
+                setImageAdd(false);
+                alert.success('Successfully uploaded!');
+              }
+            });
         });
       }
     }
@@ -297,7 +328,7 @@ export default function Creator() {
               className="w-full rounded-lg p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
               onChange={(e) => {
                 e.persist();
-                uploadImage(e);
+                uploadImage(e, true);
               }}
             />
           </div>
@@ -322,17 +353,83 @@ export default function Creator() {
 
       <div className="h-full w-full bg-gray-800 flex sm:flex-row flex-col justify-between items-center mt-4">
         <div className="sm:w-49/100 w-full">
-          <div className="w-full sm:text-3xl text-xl font-sans font-bold tracking-wider text-gray-300 sm:mb-2">
-            Content
+          <div className="w-full flex items-center sm:mb-2">
+            <div className="sm:text-3xl text-xl font-sans font-bold tracking-wider text-gray-300 mr-2">
+              Content
+            </div>
+            {!imageAdd && (
+              <button
+                title="Insert image"
+                className="sm:text-3xl text-xl text-gray-300 mr-2 sm:w-16 sm:h-12 w-10 h-10 rounded ri-image-add-fill bg-gray-700 hover:bg-gray-900 focus:bg-gray-900 flex items-center justify-center"
+                onClick={() => setImageAdd(true)}
+              ></button>
+            )}
           </div>
 
-          <textarea
-            className="w-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-900 text-gray-300 p-4 placeholder-gray-500 overflow-y-scroll"
-            value={content}
-            placeholder="Write something..."
-            onChange={(e) => setContent(e.target.value)}
-            style={{ height: '30rem', minHeight: '20rem', maxHeight: '40rem' }}
-          />
+          {!imageAdd ? (
+            <textarea
+              className="w-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-900 text-gray-300 p-4 placeholder-gray-500 overflow-y-scroll"
+              value={content}
+              placeholder="Write something..."
+              onChange={(e) => setContent(e.target.value)}
+              style={{
+                height: '30rem',
+                minHeight: '20rem',
+                maxHeight: '40rem',
+              }}
+            />
+          ) : (
+            <div
+              className="w-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-900 text-gray-300 p-4 placeholder-gray-500 flex flex-col justify-around"
+              style={{ height: '30rem' }}
+            >
+              <div className="sm:text-xl text-lg font-sans tracking-wider text-blue-300 w-full text-center ">
+                Click on an image to insert it
+              </div>
+              <div className="w-full flex items-center overflow-x-scroll h-1/2">
+                {links.map((l, i) => (
+                  <button
+                    className="flex-shrink-0 flex-grow-0 sm:w-48 sm:h-48 w-40 h-40 border-2 border-gray-900 hover:border-blue-200 focus:border-blue-200"
+                    onClick={() => {
+                      setContent(
+                        (prev) => prev + `\n![](${UPLOADSURL}/${l.link})`
+                      );
+                      setImageAdd(false);
+                    }}
+                  >
+                    <img
+                      key={l.linkID}
+                      title={l.link}
+                      src={`${UPLOADSURL}/${l.link}`}
+                      alt="not available"
+                      className={`w-full h-full object-scale-down ${
+                        i < links.length - 1 && 'sm:mr-2 mr-1'
+                      } `}
+                    />
+                  </button>
+                ))}
+              </div>
+              <div className="w-full flex items-center justify-around">
+                <input
+                  type="file"
+                  title="Upload a new image"
+                  id="image"
+                  className="sm:w-2/5 w-9/20 bg-blue-300 text-blue-900 hover:bg-blue-400 focus:bg-blue-400 rounded-lg p-4 sm:text-xl text-sm overflow-hidden"
+                  onChange={(e) => {
+                    e.persist();
+                    alert.info('Uploading...');
+                    uploadImage(e, false);
+                  }}
+                />
+                <button
+                  className="sm:w-2/5 w-9/20 bg-red-300 text-red-900 hover:bg-red-400 focus:bg-red-400 rounded-lg p-4 sm:text-xl text-lg font-bold tracking-wide"
+                  onClick={() => setImageAdd(false)}
+                >
+                  Back
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="sm:w-49/100 w-full">

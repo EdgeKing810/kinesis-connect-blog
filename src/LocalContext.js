@@ -12,6 +12,7 @@ function LocalContextProvider({ children }) {
   const [myPosts, setMyPosts] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState({});
   const [blogProfiles, setBlogProfiles] = useState([]);
+  const [links, setLinks] = useState([]);
 
   const [width, setWidth] = useState(100);
 
@@ -71,6 +72,16 @@ function LocalContextProvider({ children }) {
             setMyPosts(res.data.blog_posts.reverse());
           }
         });
+
+      axios
+        .post(`${APIURL}/api/links/fetch`, data, {
+          headers: { Authorization: `Bearer ${jwt}` },
+        })
+        .then((resp) => {
+          if (resp.data.error === 0) {
+            setLinks(resp.data.links);
+          }
+        });
     } else {
       axios.post(`${APIURL}/api/blog/posts/fetch`, {}).then((resp) => {
         if (resp.data.error === 0) {
@@ -109,6 +120,8 @@ function LocalContextProvider({ children }) {
         setLoggedInUser,
         blogProfiles,
         setBlogProfiles,
+        links,
+        setLinks,
         width,
         setWidth,
       }}

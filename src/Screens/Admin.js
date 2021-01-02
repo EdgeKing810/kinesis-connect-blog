@@ -17,6 +17,7 @@ export default function Admin() {
     myPosts,
     setMyPosts,
     setBlogProfiles,
+    setLinks,
     setWidth,
   } = useContext(LocalContext);
 
@@ -118,6 +119,16 @@ export default function Admin() {
           .then((resp) => {
             if (resp.data.error === 0) {
               setMyPosts(resp.data.blog_posts);
+            }
+          });
+
+        axios
+          .post(`${APIURL}/api/links/fetch`, data, {
+            headers: { Authorization: `Bearer ${res.data.jwt}` },
+          })
+          .then((resp) => {
+            if (resp.data.error === 0) {
+              setLinks(resp.data.links);
             }
           });
       }
