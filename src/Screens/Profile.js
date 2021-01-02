@@ -74,6 +74,20 @@ export default function View() {
     // eslint-disable-next-line
   }, [posts, myPosts]);
 
+  const convertDate = (date) => {
+    const oldDate = new Date(date);
+    return new Date(
+      Date.UTC(
+        oldDate.getFullYear(),
+        oldDate.getMonth(),
+        oldDate.getDate(),
+        oldDate.getHours(),
+        oldDate.getMinutes(),
+        oldDate.getSeconds()
+      )
+    ).toString();
+  };
+
   const prepareEditingBio = (currentBio) => {
     setIsEditingBio(true);
     setBio(currentBio);
@@ -344,12 +358,28 @@ export default function View() {
                   : {}
               }
             >
-              <div className="sm:text-2xl text-lg tracking-wide font-bold">
+              <div
+                className={`sm:text-2xl text-lg tracking-wide font-bold ${
+                  post.preview_img && post.preview_img.length > 8
+                    ? 'text-gray-200'
+                    : 'text-gray-800'
+                }`}
+              >
                 {post.title}
               </div>
 
               <div className="sm:text-lg text-sm tracking-wide font-normal mt-1 text-blue-200 bg-blue-900 opacity-75 rounded px-2">
                 {post.subtitle}
+              </div>
+
+              <div className="sm:text-sm text-xs tracking-wide font-normal mt-2 text-gray-200 bg-gray-900 opacity-75 rounded px-2 w-full text-left">
+                Last updated on{' '}
+                <span className="text-green-300">
+                  {convertDate(post.updated_on)
+                    .split(' ')
+                    .slice(0, 5)
+                    .join(' ')}
+                </span>{' '}
               </div>
             </button>
           ))}

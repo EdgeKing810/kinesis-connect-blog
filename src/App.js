@@ -3,14 +3,11 @@ import { Redirect, Switch, Route } from 'react-router-dom';
 
 import NavBar from './Components/NavBar';
 
+import Home from './Screens/Home';
 import Admin from './Screens/Admin';
 import Creator from './Screens/Creator';
 import Profile from './Screens/Profile';
 import View from './Screens/View';
-
-const Home = () => {
-  return null;
-};
 
 export default function App() {
   return (

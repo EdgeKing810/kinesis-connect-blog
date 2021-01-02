@@ -641,7 +641,7 @@ export default function View() {
               </button>
             </div>
           )}
-        <span className="w-full mb-2 bg-blue-800 flex justify-between items-center p-1 rounded"></span>
+        <span className="w-full mb-2 sm:mt-1 mt-2 bg-blue-800 flex justify-between items-center p-1 rounded"></span>
         {blogPost.comments &&
         blogPost.comments !== undefined &&
         editComment.length <= 0 &&
@@ -654,7 +654,13 @@ export default function View() {
               }`}
               key={comm.commentID}
             >
-              <div className="sm:w-4/5 w-full flex pr-2">
+              <div
+                className={`${
+                  loggedInUser.username && loggedInUser.username !== undefined
+                    ? 'sm:w-4/5'
+                    : ''
+                } w-full flex pr-2`}
+              >
                 <img
                   src={
                     getCommentOwner(comm.uid).profile_pic &&

@@ -39,7 +39,11 @@ function LocalContextProvider({ children }) {
         })
         .then((res) => {
           if (res.data.error === 0) {
-            setPosts(res.data.blog_posts.reverse());
+            setPosts(
+              res.data.blog_posts
+                .sort((a, b) => a.updated_on.localeCompare(b.updated_on))
+                .reverse()
+            );
           }
         });
 
@@ -70,7 +74,11 @@ function LocalContextProvider({ children }) {
     } else {
       axios.post(`${APIURL}/api/blog/posts/fetch`, {}).then((resp) => {
         if (resp.data.error === 0) {
-          setPosts(resp.data.blog_posts.reverse());
+          setPosts(
+            resp.data.blog_posts
+              .sort((a, b) => a.updated_on.localeCompare(b.updated_on))
+              .reverse()
+          );
         } else {
           console.log(resp.data);
         }

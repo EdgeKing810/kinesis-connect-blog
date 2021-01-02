@@ -22,7 +22,7 @@ export default function NavBar() {
   const alert = useAlert();
 
   return (
-    <div className="w-full bg-gray-900 flex flex-col justify-between sm:h-24 shadow-2xl fixed">
+    <div className="w-full bg-gray-900 flex flex-col justify-between sm:h-24 shadow-2xl fixed z-50">
       <div className="w-full flex items-center justify-between sm:px-20 px-4 py-2 h-full">
         <button
           className="sm:text-2xl text-lg tracking-widest text-blue-300 font-open font-bold border-b-2 border-blue-200 hover:border-yellow-300 focus:border-yellow-300"
