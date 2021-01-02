@@ -29,6 +29,29 @@ export default function Home() {
     ).toString();
   };
 
+  const tmpCard = (
+    <div className="flex-shrink-0 flex-grow-0 sm:w-100 w-80 border-4 border-gray-600 rounded-lg sm:h-40 h-32 p-2 flex flex-col justify-end bg-gray-900 mr-2">
+      <div className="w-5/6 py-2 bg-gray-800 my-2 rounded-lg"></div>
+
+      <div className="w-3/5 py-1 bg-gray-700 my-2 rounded-lg"></div>
+
+      <div className="w-full py-1 bg-gray-600 mt-1 rounded-lg"></div>
+    </div>
+  );
+
+  const placeholderCards = (
+    <div className="w-full flex flex-col items-start sm:px-4 mb-4">
+      <div className="sm:w-2/5 w-5/6 my-2 rounded-lg py-3 bg-gray-900"></div>
+      <div className="w-full flex overflow-x-scroll py-2">
+        {tmpCard}
+        {tmpCard}
+        {tmpCard}
+        {tmpCard}
+        {tmpCard}
+      </div>
+    </div>
+  );
+
   const favorites =
     loggedInUser.username && loggedInUser.username !== undefined
       ? loggedInUser.favorites.map((f) => f.uid)
@@ -41,6 +64,13 @@ export default function Home() {
     loggedInUser.following !== undefined
       ? [...loggedInUser.following.map((f) => f.uid), loggedInUser.uid]
       : [loggedInUser.uid];
+
+  const famousPosts = posts
+    .sort(
+      (a, b) =>
+        a.likes.length + a.comments.length > b.likes.length + b.comments.length
+    )
+    .slice(0, 4);
 
   const returnSpecificBlogPosts = (list, title) => (
     <div
@@ -112,23 +142,37 @@ export default function Home() {
   );
 
   return (
-    <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-32 pt-28">
+    <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-32 pt-24">
       {!blogProfiles ||
       blogProfiles.length <= 0 ||
       !posts ||
       posts.length <= 0 ? (
-        <div className="w-full"></div>
+        <div className="w-full">
+          {placeholderCards}
+          {placeholderCards}
+          {placeholderCards}
+          {placeholderCards}
+        </div>
       ) : (
         <div className="w-full h-full">
-          {returnSpecificBlogPosts(
-            posts.filter((p) => following.includes(p.authorID)).slice(0, 10),
-            'Latest posts'
-          )}
+          {loggedInUser.username &&
+            loggedInUser.username !== undefined &&
+            returnSpecificBlogPosts(
+              posts.filter((p) => following.includes(p.authorID)).slice(0, 10),
+              'Latest posts'
+            )}
 
           {returnSpecificBlogPosts(
-            posts.filter((p) => following.includes(p.authorID)),
-            'All posts by people you follow'
+            famousPosts,
+            'Posts getting the most attention'
           )}
+
+          {loggedInUser.username &&
+            loggedInUser.username !== undefined &&
+            returnSpecificBlogPosts(
+              posts.filter((p) => following.includes(p.authorID)),
+              'All posts by people you follow'
+            )}
 
           {loggedInUser.username &&
             loggedInUser.username !== undefined &&
@@ -138,10 +182,12 @@ export default function Home() {
               'Favorites'
             )}
 
-          {returnSpecificBlogPosts(
-            posts.filter((p) => !following.includes(p.authorID)),
-            'Other posts'
-          )}
+          {loggedInUser.username &&
+            loggedInUser.username !== undefined &&
+            returnSpecificBlogPosts(
+              posts.filter((p) => !following.includes(p.authorID)),
+              'Other posts'
+            )}
 
           {returnSpecificBlogPosts(posts, 'All posts')}
         </div>

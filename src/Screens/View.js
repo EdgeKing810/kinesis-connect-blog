@@ -479,7 +479,7 @@ export default function View() {
     blogPost !== undefined &&
     blogProfile &&
     blogProfile !== undefined ? (
-    <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-28 pt-24">
+    <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-28 pt-20">
       <div className="w-full flex flex-col my-2 bg-gray-900 sm:p-2 p-2 rounded-lg sm:items-end items-center">
         <div
           className="w-full rounded-lg sm:text-sm text-xs text-gray-300 p-2"
@@ -779,5 +779,58 @@ export default function View() {
         )}
       </div>
     </div>
-  ) : null;
+  ) : (
+    <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-28 pt-20">
+      <div className="w-full flex flex-col my-2 bg-gray-900 sm:p-2 p-2 rounded-lg sm:items-end items-center">
+        <div
+          className="w-full rounded-lg sm:text-xl text-base text-gray-300 p-2 h-200 flex items-center justify-center"
+          ref={contentRef}
+        >
+          Loading...
+        </div>
+      </div>
+
+      <div className="w-full flex mb-2 bg-gray-900 rounded-lg items-center justify-around p-4"></div>
+
+      <div className="w-full flex justify-start flex-wrap	">
+        <div className="flex items-center rounded-lg bg-gray-900 p-1 flex-wrap	">
+          <div className="text-left text-blue-200 font-open sm:text-base text-xs mr-1 rounded py-2 px-4 bg-gray-800">
+            Views
+          </div>
+          <div className="text-left text-blue-200 font-open sm:text-base text-xs mr-1 rounded py-2 px-4 bg-gray-800">
+            Likes
+          </div>
+          <div className="text-left text-blue-200 font-open sm:text-base text-xs rounded py-2 px-4 bg-gray-800">
+            Comments
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full">
+        <div className="sm:w-100 w-full flex items-center bg-gray-700 rounded-lg mt-2 flex p-2 border-2 border-gray-900">
+          <div className="w-1/5 h-full flex justify-center items-center">
+            <div className="h-16 w-16 z-0 object-cover border-2 border-blue-400 rounded-full bg-gray-900" />
+          </div>
+          <div className="flex-col flex-1">
+            <div className="w-full flex items-center">
+              <button className="text-left text-blue-500 font-open sm:text-base text-sm bg-gray-900 hover:bg-gray-800 focus:bg-gray-800 px-2 py-4 rounded-lg w-full"></button>
+              <div
+                className={`sm:w-10 sm:h-10 w-6 h-6 flex items-center justify-center ri-user-add-fill mx-2 sm:text-lg text-sm text-blue-400 hover:bg-gray-900 focus:bg-gray-900 p-2 rounded-full`}
+              ></div>
+            </div>
+            <div className="w-5/6 text-left text-blue-200 font-open text-xs mt-1 py-2 rounded-lg bg-gray-800"></div>
+            <div className="w-5/6 text-left text-blue-200 font-open text-xs mt-1 py-2 rounded-lg bg-gray-800"></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full flex flex-col my-2 bg-gray-900 sm:p-2 p-2 rounded-lg items-center">
+        <div className="w-full flex items-center mb-2">
+          <div className="sm:text-3xl text-lg font-sans tracking-wider font-bold text-blue-200 mr-4 py-4 rounded-lg w-1/4 bg-gray-700"></div>
+          <button className="p-2 sm:w-1/6 w-2/3 rounded-lg sm:text-sm text-xs bg-gray-800 hover:bg-gray-700 focus:bg-gray-700 font-open text-gray-100"></button>
+        </div>
+        <span className="w-full mb-2 sm:mt-1 mt-2 bg-blue-800 flex justify-between items-center p-1 rounded"></span>
+      </div>
+    </div>
+  );
 }
