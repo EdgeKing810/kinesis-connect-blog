@@ -192,8 +192,8 @@ export default function Creator() {
       uid: loggedInUser.uid,
       authorID: loggedInUser.uid,
       blogID: blogID,
-      title: title,
-      subtitle: subtitle,
+      title: title.slice(0, 35),
+      subtitle: subtitle.slice(0, 40),
       slug: refPost !== undefined ? refPost.slug : slug,
       preview_img: previewImage,
       status: refPost !== undefined ? refPost.status : 'DRAFT',
@@ -254,11 +254,6 @@ export default function Creator() {
             Title
           </div>
 
-          <label>
-            Enter anything but a space
-            <input type="text" />
-          </label>
-
           <div className="sm:w-49/100 w-11/12 flex flex-col justify-center items-center">
             <input
               type="text"
@@ -267,7 +262,13 @@ export default function Creator() {
               className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
               placeholder="Type something..."
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length < 36) {
+                  setTitle(e.target.value);
+                } else {
+                  alert.error('Max limit reached');
+                }
+              }}
             />
           </div>
         </div>
@@ -302,7 +303,13 @@ export default function Creator() {
               className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
               placeholder="Type something..."
               value={subtitle}
-              onChange={(e) => setSubtitle(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length < 41) {
+                  setSubtitle(e.target.value);
+                } else {
+                  alert.error('Max limit reached');
+                }
+              }}
             />
           </div>
         </div>
