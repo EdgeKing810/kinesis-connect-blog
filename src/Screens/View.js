@@ -99,6 +99,10 @@ export default function View() {
   }, [blogPost, contentRef]);
 
   useEffect(() => {
+    if (!username || username === undefined || !slug || slug === undefined) {
+      history.push('/');
+    }
+
     if (loggedInUser.username && loggedInUser.username !== undefined) {
       const data = {
         uid: loggedInUser.uid,
@@ -119,10 +123,6 @@ export default function View() {
             updatePosts({ ...update });
           }
         });
-    }
-
-    if (!username || username === undefined || !slug || slug === undefined) {
-      history.push('/');
     }
 
     const tmpPosts = [...posts, ...myPosts];

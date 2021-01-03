@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 
 import axios from 'axios';
 import { useAlert } from 'react-alert';
@@ -38,6 +38,7 @@ export default function Creator() {
   const alert = useAlert();
 
   const { id } = useParams();
+  const { pathname } = useLocation();
 
   useEffect(() => {
     setWidth(100);
@@ -83,6 +84,10 @@ export default function Creator() {
           setContent(p.content);
         }
       });
+    } else {
+      if (pathname.slice(1, 5) === 'edit') {
+        history.push('/admin');
+      }
     }
     // eslint-disable-next-line
   }, []);
@@ -248,6 +253,11 @@ export default function Creator() {
           <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">
             Title
           </div>
+
+          <label>
+            Enter anything but a space
+            <input type="text" />
+          </label>
 
           <div className="sm:w-49/100 w-11/12 flex flex-col justify-center items-center">
             <input

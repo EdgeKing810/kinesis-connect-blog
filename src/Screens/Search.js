@@ -1,24 +1,60 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { useAlert } from 'react-alert';
 
 import { LocalContext } from '../LocalContext';
 
-export default function Home() {
-  const { loggedInUser, posts, blogProfiles, setWidth } = useContext(
-    LocalContext
-  );
+export default function Search() {
+  const { posts, blogProfiles, setWidth } = useContext(LocalContext);
+
+  const { searchString } = useParams();
 
   const [search, setSearch] = useState('');
+
+  const [usersFound, setUsersFound] = useState([]);
+  const [postsFound, setPostsFound] = useState([]);
+
   const alert = useAlert();
 
   const history = useHistory();
 
   useEffect(() => {
     setWidth(100);
+
+    if (searchString && searchString !== undefined) {
+      setSearch(searchString.split('+').join(' ').trim());
+    }
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (!search || search === undefined || search.length <= 9) {
+      setUsersFound([]);
+      setPostsFound([]);
+    }
+
+    const searchWords = search.toLowerCase().trim().split(' ');
+    if (blogProfiles && blogProfiles.length > 0) {
+      setUsersFound(
+        blogProfiles.filter((p) =>
+          searchWords.some((w) => p.username.toLowerCase().includes(w))
+        )
+      );
+    }
+
+    if (posts && posts.length > 0) {
+      setPostsFound(
+        posts.filter((p) =>
+          searchWords.some(
+            (w) =>
+              p.title.toLowerCase().includes(w) ||
+              p.subtitle.toLowerCase().includes(w)
+          )
+        )
+      );
+    }
+  }, [posts, blogProfiles, search]);
 
   const convertDate = (date) => {
     const oldDate = new Date(date);
@@ -56,26 +92,6 @@ export default function Home() {
       </div>
     </div>
   );
-
-  const favorites =
-    loggedInUser.username && loggedInUser.username !== undefined
-      ? loggedInUser.favorites.map((f) => f.uid)
-      : [];
-
-  const following =
-    loggedInUser.username &&
-    loggedInUser.username !== undefined &&
-    loggedInUser.following &&
-    loggedInUser.following !== undefined
-      ? [...loggedInUser.following.map((f) => f.uid), loggedInUser.uid]
-      : [loggedInUser.uid];
-
-  const famousPosts = posts
-    .sort(
-      (a, b) =>
-        a.likes.length + a.comments.length > b.likes.length + b.comments.length
-    )
-    .slice(0, 4);
 
   const returnSpecificBlogPosts = (list, title) => (
     <div
@@ -148,6 +164,32 @@ export default function Home() {
 
   return (
     <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-32 pt-24">
+      <form
+        className="w-full flex justify-center items-center my-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <input
+          type="text"
+          id="search"
+          name="search"
+          className="w-4/5 rounded-lg p-2 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-4 border-gray-700 sm:text-lg text-sm"
+          placeholder="Search for an author / blog post..."
+          value={search}
+          onChange={(e) => {
+            if (
+              e.target.value.match(/^[A-Za-z0-9 ]+$/) ||
+              e.target.value.length < 1
+            ) {
+              setSearch(e.target.value);
+            } else {
+              alert.info('Only alphabets, numbers and spaces are accepted.');
+            }
+          }}
+        />
+      </form>
+
       {!blogProfiles ||
       blogProfiles.length <= 0 ||
       !posts ||
@@ -155,90 +197,10 @@ export default function Home() {
         <div className="w-full">
           {placeholderCards}
           {placeholderCards}
-          {placeholderCards}
-          {placeholderCards}
         </div>
       ) : (
-        <div className="w-full h-full">
-          <form
-            className="w-full flex sm:justify-end justify-center items-center mb-2"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (search.trim().length > 0) {
-                if (search.match(/^[A-Za-z0-9 ]+$/)) {
-                  history.push(`/search/${search.trim().split(' ').join('+')}`);
-                }
-              } else {
-                alert.error('Invalid search string');
-              }
-            }}
-          >
-            <input
-              type="text"
-              id="search"
-              name="search"
-              className="sm:w-1/3 w-4/5 rounded-lg p-2 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-4 border-gray-700 sm:text-lg text-sm"
-              placeholder="Search for an author / blog post..."
-              value={search}
-              onChange={(e) => {
-                if (
-                  e.target.value.match(/^[A-Za-z0-9 ]+$/) ||
-                  e.target.value.length < 1
-                ) {
-                  setSearch(e.target.value);
-                } else {
-                  alert.info(
-                    'Only alphabets, numbers and spaces are accepted.'
-                  );
-                }
-              }}
-            />
-            <button
-              title="Search"
-              type="submit"
-              className={`rounded-full ml-2 sm:w-12 sm:h-12 w-10 h-10 sm:text-xl text-lg text-gray-100 bg-gray-700 ${
-                search.trim().length > 0
-                  ? 'hover:bg-gray-900 focus:bg-gray-900 text-blue-300'
-                  : 'opacity-50'
-              } ri-search-line`}
-            />
-          </form>
-
-          {loggedInUser.username &&
-            loggedInUser.username !== undefined &&
-            returnSpecificBlogPosts(
-              posts.filter((p) => following.includes(p.authorID)).slice(0, 10),
-              'Latest posts'
-            )}
-
-          {returnSpecificBlogPosts(
-            famousPosts,
-            'Posts getting the most attention'
-          )}
-
-          {loggedInUser.username &&
-            loggedInUser.username !== undefined &&
-            returnSpecificBlogPosts(
-              posts.filter((p) => following.includes(p.authorID)),
-              'All posts by people you follow'
-            )}
-
-          {loggedInUser.username &&
-            loggedInUser.username !== undefined &&
-            loggedInUser.favorites.length > 0 &&
-            returnSpecificBlogPosts(
-              [...posts].filter((p) => favorites.includes(p.blogID)),
-              'Favorites'
-            )}
-
-          {loggedInUser.username &&
-            loggedInUser.username !== undefined &&
-            returnSpecificBlogPosts(
-              posts.filter((p) => !following.includes(p.authorID)),
-              'Other posts'
-            )}
-
-          {returnSpecificBlogPosts(posts, 'All posts')}
+        <div className="w-full">
+          {returnSpecificBlogPosts(postsFound, 'Posts found')}
         </div>
       )}
     </div>
