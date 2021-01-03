@@ -34,24 +34,35 @@ export default function NavBar() {
         {loggedInUser.username && loggedInUser.username !== undefined ? (
           <div className="sm:w-1/6 w-1/2 bg-gray-800 px-4 py-1 rounded-lg border border-gray-700 flex h-full items-center">
             <div className="w-1/3 h-full flex items-center sm:justify-center">
-              <img
-                src={
-                  loggedInUser.profile_pic &&
-                  loggedInUser.profile_pic !== undefined &&
-                  loggedInUser.profile_pic.length > 3
-                    ? `${UPLOADSURL}/${loggedInUser.profile_pic}`
-                    : tmpAvatar
+              <button
+                className="sm:h-16 sm:w-16 h-12 w-12 z-0 border-2 border-blue-400 hover:border-blue-200 focus:border-blue-200 rounded-full"
+                onClick={() =>
+                  pathname !== `/profile/${loggedInUser.username}`
+                    ? history.push(`/profile/${loggedInUser.username}`)
+                    : null
                 }
-                alt="p.pic"
-                className="sm:h-12 sm:w-12 h-10 w-10 z-0 object-cover border-2 border-blue-400 rounded-full"
-              />
+              >
+                <img
+                  src={
+                    loggedInUser.profile_pic &&
+                    loggedInUser.profile_pic !== undefined &&
+                    loggedInUser.profile_pic.length > 3
+                      ? `${UPLOADSURL}/${loggedInUser.profile_pic}`
+                      : tmpAvatar
+                  }
+                  alt="p.pic"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              </button>
             </div>
 
             <div className="w-2/3 h-full flex flex-col">
               <button
                 className="w-full h-1/2 font-open text-gray-400 sm:text-base text-sm flex items-center text-gray-200 hover:underline focus:underline"
                 onClick={() =>
-                  pathname !== '/admin' ? history.push('/admin') : null
+                  pathname !== `/profile/${loggedInUser.username}`
+                    ? history.push(`/profile/${loggedInUser.username}`)
+                    : null
                 }
               >
                 {loggedInUser.username.length > 12

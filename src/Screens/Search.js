@@ -60,6 +60,7 @@ export default function Search() {
             (w) =>
               p.title.toLowerCase().includes(w) ||
               p.subtitle.toLowerCase().includes(w) ||
+              p.tags.toLowerCase().includes(w) ||
               profile.name.toLowerCase().includes(w) ||
               profile.username.toLowerCase().includes(w)
           );

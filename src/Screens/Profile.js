@@ -382,7 +382,7 @@ export default function View() {
           loggedInUser.username !== undefined &&
           blogProfile.uid === loggedInUser.uid && (
             <div className="absolute rounded-full p-1 left-0 border-2 border-gray-200 sm:ml-24 ml-4 flex items-center bg-gray-900 text-gray-100 sm:text-lg text-xsss sm:w-1/8 w-3/10 justify-between sm:mt-16 mt-8">
-              Change profile pic
+              Change profile picture
               <div className="sm:w-10 sm:h-10 w-4 h-4 bg-yellow-400 ml-2 rounded-full">
                 <input
                   type="file"
@@ -505,10 +505,25 @@ export default function View() {
               ? blogProfile.blog_following_amount
               : 0}
           </div>
-          <div className="w-3/10 p-2 rounded-lg bg-gray-900 text-center sm:text-lg text-xs font-open text-gray-200">
-            Blog Posts:{' '}
-            {blogProfile.blog_posts ? blogProfile.blog_posts.length : 0}
-          </div>
+          {loggedInUser.username &&
+          loggedInUser.username !== undefined &&
+          loggedInUser.uid === blogProfile.uid ? (
+            <button
+              className="w-3/10 p-2 rounded-lg bg-gray-900 text-center sm:text-lg text-xs font-open text-gray-200 hover:bg-gray-800 focus:bg-gray-800"
+              onClick={() => history.push('/admin')}
+            >
+              Access Admin Interface
+            </button>
+          ) : (
+            <div className="w-3/10 p-2 rounded-lg bg-gray-900 text-center sm:text-lg text-xs font-open text-gray-200">
+              Blog Posts:{' '}
+              {currentPosts &&
+              currentPosts !== undefined &&
+              currentPosts.length > 0
+                ? currentPosts.length
+                : 0}
+            </div>
+          )}
         </div>
       </div>
 
