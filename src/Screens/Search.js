@@ -5,8 +5,12 @@ import { useAlert } from 'react-alert';
 
 import { LocalContext } from '../LocalContext';
 
+import tmpAvatar from '../Assets/images/avatar_tmp.png';
+
 export default function Search() {
-  const { posts, blogProfiles, setWidth } = useContext(LocalContext);
+  const { UPLOADSURL, posts, blogProfiles, setWidth } = useContext(
+    LocalContext
+  );
 
   const { searchString } = useParams();
 
@@ -38,7 +42,11 @@ export default function Search() {
     if (blogProfiles && blogProfiles.length > 0) {
       setUsersFound(
         blogProfiles.filter((p) =>
-          searchWords.some((w) => p.username.toLowerCase().includes(w))
+          searchWords.some(
+            (w) =>
+              p.name.toLowerCase().includes(w) ||
+              p.username.toLowerCase().includes(w)
+          )
         )
       );
     }
@@ -162,6 +170,68 @@ export default function Search() {
     </div>
   );
 
+  const returnSpecificUsers = (list, title) => (
+    <div
+      key={`${title}`}
+      className="w-full flex flex-col items-center sm:px-4 mb-4"
+    >
+      <div className="w-full sm:text-4xl text-xl text-blue-300 tracking-wide text-left font-bold">
+        {title} {`(${list ? list.length : 0})`}
+      </div>
+      <div className="w-full flex overflow-x-scroll py-2">
+        {list.map((user, i) => {
+          return (
+            <button
+              className={`flex-shrink-0 flex-grow-0 sm:w-100 w-80 ${
+                i < list.length - 1 ? 'mr-2' : 'mr-0'
+              } border-4 border-gray-200 hover:border-gray-900 focus:border-gray-900 bg-gradient-to-r from-blue-300 via-blue-500 to-blue-700 hover:from-blue-400 hover:via-blue-600 hover:to-blue-800 focus:from-blue-400 focus:via-blue-600 focus:to-blue-800 rounded-lg sm:h-40 h-32 p-2 flex flex-col justify-end`}
+              key={user.uid}
+              onClick={() => history.push(`/profile/${user.username}`)}
+              style={
+                user.banner_img && user.banner_img.length > 8
+                  ? {
+                      color: '#fff',
+                      background: `url(${
+                        UPLOADSURL + '/' + user.banner_img
+                      }) center / cover no-repeat #fff`,
+                    }
+                  : {}
+              }
+            >
+              <div className="w-full flex justify-start">
+                <img
+                  src={
+                    user.profile_pic &&
+                    user.profile_pic !== undefined &&
+                    user.profile_pic.length > 3
+                      ? `${UPLOADSURL}/${user.profile_pic}`
+                      : tmpAvatar
+                  }
+                  alt="p.pic"
+                  className="sm:h-16 sm:w-16 h-12 w-12 border-2 border-blue-900 rounded-full bg-gray-800 -ml-1"
+                />
+              </div>
+
+              <div
+                className={`sm:text-2xl text-lg tracking-wide font-bold mt-1 ${
+                  user.banner_img && user.banner_img.length > 8
+                    ? 'text-gray-200'
+                    : 'text-gray-800'
+                }`}
+              >
+                {user.name.length > 20 ? user.name.substring(0, 20) : user.name}
+              </div>
+
+              <div className="sm:text-lg text-sm tracking-wide font-normal mt-1 text-blue-200 bg-blue-900 opacity-75 rounded px-2">
+                {user.username}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   return (
     <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-32 pt-24">
       <form
@@ -201,6 +271,7 @@ export default function Search() {
       ) : (
         <div className="w-full">
           {returnSpecificBlogPosts(postsFound, 'Posts found')}
+          {returnSpecificUsers(usersFound, 'Users found')}
         </div>
       )}
     </div>

@@ -8,6 +8,8 @@ import { LocalContext } from '../LocalContext';
 
 import tmpAvatar from '../Assets/images/avatar_tmp.png';
 
+import { v4 } from 'uuid';
+
 export default function View() {
   const {
     APIURL,
@@ -18,6 +20,7 @@ export default function View() {
     myPosts,
     blogProfiles,
     setBlogProfiles,
+    setLinks,
     setWidth,
   } = useContext(LocalContext);
 
@@ -139,6 +142,122 @@ export default function View() {
     setIsEditingBio(false);
   };
 
+  const uploadImage = (e, isBanner) => {
+    if (e.target.files[0]) {
+      if (e.target.files[0].size > 10485760) {
+        alert.error('File too large!');
+      } else {
+        e.preventDefault();
+
+        const data = new FormData();
+        data.append('file', e.target.files[0]);
+
+        axios.post(`${APIURL}/api/user/upload`, data).then((res) => {
+          setLoggedInUser((prev) => {
+            let update = { ...prev };
+
+            if (isBanner) {
+              update.banner_img = res.data.url;
+            } else {
+              update.profile_pic = res.data.url;
+            }
+
+            return update;
+          });
+
+          setBlogProfiles((prev) =>
+            prev.map((p) => {
+              if (p.uid === loggedInUser.uid) {
+                let update = { ...p };
+
+                if (isBanner) {
+                  update.banner_img = res.data.url;
+                } else {
+                  update.profile_pic = res.data.url;
+                }
+
+                return { ...update };
+              } else {
+                return p;
+              }
+            })
+          );
+
+          setBlogProfile((prev) => {
+            let update = { ...prev };
+
+            if (isBanner) {
+              update.banner_img = res.data.url;
+            } else {
+              update.profile_pic = res.data.url;
+            }
+
+            return update;
+          });
+
+          const postData = {
+            uid: loggedInUser.uid,
+            link: res.data.url,
+            linkID: v4(),
+          };
+
+          axios
+            .post(
+              `${APIURL}/api/links/create`,
+              { ...postData },
+              { headers: { Authorization: `Bearer ${loggedInUser.jwt}` } }
+            )
+            .then((response) => {
+              if (response.data.error !== 0) {
+                console.log(response.data.message);
+                alert.error(response.data.message);
+              } else {
+                setLinks((prev) =>
+                  prev === undefined
+                    ? [{ ...postData }]
+                    : [...prev, { ...postData }]
+                );
+              }
+            });
+
+          if (isBanner) {
+            const bannerData = {
+              uid: loggedInUser.uid,
+              profileID: loggedInUser.uid,
+              banner_img: res.data.url,
+            };
+
+            axios
+              .post(`${APIURL}/api/blog/user/update`, bannerData, {
+                headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
+              })
+              .then((response) => {
+                if (response.data.error === 0) {
+                  alert.success('Banner Image Updated!');
+                } else {
+                  console.log(response.data);
+                }
+              });
+          } else {
+            axios
+              .post(
+                `${APIURL}/api/profile/pic`,
+                { uid: loggedInUser.uid, profile_pic_url: res.data.url },
+                { headers: { Authorization: `Bearer ${loggedInUser.jwt}` } }
+              )
+              .then((response) => {
+                if (response.data.error === 0) {
+                  alert.success('Profile Pic Updated!');
+                } else {
+                  console.log(response.data);
+                }
+              });
+          }
+        });
+      }
+    }
+  };
+
   const followUser = (uid) => {
     const data = {
       uid: loggedInUser.uid,
@@ -225,7 +344,61 @@ export default function View() {
 
   return (
     <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-28 pt-24">
-      <div className="w-full flex flex-col items-center bg-gray-700 rounded-lg mt-2 flex p-2 border-2 border-gray-900">
+      <div
+        className="w-full flex flex-col items-center rounded-lg mt-2 flex p-2 border-2 border-gray-900 bg-gradient-to-r from-pink-400 via-indigo-500 to-purple-700"
+        style={
+          blogProfile.banner_img && blogProfile.banner_img.length > 8
+            ? {
+                color: '#fff',
+                background: `url(${
+                  UPLOADSURL + '/' + blogProfile.banner_img
+                }) center / cover no-repeat #fff`,
+              }
+            : {}
+        }
+      >
+        {loggedInUser.username &&
+          loggedInUser.username !== undefined &&
+          blogProfile.uid === loggedInUser.uid && (
+            <div className="absolute rounded-full p-1 left-0 border-2 border-gray-200 sm:ml-24 ml-4 flex items-center bg-gray-900 text-gray-100 sm:text-lg text-xsss sm:w-1/8 w-3/10 justify-between">
+              Change banner image
+              <div className="sm:w-10 sm:h-10 w-4 h-4 bg-blue-400 ml-2 rounded-full">
+                <input
+                  type="file"
+                  id="preview"
+                  name="preview"
+                  accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
+                  className="w-full h-full sm:text-md text-sm opacity-0"
+                  onChange={(e) => {
+                    e.persist();
+                    uploadImage(e, true);
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+        {loggedInUser.username &&
+          loggedInUser.username !== undefined &&
+          blogProfile.uid === loggedInUser.uid && (
+            <div className="absolute rounded-full p-1 left-0 border-2 border-gray-200 sm:ml-24 ml-4 flex items-center bg-gray-900 text-gray-100 sm:text-lg text-xsss sm:w-1/8 w-3/10 justify-between sm:mt-16 mt-8">
+              Change profile pic
+              <div className="sm:w-10 sm:h-10 w-4 h-4 bg-yellow-400 ml-2 rounded-full">
+                <input
+                  type="file"
+                  id="preview"
+                  name="preview"
+                  accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
+                  className="w-full h-full sm:text-md text-sm opacity-0"
+                  onChange={(e) => {
+                    e.persist();
+                    uploadImage(e, false);
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
         <div className="w-full h-full flex justify-center items-center sm:mt-0 mt-2">
           <img
             src={
@@ -240,9 +413,9 @@ export default function View() {
           />
         </div>
 
-        <div className="w-full flex justify-center mt-4 font-bold sm:text-2xl text-lg text-blue-300 tracking-wide font-sans">
+        <div className="w-full flex justify-center mt-4 font-bold sm:text-2xl text-lg text-blue-900 tracking-wide font-sans">
           {blogProfile.name && blogProfile.name}{' '}
-          <span className="text-yellow-300 ml-1">
+          <span className="text-yellow-500 ml-1">
             {`(${blogProfile.username && blogProfile.username})`}
           </span>
         </div>
@@ -341,7 +514,7 @@ export default function View() {
 
       {currentPosts && currentPosts.length > 0 ? (
         <div className="w-full sm:text-4xl text-lg text-gray-100 font-bold tracking-widest mt-4 ">
-          Blog Posts
+          Blog Posts {`(${currentPosts.length})`}
           {currentPosts.map((post) => (
             <button
               className="w-full my-2 border-4 border-gray-200 hover:border-blue-500 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 focus:from-pink-500 focus:to-yellow-500 rounded-lg sm:h-40 h-32 p-2 flex flex-col justify-end"
