@@ -409,7 +409,7 @@ export default function View() {
                 : tmpAvatar
             }
             alt="p.pic"
-            className="sm:h-40 sm:w-40 h-24 w-24 border-2 border-blue-400 rounded-full"
+            className="sm:h-40 sm:w-40 h-24 w-24 border-4 rounded-full border-dotted p-1 border-gray-900"
           />
         </div>
 
@@ -517,7 +517,7 @@ export default function View() {
           Blog Posts {`(${currentPosts.length})`}
           {currentPosts.map((post) => (
             <button
-              className="w-full my-2 border-4 border-gray-200 hover:border-blue-500 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 focus:from-pink-500 focus:to-yellow-500 rounded-lg sm:h-40 h-32 p-2 flex flex-col justify-end"
+              className="w-full my-2 border-4 border-gray-200 hover:border-gray-900 focus:border-gray-900 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 focus:from-pink-500 focus:to-yellow-500 rounded-lg sm:h-40 h-32 p-2 flex flex-col justify-end"
               key={post.blogID}
               onClick={() =>
                 history.push(`/view/${blogProfile.username}/${post.slug}`)
