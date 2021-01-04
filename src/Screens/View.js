@@ -180,7 +180,7 @@ export default function View() {
   };
 
   const updatePosts = (update) => {
-    const updatedPosts = posts.map((p) => {
+    let updatedPosts = posts.map((p) => {
       if (p.blogID === blogPost.blogID) {
         return { ...update };
       } else {
@@ -188,13 +188,21 @@ export default function View() {
       }
     });
 
-    const updatedMyPosts = myPosts.map((p) => {
+    let updatedMyPosts = myPosts.map((p) => {
       if (p.blogID === blogPost.blogID) {
-        return update;
+        return { ...update };
       } else {
         return p;
       }
     });
+
+    if (!updatedPosts.some((p) => p.blogID === blogPost.blogID)) {
+      updatedPosts = [{ ...update }, ...updatedPosts];
+    }
+
+    if (!updatedMyPosts.some((p) => p.blogID === blogPost.blogID)) {
+      updatedMyPosts = [{ ...update }, ...updatedMyPosts];
+    }
 
     setTimeout(() => {
       setPosts(updatedPosts);
