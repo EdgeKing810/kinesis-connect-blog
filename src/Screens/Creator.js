@@ -108,6 +108,10 @@ export default function Creator() {
   }, [title]);
 
   const uploadImage = (e, isPreview) => {
+    alert.info(
+      'Avoid symbols/spaces in file name. Might take some time to upload.'
+    );
+
     if (e.target.files[0]) {
       if (e.target.files[0].size > 10485760) {
         alert.error('File too large!');
@@ -145,10 +149,12 @@ export default function Creator() {
                     : [...prev, { ...postData }]
                 );
 
-                setContent(
-                  (prev) => prev + `\n![](${UPLOADSURL}/${res.data.url})`
-                );
-                setImageAdd(false);
+                if (!isPreview) {
+                  setContent(
+                    (prev) => prev + `\n![](${UPLOADSURL}/${res.data.url})`
+                  );
+                  setImageAdd(false);
+                }
                 alert.success('Successfully uploaded!');
               }
             });

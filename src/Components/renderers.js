@@ -19,7 +19,10 @@ const heading = (props) => {
 
 const link = (props) => {
   return (
-    <a href={props.href} className="text-blue-300 bg-blue-900 underline text-sm">
+    <a
+      href={props.href}
+      className="text-blue-300 bg-blue-900 underline text-sm"
+    >
       {props.children}
     </a>
   );
@@ -54,11 +57,11 @@ const code = (props) => {
 
 const image = (props) => {
   return (
-    <span className="w-full flex flex-col justify-center items-center">
+    <span className="w-full flex flex-col justify-center items-center mt-2">
       <img
         src={props.src}
         alt={props.alt}
-        className="sm:max-w-sm sm:max-h-sm max-w-xxs max-h-xxs object-scale-down rounded p-1 border-2 border-blue-400"
+        className="sm:max-w-3xl sm:max-h-3xl max-w-xs max-h-xs object-scale-down rounded p-1 border-2 border-blue-400"
       />
     </span>
   );

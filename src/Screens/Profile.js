@@ -62,7 +62,7 @@ export default function View() {
       }
     });
 
-    const tmpPosts = [...posts, ...myPosts];
+    const tmpPosts = [...posts];
     let authorPosts = [];
     for (let i = 0; i < tmpPosts.length; i++) {
       if (
@@ -143,6 +143,10 @@ export default function View() {
   };
 
   const uploadImage = (e, isBanner) => {
+    alert.info(
+      'Avoid symbols/spaces in file name. Might take some time to upload.'
+    );
+
     if (e.target.files[0]) {
       if (e.target.files[0].size > 10485760) {
         alert.error('File too large!');
@@ -349,7 +353,6 @@ export default function View() {
         style={
           blogProfile.banner_img && blogProfile.banner_img.length > 8
             ? {
-                color: '#fff',
                 background: `url(${
                   UPLOADSURL + '/' + blogProfile.banner_img
                 }) center / cover no-repeat #fff`,
@@ -416,7 +419,11 @@ export default function View() {
         <div className="w-full flex justify-center mt-4 font-bold sm:text-2xl text-lg text-blue-900 tracking-wide font-sans">
           {blogProfile.name && blogProfile.name}{' '}
           <span className="text-yellow-500 ml-1">
-            {`(${blogProfile.username && blogProfile.username})`}
+            {`(${
+              blogProfile.username && blogProfile.username !== undefined
+                ? blogProfile.username
+                : 'Loading...'
+            })`}
           </span>
         </div>
 
@@ -493,13 +500,13 @@ export default function View() {
           )}
 
         <div className="w-full flex justify-between mt-2">
-          <div className="w-3/10 p-2 rounded-lg bg-gray-900 text-center sm:text-lg text-xs font-open text-gray-200">
+          <div className="w-3/10 p-2 rounded-lg bg-gray-900 text-center sm:text-lg text-xs font-open text-gray-200 flex items-center justify-center">
             Followers:{' '}
             {blogProfile.blog_followers_amount
               ? blogProfile.blog_followers_amount
               : 0}
           </div>
-          <div className="w-3/10 p-2 rounded-lg bg-gray-900 text-center sm:text-lg text-xs font-open text-gray-200">
+          <div className="w-3/10 p-2 rounded-lg bg-gray-900 text-center sm:text-lg text-xs font-open text-gray-200 flex items-center justify-center">
             Following:{' '}
             {blogProfile.blog_following_amount
               ? blogProfile.blog_following_amount
@@ -509,7 +516,7 @@ export default function View() {
           loggedInUser.username !== undefined &&
           loggedInUser.uid === blogProfile.uid ? (
             <button
-              className="w-3/10 p-2 rounded-lg bg-gray-900 text-center sm:text-lg text-xs font-open text-gray-200 hover:bg-gray-800 focus:bg-gray-800"
+              className="w-3/10 p-2 rounded-lg bg-gray-900 text-center sm:text-lg text-xs font-open text-gray-200 hover:bg-gray-800 focus:bg-gray-800 flex items-center justify-center"
               onClick={() => history.push('/admin')}
             >
               Access Admin Interface
