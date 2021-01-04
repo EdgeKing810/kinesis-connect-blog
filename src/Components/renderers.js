@@ -57,7 +57,7 @@ const code = (props) => {
 
 const image = (props) => {
   return (
-    <span className="w-full flex flex-col justify-center items-center mt-2">
+    <span className="w-full flex flex-col justify-center items-center my-2">
       <img
         src={props.src}
         alt={props.alt}
