@@ -107,7 +107,7 @@ export default function Creator() {
     // eslint-disable-next-line
   }, [title]);
 
-  const uploadImage = (e, isPreview) => {
+  const uploadImage = (e, isPreview, addToContent) => {
     alert.info(
       'Avoid symbols/spaces in file name. Might take some time to upload.'
     );
@@ -149,7 +149,7 @@ export default function Creator() {
                     : [...prev, { ...postData }]
                 );
 
-                if (!isPreview) {
+                if (addToContent) {
                   setContent(
                     (prev) => prev + `\n![](${UPLOADSURL}/${res.data.url})`
                   );
@@ -383,7 +383,7 @@ export default function Creator() {
               className="w-full rounded-lg p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
               onChange={(e) => {
                 e.persist();
-                uploadImage(e, true);
+                uploadImage(e, true, false);
               }}
             />
           </div>
@@ -447,7 +447,7 @@ export default function Creator() {
                 onChange={(e) => {
                   e.persist();
                   alert.info('Uploading...');
-                  uploadImage(e, false);
+                  uploadImage(e, false, false);
                 }}
               />
             </div>
@@ -524,7 +524,7 @@ export default function Creator() {
                   onChange={(e) => {
                     e.persist();
                     alert.info('Uploading...');
-                    uploadImage(e, false);
+                    uploadImage(e, false, true);
                   }}
                 />
                 <button
