@@ -15,6 +15,7 @@ export default function Creator() {
     APIURL,
     UPLOADSURL,
     loggedInUser,
+    setPosts,
     myPosts,
     setMyPosts,
     links,
@@ -243,8 +244,20 @@ export default function Creator() {
           }
         })
       );
+
+      if (data.status === 'PUBLISHED') {
+        setPosts((prev) =>
+          prev.map((p) => {
+            if (p.blogID === id) {
+              return { ...data };
+            } else {
+              return { ...p };
+            }
+          })
+        );
+      }
     } else {
-      setMyPosts((prev) => [...prev, { ...data }]);
+      setMyPosts((prev) => [{ ...data }, ...prev]);
     }
 
     history.push('/admin');

@@ -118,7 +118,7 @@ export default function Admin() {
           })
           .then((resp) => {
             if (resp.data.error === 0) {
-              setMyPosts(resp.data.blog_posts);
+              setMyPosts(resp.data.blog_posts.reverse());
             }
           });
 
@@ -173,6 +173,7 @@ export default function Admin() {
         });
 
       setMyPosts((prev) => prev.filter((p) => p.blogID !== blogID));
+      setPosts((prev) => prev.filter((p) => p.blogID !== blogID));
     }
   };
 
@@ -225,6 +226,13 @@ export default function Admin() {
             let copy = { ...p };
             copy.status = data.status;
             copy.updated_on = data.updated_on;
+
+            setPosts((previous) =>
+              copy.status !== 'PUBLISHED'
+                ? previous.filter((pr) => pr.blogID !== blogID)
+                : [{ ...copy }, ...previous]
+            );
+
             update.push({ ...copy });
           } else {
             update.push({ ...p });

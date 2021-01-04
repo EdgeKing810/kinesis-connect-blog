@@ -73,7 +73,10 @@ export default function Home() {
   const famousPosts = posts
     .sort(
       (a, b) =>
-        a.likes.length + a.comments.length > b.likes.length + b.comments.length
+        (a.likes && a.likes !== undefined ? a.likes.length : 0) +
+          (a.comments && a.comments !== undefined ? a.comments.length : 0) >
+        (b.likes && b.likes !== undefined ? b.likes.length : 0) +
+          (b.comments && b.comments !== undefined ? b.comments.length : 0)
     )
     .slice(0, 4);
 
