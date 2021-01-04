@@ -133,16 +133,12 @@ export default function Search() {
               }
             >
               <div
-                className={`sm:text-2xl text-lg tracking-wide font-bold ${
-                  post.preview_img && post.preview_img.length > 8
-                    ? 'text-gray-200'
-                    : 'text-gray-800'
-                }`}
+                className={`sm:text-xl text-lg tracking-wide font-bold bg-gray-900 opacity-75 rounded text-gray-200 px-2`}
               >
                 {post.title}
               </div>
 
-              <div className="sm:text-lg text-sm tracking-wide font-normal mt-1 text-blue-200 bg-blue-900 opacity-75 rounded px-2">
+              <div className="text-sm tracking-wide font-normal mt-1 text-blue-200 bg-blue-900 opacity-75 rounded px-2 text-left">
                 {post.subtitle}
               </div>
 
