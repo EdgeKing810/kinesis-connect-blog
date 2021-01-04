@@ -4,6 +4,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAlert } from 'react-alert';
 import { v4 } from 'uuid';
+import Slider from 'react-slick';
 
 import { LocalContext } from '../LocalContext';
 import { Parser } from '../Components/renderers';
@@ -552,6 +553,31 @@ export default function View() {
           className="w-full rounded-lg sm:text-sm text-xs text-gray-300 p-2"
           ref={contentRef}
         >
+          {blogPost.carousel &&
+            blogPost.carousel !== undefined &&
+            blogPost.carousel.length > 0 && (
+              <div className="w-full flex justify-center">
+                <div className="sm:w-3/5 w-5/6 mb-2">
+                  <Slider
+                    dots
+                    infinite
+                    speed={500}
+                    className="w-full h-full flex items-center justify-center"
+                  >
+                    {blogPost.carousel.map((im, i) => (
+                      <div className="w-full h-full p-1" key={`slider-${i}`}>
+                        <img
+                          src={`${UPLOADSURL}/${im}`}
+                          alt={`slider-${i}`}
+                          className="object-scale-down m-auto"
+                        />
+                      </div>
+                    ))}
+                  </Slider>
+                </div>
+              </div>
+            )}
+
           <Parser content={blogPost.content} />
         </div>
       </div>
@@ -799,7 +825,7 @@ export default function View() {
           <div className="bg-gray-800 rounded p-1 w-full bg-gray-800 p-4 mt-2 rounded-lg sm:mr-4"></div>
         </div>
 
-        <div className="sm:w-1/4 w-full h-full flex items-center bg-gray-700 rounded-lg flex p-2 border-2 border-gray-900 sm:ml-2">
+        <div className="sm:w-1/4 w-full h-full flex items-center bg-gray-700 rounded-lg flex p-2 border-2 border-gray-900 sm:ml-2 smLmt-0 mt-2">
           <div className="w-1/5 h-full flex justify-center items-center">
             <div className="h-16 w-16 z-0 object-cover bg-gray-900 rounded-full" />
           </div>

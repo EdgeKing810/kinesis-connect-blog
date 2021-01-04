@@ -3,6 +3,7 @@ import { useHistory, useLocation, useParams } from 'react-router-dom';
 
 import axios from 'axios';
 import { useAlert } from 'react-alert';
+import Slider from 'react-slick';
 
 import { LocalContext } from '../LocalContext';
 import { Parser } from '../Components/renderers';
@@ -31,6 +32,7 @@ export default function Creator() {
 
   const [content, setContent] = useState('');
   const [previewImage, setPreviewImage] = useState('_empty');
+  const [sliderImages, setSliderImages] = useState([]);
 
   const [imageAdd, setImageAdd] = useState(false);
 
@@ -82,6 +84,7 @@ export default function Creator() {
           setSlug(p.slug);
           setPreviewImage(p.preview_img);
           setContent(p.content);
+          setSliderImages(p.carousel);
         }
       });
     } else {
@@ -168,6 +171,16 @@ export default function Creator() {
     );
   };
 
+  const addSliderImage = (link) => {
+    setSliderImages((prev) => {
+      if (prev.length > 0 && prev.includes(link)) {
+        return prev.filter((i) => i !== link);
+      } else {
+        return [...prev, link];
+      }
+    });
+  };
+
   const savePost = (e) => {
     let refPost = undefined;
     if (id && id !== undefined) {
@@ -196,6 +209,7 @@ export default function Creator() {
       subtitle: subtitle.slice(0, 40),
       slug: refPost !== undefined ? refPost.slug : slug,
       preview_img: previewImage,
+      carousel: sliderImages,
       status: refPost !== undefined ? refPost.status : 'DRAFT',
       tags: tags,
       created_on: refPost !== undefined ? refPost.created_on : timestamp,
@@ -373,6 +387,55 @@ export default function Creator() {
         )}
       </div>
 
+      <div className="w-full flex flex-col mt-4 bg-gray-900 sm:p-2 pb-4 pt-2 rounded-lg sm:items-end items-center">
+        <div className="w-full flex sm:flex-row flex-col justify-between items-center">
+          <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">
+            Image Slider (optional) {`(${sliderImages.length})`}
+          </div>
+
+          <div className="sm:w-49/100 w-11/12 flex flex-col justify-center items-center">
+            <div className="sm:text-xl text-lg font-sans tracking-wider text-blue-300 w-full text-center mt-1">
+              Select images
+            </div>
+            <div className="w-full flex items-center overflow-x-scroll my-2 py-1">
+              {links.map((l, i) => (
+                <button
+                  key={l.linkID}
+                  className={`flex-shrink-0 flex-grow-0 sm:w-48 sm:h-48 w-40 h-40 border-4 border-gray-900 hover:border-blue-200 focus:border-blue-200 ${
+                    sliderImages.includes(l.link) && 'border-yellow-400'
+                  } ${i < links.length - 1 && 'sm:mr-2 mr-1'}`}
+                  onClick={() => {
+                    addSliderImage(l.link);
+                  }}
+                >
+                  <img
+                    title={l.link}
+                    src={`${UPLOADSURL}/${l.link}`}
+                    alt="not available"
+                    className="w-full h-full object-scale-down"
+                  />
+                </button>
+              ))}
+            </div>
+            <div className="w-full flex items-center justify-around">
+              <input
+                type="file"
+                title="Upload a new image"
+                id="image"
+                name="image"
+                accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
+                className="sm:w-2/5 w-9/20 bg-blue-300 text-blue-900 hover:bg-blue-400 focus:bg-blue-400 rounded-lg p-2 sm:text-xl text-sm overflow-hidden"
+                onChange={(e) => {
+                  e.persist();
+                  alert.info('Uploading...');
+                  uploadImage(e, false);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="h-full w-full bg-gray-800 flex sm:flex-row flex-col justify-between items-center mt-4">
         <div className="sm:w-49/100 w-full">
           <div className="w-full flex items-center sm:mb-2">
@@ -465,6 +528,29 @@ export default function Creator() {
             className="w-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-700 text-gray-300 p-4 overflow-y-scroll"
             style={{ height: '30rem', minHeight: '20rem', maxHeight: '40rem' }}
           >
+            {sliderImages.length > 0 && (
+              <div className="w-full flex justify-center">
+                <div className="sm:w-3/5 w-5/6 mb-2">
+                  <Slider
+                    dots
+                    infinite
+                    speed={500}
+                    className="w-full h-full flex items-center justify-center"
+                  >
+                    {sliderImages.map((im, i) => (
+                      <div className="w-full h-full p-1" key={`slider-${i}`}>
+                        <img
+                          src={`${UPLOADSURL}/${im}`}
+                          alt={`slider-${i}`}
+                          className="object-scale-down m-auto"
+                        />
+                      </div>
+                    ))}
+                  </Slider>
+                </div>
+              </div>
+            )}
+
             <Parser content={content} />
           </div>
         </div>
