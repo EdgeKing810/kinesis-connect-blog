@@ -104,8 +104,8 @@ export default function Home() {
               style={
                 post.preview_img && post.preview_img.length > 8
                   ? {
-                      color: '#fff',
-                      background: `url(${post.preview_img}) center / cover no-repeat #fff`,
+                      color: '#4a5568',
+                      background: `url(${post.preview_img}) center / cover no-repeat #4a5568`,
                     }
                   : {}
               }

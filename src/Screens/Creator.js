@@ -279,6 +279,32 @@ export default function Creator() {
     history.push('/admin');
   };
 
+  const settings = {
+    customPaging: function (i) {
+      return (
+        <div className="w-2 h-2 bg-gray-500 p-2 rounded-full flex items-center justify-center mt-2"></div>
+      );
+    },
+    useTransform: true,
+    dots: true,
+    dotsClass: 'slick-dots slick-thumb',
+    infinite: true,
+    speed: 1500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    cssEase: 'ease-out',
+    centerMode: true,
+    centerPadding: 0,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          dots: false,
+        },
+      },
+    ],
+  };
+
   return (
     <div className="w-full flex flex-col items-center sm:px-20 px-2 sm:pt-20 pt-20">
       <div className="w-full flex flex-col sm:mt-8 mt-4 bg-gray-900 sm:p-2 pb-4 pt-2 rounded-lg sm:items-end items-center">
@@ -386,7 +412,11 @@ export default function Creator() {
                     previewImage.includes(l.link) && 'border-yellow-400'
                   } ${i < links.length - 1 && 'sm:mr-2 mr-1'}`}
                   onClick={() => {
-                    setPreviewImage(`${UPLOADSURL}/${l.link}`);
+                    if (previewImage.includes(l.link)) {
+                      setPreviewImage('_empty');
+                    } else {
+                      setPreviewImage(`${UPLOADSURL}/${l.link}`);
+                    }
                   }}
                 >
                   <img
@@ -415,17 +445,6 @@ export default function Creator() {
             </div>
           </div>
         </div>
-
-        {previewImage !== '_empty' && previewImage.length > 10 && (
-          <div className="sm:w-49/100 w-11/12 font-sans sm:text-sm text-xs text-green-300 sm:text-left sm:mt-2 mt-4 flex flex-col items-center">
-            <button
-              className="sm:w-1/3 w-4/5 bg-red-300 hover:bg-red-400 focus:bg-red-400 rounded-lg mt-2 sm:text-lg text-sm font-sans text-gray-900 p-2"
-              onClick={() => setPreviewImage('_empty')}
-            >
-              Remove Preview
-            </button>
-          </div>
-        )}
       </div>
 
       <div className="w-full flex flex-col mt-4 bg-gray-900 sm:p-2 pb-4 pt-2 rounded-lg sm:items-end items-center">
@@ -572,20 +591,14 @@ export default function Creator() {
             {sliderImages.length > 0 && (
               <div className="w-full flex justify-center">
                 <div className="sm:w-3/5 w-5/6 mb-2">
-                  <Slider
-                    dots
-                    infinite
-                    speed={500}
-                    className="w-full h-full flex items-center justify-center"
-                  >
+                  <Slider {...settings}>
                     {sliderImages.map((im, i) => (
-                      <div className="w-full h-full p-1" key={`slider-${i}`}>
-                        <img
-                          src={`${UPLOADSURL}/${im}`}
-                          alt={`slider-${i}`}
-                          className="object-scale-down m-auto"
-                        />
-                      </div>
+                      <img
+                        src={`${UPLOADSURL}/${im}`}
+                        alt={`slider-${i}`}
+                        key={`slider-${i}`}
+                        className="sm:h-80 h-60 object-scale-down"
+                      />
                     ))}
                   </Slider>
                 </div>

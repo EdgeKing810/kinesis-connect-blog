@@ -355,7 +355,7 @@ export default function View() {
             ? {
                 background: `url(${
                   UPLOADSURL + '/' + blogProfile.banner_img
-                }) center / cover no-repeat #fff`,
+                }) center / cover no-repeat #4a5568`,
               }
             : {}
         }
@@ -547,14 +547,14 @@ export default function View() {
               style={
                 post.preview_img && post.preview_img.length > 8
                   ? {
-                      color: '#fff',
-                      background: `url(${post.preview_img}) center / cover no-repeat #fff`,
+                      color: '#4a5568',
+                      background: `url(${post.preview_img}) center / cover no-repeat #4a5568`,
                     }
                   : {}
               }
             >
               <div
-                className={`sm:text-2xl text-lg tracking-wide font-bold ${
+                className={`sm:text-2xl text-lg tracking-wide font-bold ml-1 ${
                   post.preview_img && post.preview_img.length > 8
                     ? 'text-gray-200'
                     : 'text-gray-800'

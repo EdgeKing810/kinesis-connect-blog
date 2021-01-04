@@ -375,10 +375,10 @@ export default function View() {
       if (c.commentID === commentID) {
         const updatedComment = { ...c };
         if (data.like === 'true') {
-          updatedComment.reacts = [
-            ...updatedComment.reacts,
-            { uid: loggedInUser.uid },
-          ];
+          updatedComment.reacts =
+            updatedComment.reacts && updatedComment.reacts.length > 0
+              ? [...updatedComment.reacts, { uid: loggedInUser.uid }]
+              : [[{ uid: loggedInUser.uid }]];
         } else {
           updatedComment.reacts = updatedComment.reacts.filter(
             (l) => l.uid !== loggedInUser.uid
@@ -478,6 +478,35 @@ export default function View() {
     }
   };
 
+  const settings = {
+    customPaging: function (i) {
+      return (
+        <div className="w-2 h-2 bg-gray-500 p-2 rounded-full flex items-center justify-center mt-2"></div>
+      );
+    },
+    useTransform: true,
+    dots: true,
+    dotsClass: 'slick-dots slick-thumb',
+    infinite: true,
+    speed: 1500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    // autoplay: true,
+    // speed: 2000,
+    // autoplaySpeed: 3000,
+    cssEase: 'ease-out',
+    centerMode: true,
+    centerPadding: 0,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          dots: false,
+        },
+      },
+    ],
+  };
+
   return blogPost &&
     blogPost !== undefined &&
     blogProfile &&
@@ -560,20 +589,14 @@ export default function View() {
             blogPost.carousel.length > 0 && (
               <div className="w-full flex justify-center">
                 <div className="sm:w-3/5 w-5/6 mb-2">
-                  <Slider
-                    dots
-                    infinite
-                    speed={500}
-                    className="w-full h-full flex items-center justify-center"
-                  >
+                  <Slider {...settings}>
                     {blogPost.carousel.map((im, i) => (
-                      <div className="w-full h-full p-1" key={`slider-${i}`}>
-                        <img
-                          src={`${UPLOADSURL}/${im}`}
-                          alt={`slider-${i}`}
-                          className="object-scale-down m-auto"
-                        />
-                      </div>
+                      <img
+                        src={`${UPLOADSURL}/${im}`}
+                        alt={`slider-${i}`}
+                        key={`slider-${i}`}
+                        className="sm:h-100 h-60 object-scale-down"
+                      />
                     ))}
                   </Slider>
                 </div>

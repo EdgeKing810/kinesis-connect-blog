@@ -54,15 +54,11 @@ export default function Search() {
     if (posts && posts.length > 0) {
       setPostsFound(
         posts.filter((p) => {
-          const profile = blogProfiles.find((pro) => pro.uid === p.authorID);
-
           return searchWords.some(
             (w) =>
               p.title.toLowerCase().includes(w) ||
               p.subtitle.toLowerCase().includes(w) ||
-              p.tags.toLowerCase().includes(w) ||
-              profile.name.toLowerCase().includes(w) ||
-              profile.username.toLowerCase().includes(w)
+              p.tags.toLowerCase().includes(w)
           );
         })
       );
