@@ -68,7 +68,7 @@ export default function View() {
       document.documentElement.scrollHeight -
       document.documentElement.clientHeight;
 
-    const pageScrolled = winScroll / height + 0.2;
+    const pageScrolled = winScroll / height + 0.4;
 
     const averageScrolled = (scrolled + pageScrolled) / 2;
 
@@ -646,14 +646,16 @@ export default function View() {
           <div className="sm:text-3xl text-lg font-sans tracking-wider font-bold text-blue-200 ml-2 mr-4">
             Comments
           </div>
-          {blogPost.comments.length > 0 && (
-            <button
-              className="p-2 sm:w-1/6 w-2/3 rounded-lg sm:text-sm text-xs bg-gray-800 hover:bg-gray-700 focus:bg-gray-700 font-open text-gray-100"
-              onClick={() => setShowComments((prev) => !prev)}
-            >
-              {showComments ? 'Hide' : 'Show'} Comments
-            </button>
-          )}
+          {blogPost.comments &&
+            blogPost.comments !== undefined &&
+            blogPost.comments.length > 0 && (
+              <button
+                className="p-2 sm:w-1/6 w-2/3 rounded-lg sm:text-sm text-xs bg-gray-800 hover:bg-gray-700 focus:bg-gray-700 font-open text-gray-100"
+                onClick={() => setShowComments((prev) => !prev)}
+              >
+                {showComments ? 'Hide' : 'Show'} Comments
+              </button>
+            )}
         </div>
         {loggedInUser.username &&
           loggedInUser.username !== undefined &&
