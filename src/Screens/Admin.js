@@ -363,8 +363,8 @@ export default function Admin() {
                           )
                         }
                       >
-                        {post.title.length > 20
-                          ? `${post.title.substring(0, 20)}...`
+                        {post.title.length > 35
+                          ? `${post.title.substring(0, 35)}...`
                           : post.title}
                       </button>
                       <div

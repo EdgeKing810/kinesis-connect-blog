@@ -55,6 +55,17 @@ const code = (props) => {
   );
 };
 
+const inlineCode = (props) => {
+  return (
+    <span
+      className="text-blue-500 font-mono p-1 text-xs tracking-wider"
+      style={{ whiteSpace: 'pre' }}
+    >
+      {props.node.value}
+    </span>
+  );
+};
+
 const image = (props) => {
   return (
     <span className="w-full flex flex-col justify-center items-center my-2">
@@ -84,6 +95,7 @@ const renderers = {
   list: list,
   listItem: listItem,
   code: code,
+  inlineCode: inlineCode,
   image: image,
   blockquote: blockquote,
 };
