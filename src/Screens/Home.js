@@ -96,7 +96,7 @@ export default function Home() {
             <button
               className={`flex-shrink-0 flex-grow-0 sm:w-100 w-80 ${
                 i < list.length - 1 ? 'mr-2' : 'mr-0'
-              } border-4 border-gray-200 hover:border-blue-500 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 focus:from-pink-500 focus:to-yellow-500 rounded-lg sm:h-40 h-32 p-2 flex flex-col justify-end`}
+              } border-4 border-gray-200 hover:border-blue-500 bg-gradient-to-r from-pink-500 to-yellow-500 hover:from-green-400 hover:to-blue-500 focus:from-green-400 focus:to-blue-500 rounded-lg sm:h-40 h-32 p-2 flex flex-col justify-end`}
               key={post.blogID}
               onClick={() =>
                 history.push(`/view/${profile.username}/${post.slug}`)
@@ -111,16 +111,12 @@ export default function Home() {
               }
             >
               <div
-                className={`sm:text-2xl text-lg tracking-wide font-bold ${
-                  post.preview_img && post.preview_img.length > 8
-                    ? 'text-gray-200'
-                    : 'text-gray-800'
-                }`}
+                className={`sm:text-xl text-lg tracking-wide font-bold bg-gray-900 opacity-75 rounded text-gray-200 px-2`}
               >
                 {post.title}
               </div>
 
-              <div className="sm:text-lg text-sm tracking-wide font-normal mt-1 text-blue-200 bg-blue-900 opacity-75 rounded px-2">
+              <div className="text-sm tracking-wide font-normal mt-1 text-blue-200 bg-blue-900 opacity-75 rounded px-2 text-left">
                 {post.subtitle}
               </div>
 
