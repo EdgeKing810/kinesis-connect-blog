@@ -121,7 +121,9 @@ export default function View() {
             update.views = update.views
               ? [...update.views, { uid: loggedInUser.uid }]
               : [{ uid: loggedInUser.uid }];
-            updatePosts({ ...update });
+            setTimeout(() => {
+              updatePosts({ ...update });
+            }, 1000);
           }
         });
     }

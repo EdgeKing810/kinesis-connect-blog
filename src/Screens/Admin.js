@@ -321,7 +321,7 @@ export default function Admin() {
     <div className="w-full flex flex-col items-center sm:px-16 px-4 sm:pt-28 pt-24">
       <div className="w-full p-2 rounded-lg bg-gray-900 my-4 sm:mx-8">
         <div className="sm:text-2xl  font-sans tracking-wide text-bold text-gray-300 w-full mb-2 flex items-center justify-between">
-          Manage Blog Posts
+          Manage Blog Posts {`(${myPosts.length})`}
           <button
             className="sm:text-xl text-lg ri-menu-add-fill rounded p-2 hover:bg-gray-800 focus:bg-gray-800 w-10 h-10 text-gray-100 flex items-center justify-center"
             title="Create a new blog post"

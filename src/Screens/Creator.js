@@ -213,7 +213,7 @@ export default function Creator() {
       authorID: loggedInUser.uid,
       blogID: blogID,
       title: title.slice(0, 35),
-      subtitle: subtitle.slice(0, 40),
+      subtitle: subtitle.slice(0, 45),
       slug: refPost !== undefined ? refPost.slug : slug,
       preview_img: previewImage,
       carousel: sliderImages,
@@ -337,7 +337,7 @@ export default function Creator() {
               placeholder="Type something..."
               value={subtitle}
               onChange={(e) => {
-                if (e.target.value.length < 41) {
+                if (e.target.value.length < 46) {
                   setSubtitle(e.target.value);
                 } else {
                   alert.error('Max limit reached');
@@ -375,27 +375,49 @@ export default function Creator() {
           </div>
 
           <div className="sm:w-49/100 w-11/12 flex flex-col justify-center items-center">
-            <input
-              type="file"
-              id="preview"
-              name="preview"
-              accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
-              className="w-full rounded-lg p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
-              onChange={(e) => {
-                e.persist();
-                uploadImage(e, true, false);
-              }}
-            />
+            <div className="sm:text-xl text-md font-sans tracking-wider text-blue-300 w-full text-center mt-1">
+              Click to select an already uploaded image
+            </div>
+            <div className="w-full flex items-center overflow-x-scroll mb-2 py-1">
+              {links.map((l, i) => (
+                <button
+                  key={l.linkID}
+                  className={`flex-shrink-0 flex-grow-0 sm:w-48 sm:h-48 w-40 h-40 border-4 border-gray-900 hover:border-blue-200 focus:border-blue-200 ${
+                    previewImage.includes(l.link) && 'border-yellow-400'
+                  } ${i < links.length - 1 && 'sm:mr-2 mr-1'}`}
+                  onClick={() => {
+                    setPreviewImage(`${UPLOADSURL}/${l.link}`);
+                  }}
+                >
+                  <img
+                    title={l.link}
+                    src={`${UPLOADSURL}/${l.link}`}
+                    alt="not available"
+                    className="w-full h-full object-scale-down"
+                  />
+                </button>
+              ))}
+            </div>
+            <div className="w-full flex items-center justify-around">
+              <input
+                type="file"
+                title="Upload a new image"
+                id="image"
+                name="image"
+                accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
+                className="sm:w-2/5 w-9/20 bg-blue-300 text-blue-900 hover:bg-blue-400 focus:bg-blue-400 rounded-lg p-2 sm:text-xl text-sm overflow-hidden"
+                onChange={(e) => {
+                  e.persist();
+                  alert.info('Uploading...');
+                  uploadImage(e, true, false);
+                }}
+              />
+            </div>
           </div>
         </div>
 
         {previewImage !== '_empty' && previewImage.length > 10 && (
           <div className="sm:w-49/100 w-11/12 font-sans sm:text-sm text-xs text-green-300 sm:text-left sm:mt-2 mt-4 flex flex-col items-center">
-            <img
-              src={previewImage}
-              alt="preview"
-              className="w-full object-scale-down"
-            />
             <button
               className="sm:w-1/3 w-4/5 bg-red-300 hover:bg-red-400 focus:bg-red-400 rounded-lg mt-2 sm:text-lg text-sm font-sans text-gray-900 p-2"
               onClick={() => setPreviewImage('_empty')}
@@ -413,10 +435,10 @@ export default function Creator() {
           </div>
 
           <div className="sm:w-49/100 w-11/12 flex flex-col justify-center items-center">
-            <div className="sm:text-xl text-lg font-sans tracking-wider text-blue-300 w-full text-center mt-1">
-              Select images
+            <div className="sm:text-xl text-md font-sans tracking-wider text-blue-300 w-full text-center mt-1">
+              Click to select images
             </div>
-            <div className="w-full flex items-center overflow-x-scroll my-2 py-1">
+            <div className="w-full flex items-center overflow-x-scroll mb-2 py-1">
               {links.map((l, i) => (
                 <button
                   key={l.linkID}
