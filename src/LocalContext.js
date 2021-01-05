@@ -58,6 +58,13 @@ function LocalContextProvider({ children }) {
 
             const currentUser = res.data.users.find((u) => u.uid === uid);
             if (currentUser) {
+              currentUser.notifications =
+                currentUser.notifications &&
+                currentUser.notifications !== undefined &&
+                currentUser.notifications.length > 0
+                  ? [...currentUser.notifications].reverse()
+                  : [];
+
               setLoggedInUser({ ...currentUser, uid, jwt });
             }
           }

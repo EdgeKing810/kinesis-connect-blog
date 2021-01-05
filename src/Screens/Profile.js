@@ -278,6 +278,41 @@ export default function View() {
       })
       .then((res) => {
         if (res.data.error === 0) {
+          if (loggedInUser.uid !== uid) {
+            let d = new Date();
+            const timestamp = new Date(
+              d.getUTCFullYear(),
+              d.getUTCMonth(),
+              d.getUTCDate(),
+              d.getUTCHours(),
+              d.getUTCMinutes(),
+              d.getUTCSeconds()
+            );
+
+            const notificationData = {
+              uid: loggedInUser.uid,
+              notificationID: v4(),
+              profileID: uid,
+              type: `follow_new`,
+              linkTo: `/profile/${loggedInUser.username}`,
+              timestamp: timestamp,
+            };
+
+            axios
+              .post(
+                `${APIURL}/api/blog/user/notification/create`,
+                { ...notificationData },
+                {
+                  headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
+                }
+              )
+              .then((response) => {
+                if (response.data.error !== 0) {
+                  console.log(response.data);
+                }
+              });
+          }
+
           setLoggedInUser((prev) => {
             let update = { ...prev };
 

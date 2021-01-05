@@ -16,6 +16,7 @@ export default function Admin() {
     setPosts,
     myPosts,
     setMyPosts,
+    blogProfiles,
     setBlogProfiles,
     setLinks,
     setWidth,
@@ -28,6 +29,7 @@ export default function Admin() {
   const [color, setColor] = useState('blue');
 
   const [limit, setLimit] = useState(5);
+  const [notificationLimit, setNotificationLimit] = useState(5);
 
   const history = useHistory();
   const alert = useAlert();
@@ -101,10 +103,15 @@ export default function Admin() {
             if (resp.data.error === 0) {
               setBlogProfiles(resp.data.users);
 
-              const currentUser = resp.data.users.find(
-                (u) => u.uid === data.uid
-              );
+              let currentUser = resp.data.users.find((u) => u.uid === data.uid);
               if (currentUser) {
+                currentUser.notifications =
+                  currentUser.notifications &&
+                  currentUser.notifications !== undefined &&
+                  currentUser.notifications.length > 0
+                    ? [...currentUser.notifications].reverse()
+                    : [];
+
                 setLoggedInUser({
                   ...currentUser,
                   uid: data.uid,
@@ -246,6 +253,69 @@ export default function Admin() {
     }
   };
 
+  const changeNotificationStatus = (id, read) => {
+    const data = {
+      uid: loggedInUser.uid,
+      notificationID: id,
+      read: read ? 'true' : 'false',
+    };
+
+    setLoggedInUser((prev) => {
+      let update = { ...prev };
+
+      update.notifications = update.notifications.map((n) => {
+        if (n.notificationID === id) {
+          let updatedNotification = { ...n };
+          updatedNotification.seen = read;
+          return updatedNotification;
+        } else {
+          return n;
+        }
+      });
+
+      return update;
+    });
+
+    axios
+      .post(
+        `${APIURL}/api/blog/user/notification/read`,
+        { ...data },
+        { headers: { Authorization: `Bearer ${loggedInUser.jwt}` } }
+      )
+      .then((res) => {
+        if (res.data.error !== 0) {
+          console.log(res.data);
+        }
+      });
+  };
+
+  const deleteNotification = (id) => {
+    const data = {
+      uid: loggedInUser.uid,
+      notificationID: id,
+    };
+
+    setLoggedInUser((prev) => {
+      let update = { ...prev };
+      update.notifications = update.notifications.filter(
+        (n) => n.notificationID !== id
+      );
+      return update;
+    });
+
+    axios
+      .post(
+        `${APIURL}/api/blog/user/notification/delete`,
+        { ...data },
+        { headers: { Authorization: `Bearer ${loggedInUser.jwt}` } }
+      )
+      .then((res) => {
+        if (res.data.error !== 0) {
+          console.log(res.data);
+        }
+      });
+  };
+
   const LoginScreen = (
     <div className="w-full flex items-center justify-center">
       <div className="sm:w-1/3 w-5/6 flex flex-col items-center justify-center">
@@ -331,7 +401,7 @@ export default function Admin() {
           ></button>
         </div>
 
-        {myPosts && myPosts.length > 0 ? (
+        {myPosts && myPosts !== undefined && myPosts.length > 0 ? (
           <div className="w-full px-2 border-2 border-gray-700 rounded-lg">
             {myPosts.slice(0, limit).map((post, i) => {
               const published = post.status === 'PUBLISHED';
@@ -365,8 +435,8 @@ export default function Admin() {
                           )
                         }
                       >
-                        {post.title.length > 35
-                          ? `${post.title.substring(0, 35)}...`
+                        {post.title.length > 40
+                          ? `${post.title.substring(0, 40)}...`
                           : post.title}
                       </button>
                       <div
@@ -409,7 +479,7 @@ export default function Admin() {
                 </div>
               );
             })}
-            {limit < myPosts.length && (
+            {myPosts && myPosts !== undefined && limit < myPosts.length && (
               <div className="w-full flex justify-center my-2">
                 <button
                   className="sm:w-1/3 w-4/5 p-2 bg-gray-800 hover:bg-blue-700 focus:bg-blue-700 sm:text-lg text-sm font-bold text-gray-100 rounded-lg tracking-wide font-sans"
@@ -423,6 +493,154 @@ export default function Admin() {
         ) : (
           <div className="w-full text-center rounded-lg bg-yellow-300 p-2 sm:text-md text-sm tracking-wide text-gray-900 flex sm:flex-row flex-col items-center justify-center">
             No blog posts created yet...
+          </div>
+        )}
+      </div>
+
+      <div className="w-full p-2 rounded-lg bg-gray-900 my-4 sm:mx-8">
+        <div className="sm:text-2xl  font-sans tracking-wide text-bold text-gray-300 w-full mb-2 flex items-center justify-between">
+          Manage Notifications{' '}
+          {`(${
+            loggedInUser.notifications &&
+            loggedInUser.notifications !== undefined
+              ? loggedInUser.notifications.filter((n) => !n.seen).length
+              : 0
+          })`}
+        </div>
+
+        {loggedInUser.notifications &&
+        loggedInUser.notifications !== undefined &&
+        loggedInUser.notifications.length > 0 ? (
+          <div className="w-full border-2 px-2 border-gray-700">
+            {loggedInUser.notifications
+              .slice(0, notificationLimit)
+              .map((notification, i) => {
+                const profile = blogProfiles.find(
+                  (p) => p.uid === notification.uid
+                );
+
+                function evenType(type) {
+                  switch (type) {
+                    case 'comment_new':
+                      return 'posted a comment on your blog post';
+                    case 'comment_edit':
+                      return 'edited a comment on your blog post';
+                    case 'comment_like':
+                      return 'liked your comment.';
+                    case 'follow_new':
+                      return 'started following you';
+                  }
+                }
+
+                function imgEvenType(type) {
+                  switch (type) {
+                    case 'comment_new':
+                      return 'ri-chat-new-line';
+                    case 'comment_edit':
+                      return 'ri-chat-settings-line';
+                    case 'comment_like':
+                      return 'ri-chat-follow-up-line.';
+                    case 'follow_new':
+                      return 'ri-user-add-line';
+                  }
+                }
+
+                const description = (
+                  <div className="w-full h-full flex items-center">
+                    <div
+                      className={`sm:w-16 sm:h-16 w-12 h-10 rounded-full ml-1 mr-2 flex items-center justify-center sm:text-2xl text-sm ${imgEvenType(
+                        notification.type
+                      )} bg-gray-${notification.seen ? '900' : '700'}`}
+                    />
+
+                    <div className="w-full h-full">
+                      <span className="text-yellow-300">
+                        {profile.username.length > 12
+                          ? profile.username.substring(0, 12)
+                          : profile.username}
+                      </span>{' '}
+                      {evenType(notification.type)} on{' '}
+                      <span className="text-green-300">
+                        {convertDate(notification.timestamp)
+                          .split(' ')
+                          .slice(0, 5)
+                          .join(' ')}
+                      </span>
+                    </div>
+                  </div>
+                );
+
+                return (
+                  <div
+                    className={`w-full flex justify-between flex h-full items-center p-2 mt-2 bg-gray-${
+                      notification.seen ? '900' : '700'
+                    } ${
+                      i < loggedInUser.notifications.length - 1
+                        ? 'border-b-2 border-gray-700'
+                        : ''
+                    }`}
+                    key={notification.notificationID}
+                  >
+                    <div className="sm:w-4/5 w-3/4 flex items-center">
+                      <button
+                        className="w-full font-open text-blue-200 sm:text-sm text-xs text-left bg-gray-800 rounded p-1"
+                        onClick={() => {
+                          changeNotificationStatus(
+                            notification.notificationID,
+                            !notification.seen
+                          );
+                          history.push(notification.linkTo);
+                        }}
+                      >
+                        {description}
+                      </button>
+                    </div>
+
+                    <div className="sm:w-1/6 w-1/5 bg-gray-800 rounded-lg flex justify-end p-2">
+                      <button
+                        className={`sm:text-xl text-lg ri-checkbox-${
+                          notification.seen ? 'line' : 'blank-line'
+                        } rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 text-gray-100 flex items-center justify-center text-gray-100 hover:text-${
+                          notification.seen ? 'green' : 'blue'
+                        }-300 focus:text-${
+                          notification.seen ? 'green' : 'blue'
+                        }-300`}
+                        title={`Mark as ${notification.seen ? 'un' : ''}seen`}
+                        onClick={() =>
+                          changeNotificationStatus(
+                            notification.notificationID,
+                            !notification.seen
+                          )
+                        }
+                      ></button>
+
+                      <button
+                        className="sm:text-xl text-lg ri-delete-bin-2-line rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 text-gray-100 flex items-center justify-center text-gray-100 hover:text-red-300 focus:text-red-300"
+                        title="Delete notification"
+                        onClick={() =>
+                          deleteNotification(notification.notificationID)
+                        }
+                      ></button>
+                    </div>
+                  </div>
+                );
+              })}
+            {loggedInUser.notifications &&
+              loggedInUser.notifications !== undefined &&
+              limit < notificationLimit.length && (
+                <div className="w-full flex justify-center my-2">
+                  <button
+                    className="sm:w-1/3 w-4/5 p-2 bg-gray-800 hover:bg-blue-700 focus:bg-blue-700 sm:text-lg text-sm font-bold text-gray-100 rounded-lg tracking-wide font-sans"
+                    onClick={() => setNotificationLimit((prev) => prev + 5)}
+                  >
+                    View more
+                  </button>
+                </div>
+              )}
+          </div>
+        ) : (
+          <div className="w-full text-center rounded-lg bg-yellow-300 p-2 sm:text-md text-sm tracking-wide text-gray-900 flex sm:flex-row flex-col items-center justify-center">
+            No notifications
           </div>
         )}
       </div>

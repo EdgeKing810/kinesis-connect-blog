@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 
 import axios from 'axios';
 import { useAlert } from 'react-alert';
@@ -45,6 +45,7 @@ export default function View() {
   const { username, slug } = useParams();
   const alert = useAlert();
   const contentRef = useRef(null);
+  const { pathname } = useLocation();
 
   const tags =
     blogPost &&
@@ -306,7 +307,7 @@ export default function View() {
     setPostFavorited((prev) => !prev);
   };
 
-  const postComment = () => {
+  const postComment = (isEditing) => {
     let d = new Date();
     const timestamp = new Date(
       d.getUTCFullYear(),
@@ -321,31 +322,75 @@ export default function View() {
       uid: loggedInUser.uid,
       profileID: loggedInUser.uid,
       blogID: blogPost.blogID,
-      commentID: v4(),
-      comment: comment,
+      commentID: isEditing ? editComment : v4(),
+      comment: isEditing ? editingComment : comment,
       timestamp: timestamp,
     };
 
     axios
-      .post(`${APIURL}/api/blog/post/comment/add`, data, {
-        headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
-      })
+      .post(
+        `${APIURL}/api/blog/post/comment/${isEditing ? 'edit' : 'add'}`,
+        data,
+        {
+          headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
+        }
+      )
       .then((res) => {
         if (res.data.error === 0) {
-          alert.success(`Comment successfully posted!`);
+          alert.success(
+            `Comment successfully ${isEditing ? 'edited' : 'posted'}!`
+          );
+
+          if (loggedInUser.uid !== blogPost.authorID) {
+            const notificationData = {
+              uid: loggedInUser.uid,
+              notificationID: v4(),
+              profileID: blogPost.authorID,
+              type: `comment_${isEditing ? 'edit' : 'new'}`,
+              linkTo: pathname.toString(),
+              timestamp: timestamp,
+            };
+
+            axios
+              .post(
+                `${APIURL}/api/blog/user/notification/create`,
+                { ...notificationData },
+                {
+                  headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
+                }
+              )
+              .then((response) => {
+                if (response.data.error !== 0) {
+                  console.log(response.data);
+                }
+              });
+          }
         } else {
           console.log(res.data);
         }
       });
 
     let update = { ...blogPost };
-    update.comments = update.comments
-      ? [...update.comments, { ...data }]
-      : [{ uid: loggedInUser.uid }];
+
+    if (isEditing) {
+      update.comments = update.comments.map((c) => {
+        if (c.commentID === editComment) {
+          return { ...data };
+        } else {
+          return { ...c };
+        }
+      });
+      cancelEditComment();
+    } else {
+      update.comments = update.comments
+        ? [...update.comments, { ...data }]
+        : [{ uid: loggedInUser.uid }];
+
+      setComment('');
+      setShowComments(true);
+    }
 
     updatePosts({ ...update });
-    setComment('');
-    setShowComments(true);
   };
 
   const checkCommentLike = (commentID) => {
@@ -376,7 +421,7 @@ export default function View() {
     return profile;
   };
 
-  const likeComment = (commentID) => {
+  const likeComment = (commentID, commentUID) => {
     const data = {
       uid: loggedInUser.uid,
       profileID: loggedInUser.uid,
@@ -392,6 +437,41 @@ export default function View() {
       .then((res) => {
         if (res.data.error !== 0) {
           console.log(res.data);
+        } else {
+          if (loggedInUser.uid !== commentUID) {
+            let d = new Date();
+            const timestamp = new Date(
+              d.getUTCFullYear(),
+              d.getUTCMonth(),
+              d.getUTCDate(),
+              d.getUTCHours(),
+              d.getUTCMinutes(),
+              d.getUTCSeconds()
+            );
+
+            const notificationData = {
+              uid: loggedInUser.uid,
+              notificationID: v4(),
+              profileID: commentUID,
+              type: `comment_like`,
+              linkTo: pathname.toString(),
+              timestamp: timestamp,
+            };
+
+            axios
+              .post(
+                `${APIURL}/api/blog/user/notification/create`,
+                { ...notificationData },
+                {
+                  headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
+                }
+              )
+              .then((response) => {
+                if (response.data.error !== 0) {
+                  console.log(response.data);
+                }
+              });
+          }
         }
       });
 
@@ -421,51 +501,6 @@ export default function View() {
   const prepareEditComment = (commentID, content) => {
     setEditComment(commentID);
     setEditingComment(content);
-  };
-
-  const submitEditComment = () => {
-    let d = new Date();
-    const timestamp = new Date(
-      d.getUTCFullYear(),
-      d.getUTCMonth(),
-      d.getUTCDate(),
-      d.getUTCHours(),
-      d.getUTCMinutes(),
-      d.getUTCSeconds()
-    );
-
-    const data = {
-      uid: loggedInUser.uid,
-      profileID: loggedInUser.uid,
-      blogID: blogPost.blogID,
-      commentID: editComment,
-      comment: editingComment,
-      timestamp: timestamp,
-    };
-
-    axios
-      .post(`${APIURL}/api/blog/post/comment/edit`, data, {
-        headers: { Authorization: `Bearer ${loggedInUser.jwt}` },
-      })
-      .then((res) => {
-        if (res.data.error === 0) {
-          alert.success(`Comment successfully edited!`);
-        } else {
-          console.log(res.data);
-        }
-      });
-
-    let update = { ...blogPost };
-    update.comments = update.comments.map((c) => {
-      if (c.commentID === editComment) {
-        return { ...data };
-      } else {
-        return { ...c };
-      }
-    });
-
-    updatePosts({ ...update });
-    cancelEditComment();
   };
 
   const cancelEditComment = () => {
@@ -725,7 +760,7 @@ export default function View() {
                     ? 'hover:bg-gray-700 focus:bg-gray-700'
                     : 'opacity-50'
                 } sm:h-10 h-8 sm:text-lg text-sm font-open text-gray-400 sm:ml-2`}
-                onClick={() => (comment.length > 0 ? postComment() : null)}
+                onClick={() => (comment.length > 0 ? postComment(false) : null)}
               >
                 Post
               </button>
@@ -802,7 +837,7 @@ export default function View() {
              } ${
                       checkCommentLike(comm.commentID) ? 'bg-gray-700' : ''
                     } sm:text-lg text-xs`}
-                    onClick={() => likeComment(comm.commentID)}
+                    onClick={() => likeComment(comm.commentID, comm.uid)}
                   ></button>
                   {comm.uid === loggedInUser.uid && (
                     <button
@@ -840,20 +875,20 @@ export default function View() {
             />
             <div className="sm:w-1/5 w-1/6 h-full flex flex-col items-center justify-end">
               <button
-                className={`w-4/5 rounded-lg bg-gray-800 ${
+                className={`sm:w-4/5 w-full rounded-lg bg-gray-800 ${
                   editingComment.length > 0
                     ? 'hover:bg-gray-700 focus:bg-gray-700'
                     : 'opacity-50'
-                } sm:h-10 h-8 sm:text-lg text-sm font-open text-gray-400`}
+                } sm:h-10 h-8 sm:text-lg text-xs font-open text-gray-400`}
                 onClick={() =>
-                  editingComment.length > 0 ? submitEditComment() : null
+                  editingComment.length > 0 ? postComment(true) : null
                 }
               >
                 Submit
               </button>
               <button
-                className={`w-4/5 rounded-lg bg-gray-800 hover:bg-gray-700 focus:bg-gray-700
-                  } sm:h-10 h-8 sm:text-lg text-sm font-open text-gray-400 mt-2`}
+                className={`sm:w-4/5 w-full rounded-lg bg-gray-800 hover:bg-gray-700 focus:bg-gray-700
+                  } sm:h-10 h-8 sm:text-lg text-xs font-open text-gray-400 mt-2`}
                 onClick={() =>
                   editingComment.length > 0 ? cancelEditComment() : null
                 }
