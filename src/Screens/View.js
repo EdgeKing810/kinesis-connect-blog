@@ -37,7 +37,7 @@ export default function View() {
 
   const [editComment, setEditComment] = useState('');
 
-  const [showComments, setShowComments] = useState(false);
+  const [showComments, setShowComments] = useState(true);
 
   const [initialScroll, setInitialScroll] = useState(9999);
 
@@ -58,6 +58,16 @@ export default function View() {
       : [];
 
   const handleScroll = () => {
+    if (
+      !blogPost ||
+      blogPost === undefined ||
+      blogPost === null ||
+      !contentRef ||
+      contentRef === null
+    ) {
+      return;
+    }
+
     const { bottom } = contentRef.current.getBoundingClientRect();
     const scrolled = 1.0 - bottom / initialScroll;
 
@@ -182,6 +192,21 @@ export default function View() {
   };
 
   const updatePosts = (update) => {
+    if (
+      !blogPost ||
+      blogPost === undefined ||
+      !blogPost.blogID ||
+      blogPost.blogID === undefined ||
+      !posts ||
+      posts === undefined ||
+      posts.length <= 0
+    ) {
+      setTimeout(() => {
+        updatePosts(update);
+      }, 500);
+      return;
+    }
+
     const updatedPosts = posts.map((p) => {
       if (p.blogID === blogPost.blogID) {
         return { ...update };
@@ -846,8 +871,8 @@ export default function View() {
     </div>
   ) : (
     <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-28 pt-20">
-      <div className="w-full flex sm:flex-row flex-col sm:justify-between bg-gray-900 rounded-lg p-2">
-        <div className="sm:w-3/4 w-full">
+      <div className="w-full flex sm:flex-row flex-col sm:justify-between bg-gray-900 rounded-lg p-1">
+        <div className="sm:w-3/4 w-full mt-2">
           <div className="sm:my-0 my-1 w-full bg-gray-800 p-6 rounded-lg sm:mr-4"></div>
           <div className="bg-gray-800 rounded p-1 w-full bg-gray-800 p-4 mt-2 rounded-lg sm:mr-4"></div>
         </div>

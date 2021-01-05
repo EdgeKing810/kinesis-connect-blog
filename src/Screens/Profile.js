@@ -28,6 +28,8 @@ export default function View() {
   const [followingAuthor, setFollowingAuthor] = useState(false);
   const [currentPosts, setCurrentPosts] = useState([]);
 
+  const [limit, setLimit] = useState(5);
+
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [bio, setBio] = useState('');
 
@@ -412,11 +414,11 @@ export default function View() {
                 : tmpAvatar
             }
             alt="p.pic"
-            className="sm:h-40 sm:w-40 h-24 w-24 border-4 rounded-full border-dotted p-1 border-gray-900"
+            className="sm:h-40 sm:w-40 h-24 w-24 border-4 rounded-full border-dotted p-1 border-gray-900 object-scale-down"
           />
         </div>
 
-        <div className="w-full flex justify-center mt-4 font-bold sm:text-2xl text-lg text-blue-900 tracking-wide font-sans">
+        <div className="w-full flex justify-center mt-4 font-bold sm:text-2xl text-lg text-blue-500 tracking-wide font-sans bg-gray-900 opacity-75 rounded-lg p-2">
           {blogProfile.name && blogProfile.name}{' '}
           <span className="text-yellow-500 ml-1">
             {`(${
@@ -537,7 +539,7 @@ export default function View() {
       {currentPosts && currentPosts.length > 0 ? (
         <div className="w-full sm:text-4xl text-lg text-gray-100 font-bold tracking-widest mt-4 ">
           Blog Posts {`(${currentPosts.length})`}
-          {currentPosts.map((post) => (
+          {currentPosts.slice(0, limit).map((post) => (
             <button
               className="w-full my-2 border-4 border-gray-200 hover:border-gray-900 focus:border-gray-900 bg-gradient-to-r from-pink-500 to-yellow-500 hover:from-green-400 hover:to-blue-500 focus:from-green-400 focus:to-blue-500 rounded-lg sm:h-40 h-32 p-2 flex flex-col justify-end"
               key={post.blogID}
@@ -574,6 +576,16 @@ export default function View() {
               </div>
             </button>
           ))}
+          {limit < myPosts.length && (
+            <div className="w-full flex justify-center mt-4">
+              <button
+                className="sm:w-1/3 w-4/5 p-2 bg-gray-900 hover:bg-blue-700 focus:bg-blue-700 sm:text-lg text-sm font-bold text-gray-100 rounded-lg tracking-wide font-sans"
+                onClick={() => setLimit((prev) => prev + 5)}
+              >
+                View more
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <div className="w-full text-center sm:text-2xl text-lg text-yellow-300 mt-4">

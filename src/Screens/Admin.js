@@ -27,6 +27,8 @@ export default function Admin() {
   const [error, setError] = useState('');
   const [color, setColor] = useState('blue');
 
+  const [limit, setLimit] = useState(5);
+
   const history = useHistory();
   const alert = useAlert();
 
@@ -331,7 +333,7 @@ export default function Admin() {
 
         {myPosts && myPosts.length > 0 ? (
           <div className="w-full px-2 border-2 border-gray-700 rounded-lg">
-            {myPosts.map((post, i) => {
+            {myPosts.slice(0, limit).map((post, i) => {
               const published = post.status === 'PUBLISHED';
 
               return (
@@ -407,6 +409,16 @@ export default function Admin() {
                 </div>
               );
             })}
+            {limit < myPosts.length && (
+              <div className="w-full flex justify-center my-2">
+                <button
+                  className="sm:w-1/3 w-4/5 p-2 bg-gray-800 hover:bg-blue-700 focus:bg-blue-700 sm:text-lg text-sm font-bold text-gray-100 rounded-lg tracking-wide font-sans"
+                  onClick={() => setLimit((prev) => prev + 5)}
+                >
+                  View more
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="w-full text-center rounded-lg bg-yellow-300 p-2 sm:text-md text-sm tracking-wide text-gray-900 flex sm:flex-row flex-col items-center justify-center">

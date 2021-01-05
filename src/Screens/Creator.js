@@ -212,8 +212,8 @@ export default function Creator() {
       uid: loggedInUser.uid,
       authorID: loggedInUser.uid,
       blogID: blogID,
-      title: title.slice(0, 35),
-      subtitle: subtitle.slice(0, 45),
+      title: title.slice(0, 40),
+      subtitle: subtitle.slice(0, 50),
       slug: refPost !== undefined ? refPost.slug : slug,
       preview_img: previewImage,
       carousel: sliderImages,
@@ -322,7 +322,7 @@ export default function Creator() {
               placeholder="Type something..."
               value={title}
               onChange={(e) => {
-                if (e.target.value.length < 36) {
+                if (e.target.value.length < 41) {
                   setTitle(e.target.value);
                 } else {
                   alert.error('Max limit reached');
@@ -363,7 +363,7 @@ export default function Creator() {
               placeholder="Type something..."
               value={subtitle}
               onChange={(e) => {
-                if (e.target.value.length < 46) {
+                if (e.target.value.length < 51) {
                   setSubtitle(e.target.value);
                 } else {
                   alert.error('Max limit reached');

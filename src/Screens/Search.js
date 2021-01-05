@@ -205,17 +205,11 @@ export default function Search() {
                       : tmpAvatar
                   }
                   alt="p.pic"
-                  className="sm:h-16 sm:w-16 h-12 w-12 border-2 border-blue-900 rounded-full bg-gray-800 -ml-1"
+                  className="sm:h-16 sm:w-16 h-12 w-12 border-2 border-blue-900 rounded-full bg-gray-800 -ml-1 object-scale-down"
                 />
               </div>
 
-              <div
-                className={`sm:text-2xl text-lg tracking-wide font-bold mt-1 ${
-                  user.banner_img && user.banner_img.length > 8
-                    ? 'text-gray-200'
-                    : 'text-gray-800'
-                }`}
-              >
+              <div className="sm:text-2xl text-lg tracking-wide font-bold mt-1 text-gray-200 bg-gray-900 opacity-75 rounded-lg px-2">
                 {user.name.length > 20 ? user.name.substring(0, 20) : user.name}
               </div>
 
