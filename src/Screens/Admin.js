@@ -529,6 +529,8 @@ export default function Admin() {
                       return 'liked your comment.';
                     case 'follow_new':
                       return 'started following you';
+                    default:
+                      return '';
                   }
                 }
 
@@ -542,6 +544,8 @@ export default function Admin() {
                       return 'ri-chat-follow-up-line.';
                     case 'follow_new':
                       return 'ri-user-add-line';
+                    default:
+                      return '';
                   }
                 }
 
