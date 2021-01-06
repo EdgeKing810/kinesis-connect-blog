@@ -9,6 +9,19 @@ import AlertTemplate from 'react-alert-template-basic';
 import App from './App';
 import { LocalContextProvider } from './LocalContext';
 
+import ReactGA from 'react-ga';
+import { createBrowserHistory } from 'history';
+
+const history = createBrowserHistory();
+
+const trackingId = 'UA-186719743-5';
+ReactGA.initialize(trackingId);
+
+history.listen((location) => {
+  ReactGA.set({ page: location.pathname });
+  ReactGA.pageview(location.pathname);
+});
+
 const options = {
   position: positions.BOTTOM_CENTER,
   timeout: 2000,
@@ -18,7 +31,7 @@ const options = {
 
 ReactDOM.render(
   <LocalContextProvider>
-    <Router>
+    <Router history={history}>
       <AlertProvider template={AlertTemplate} {...options}>
         <App />
       </AlertProvider>
