@@ -81,17 +81,17 @@ export default function Search() {
 
   const tmpCard = (
     <div className="flex-shrink-0 flex-grow-0 sm:w-100 w-80 border-4 border-gray-600 rounded-lg sm:h-40 h-32 p-2 flex flex-col justify-end bg-gray-900 mr-2">
-      <div className="w-5/6 py-2 bg-gray-800 my-2 rounded-lg"></div>
+      <div className="w-5/6 py-2 bg-gray-800 my-2 rounded-lg animate-pulse"></div>
 
-      <div className="w-3/5 py-1 bg-gray-700 my-2 rounded-lg"></div>
+      <div className="w-3/5 py-1 bg-gray-700 my-2 rounded-lg animate-pulse"></div>
 
-      <div className="w-full py-1 bg-gray-600 mt-1 rounded-lg"></div>
+      <div className="w-full py-1 bg-gray-600 mt-1 rounded-lg animate-pulse"></div>
     </div>
   );
 
   const placeholderCards = (
     <div className="w-full flex flex-col items-start sm:px-4 mb-4">
-      <div className="sm:w-2/5 w-5/6 my-2 rounded-lg py-3 bg-gray-900"></div>
+      <div className="sm:w-2/5 w-5/6 my-2 rounded-lg py-3 bg-gray-900 animate-pulse"></div>
       <div className="w-full flex overflow-x-scroll py-2">
         {tmpCard}
         {tmpCard}
