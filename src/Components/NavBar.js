@@ -23,7 +23,7 @@ export default function NavBar() {
 
   return (
     <div className="w-full bg-gray-900 flex flex-col justify-between sm:h-24 shadow-2xl fixed z-50">
-      <div className="w-full flex items-center justify-between sm:px-20 px-4 py-2 h-full">
+      <div className="w-full flex items-center justify-between sm:px-8 px-4 py-2 h-full">
         <button
           className="sm:text-2xl text-lg tracking-widest text-blue-300 font-open font-bold border-b-2 border-blue-200 hover:border-yellow-300 focus:border-yellow-300"
           onClick={() => (pathname !== '/' ? history.push('/') : null)}
@@ -32,7 +32,7 @@ export default function NavBar() {
         </button>
 
         {loggedInUser.username && loggedInUser.username !== undefined ? (
-          <div className="sm:w-1/6 w-1/2 bg-gray-800 px-4 py-1 rounded-lg border border-gray-700 flex h-full items-center">
+          <div className="w-1/2 sm:w-1/3 lg:w-1/6 bg-gray-800 px-4 py-1 rounded-lg border border-gray-700 flex h-full items-center">
             <div className="w-1/3 h-full flex items-center sm:justify-center">
               <button
                 className="sm:h-16 sm:w-16 h-12 w-12 z-0 border-2 border-blue-400 hover:border-blue-200 focus:border-blue-200 rounded-full"
@@ -56,9 +56,9 @@ export default function NavBar() {
               </button>
             </div>
 
-            <div className="w-2/3 h-full flex flex-col">
+            <div className="w-2/3 h-full flex flex-col pl-3">
               <button
-                className="w-full h-1/2 font-open text-gray-400 sm:text-base text-sm flex items-center text-gray-200 hover:underline focus:underline"
+                className="w-full h-1/2 font-open text-xs sm:text-base flex items-center text-gray-200 hover:underline focus:underline"
                 onClick={() =>
                   pathname !== `/profile/${loggedInUser.username}`
                     ? history.push(`/profile/${loggedInUser.username}`)
@@ -71,7 +71,7 @@ export default function NavBar() {
               </button>
               <div className="w-full h-1/2 py-1 flex flex-col justify-center">
                 <button
-                  className="w-full rounded bg-red-400 hover:bg-red-500 focus:bg-red-500 text-center font-rale tracking-wide font-bold text-xs text-gray-900 py-1"
+                  className="w-full rounded bg-red-400 hover:bg-red-500 focus:bg-red-500 text-center font-rale tracking-wide font-bold text-xss sm:text-xs text-gray-900 py-1"
                   onClick={() => {
                     setLoggedInUser({});
                     setMyPosts([]);

@@ -307,10 +307,10 @@ export default function Creator() {
   };
 
   return (
-    <div className="w-full flex flex-col items-center sm:px-20 px-2 sm:pt-20 pt-20">
+    <div className="w-full flex flex-col items-center px-2 sm:px-3 lg:px-20 pt-20">
       <div className="w-full flex flex-col sm:mt-8 mt-4 bg-gray-900 sm:p-2 pb-4 pt-2 rounded-lg sm:items-end items-center">
         <div className="w-full flex sm:flex-row flex-col justify-between items-center">
-          <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">
+          <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:ml-8 text-xl lg:text-2xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">
             Title
           </div>
 
@@ -319,7 +319,7 @@ export default function Creator() {
               type="text"
               id="title"
               name="title"
-              className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
+              className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-base text-sm"
               placeholder="Type something..."
               value={title}
               onChange={(e) => {
@@ -351,7 +351,7 @@ export default function Creator() {
 
       <div className="w-full flex flex-col mt-4 bg-gray-900 sm:p-2 pb-4 pt-2 rounded-lg sm:items-end items-center">
         <div className="w-full flex sm:flex-row flex-col justify-between items-center">
-          <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">
+          <div className="sm:w-1/3 w-11/12 sm:text-left text-center lg:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">
             Subtitle
           </div>
 
@@ -360,7 +360,7 @@ export default function Creator() {
               type="text"
               id="subtitle"
               name="subtitle"
-              className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
+              className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-base text-sm"
               placeholder="Type something..."
               value={subtitle}
               onChange={(e) => {
@@ -377,7 +377,7 @@ export default function Creator() {
 
       <div className="w-full flex flex-col mt-4 bg-gray-900 sm:p-2 pb-4 pt-2 rounded-lg sm:items-end items-center">
         <div className="w-full flex sm:flex-row flex-col justify-between items-center">
-          <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">
+          <div className="sm:w-1/3 w-11/12 sm:text-left text-center lg:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">
             Comma-separated tags
           </div>
 
@@ -386,7 +386,7 @@ export default function Creator() {
               type="text"
               id="tags"
               name="tags"
-              className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-md text-sm"
+              className="w-full rounded-lg sm:p-2 p-1 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-2 border-blue-200 sm:text-base text-sm"
               placeholder="e.g docker, ansible, automation"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
@@ -395,14 +395,14 @@ export default function Creator() {
         </div>
       </div>
 
-      <div className="w-full flex flex-col mt-4 bg-gray-900 sm:p-2 pb-4 pt-2 rounded-lg sm:items-end items-center">
-        <div className="w-full flex sm:flex-row flex-col justify-between items-center">
-          <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">
+      <div className="w-full flex flex-col mt-4 bg-gray-900 lg:p-2 pb-4 pt-2 rounded-lg sm:items-end items-center">
+        <div className="w-full flex lg:flex-row flex-col justify-between items-center">
+          <div className="lg:w-1/3 w-11/12 lg:text-left text-center lg:text-2xl lg:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 lg:my-0 my-2">
             Preview Image (optional)
           </div>
 
-          <div className="sm:w-49/100 w-11/12 flex flex-col justify-center items-center">
-            <div className="sm:text-xl text-md font-sans tracking-wider text-blue-300 w-full text-center mt-1">
+          <div className="lg:w-49/100 w-11/12 flex flex-col justify-center items-center">
+            <div className="lg:text-xl text-base font-sans tracking-wider text-blue-300 w-full text-center mt-1">
               Click to select an already uploaded image
             </div>
             <div className="w-full flex items-center overflow-x-scroll mb-2 py-1">
@@ -436,7 +436,7 @@ export default function Creator() {
                 id="image"
                 name="image"
                 accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
-                className="sm:w-2/5 w-9/20 bg-blue-300 text-blue-900 hover:bg-blue-400 focus:bg-blue-400 rounded-lg p-2 sm:text-xl text-sm overflow-hidden"
+                className="lg:w-2/5 w-9/20 bg-blue-300 text-blue-900 hover:bg-blue-400 focus:bg-blue-400 rounded-lg p-2 text-sm sm:text-lg lg:text-xl overflow-hidden"
                 onChange={(e) => {
                   e.persist();
                   alert.info('Uploading...');
@@ -448,21 +448,21 @@ export default function Creator() {
         </div>
       </div>
 
-      <div className="w-full flex flex-col mt-4 bg-gray-900 sm:p-2 pb-4 pt-2 rounded-lg sm:items-end items-center">
-        <div className="w-full flex sm:flex-row flex-col justify-between items-center">
-          <div className="sm:w-1/3 w-11/12 sm:text-left text-center sm:text-2xl sm:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 sm:my-0 my-2">
+      <div className="w-full flex flex-col mt-4 bg-gray-900 lg:p-2 pb-4 pt-2 rounded-lg lg:items-end items-center">
+        <div className="w-full flex lg:flex-row flex-col justify-between items-center">
+          <div className="lg:w-1/3 w-11/12 lg:text-left text-center lg:text-2xl lg:ml-8 text-xl font-sans tracking-wide text-bold text-gray-300 lg:my-0 my-2">
             Image Slider (optional) {`(${sliderImages.length})`}
           </div>
 
-          <div className="sm:w-49/100 w-11/12 flex flex-col justify-center items-center">
-            <div className="sm:text-xl text-md font-sans tracking-wider text-blue-300 w-full text-center mt-1">
+          <div className="lg:w-49/100 w-11/12 flex flex-col justify-center items-center">
+            <div className="lg:text-xl text-base font-sans tracking-wider text-blue-300 w-full text-center mt-1">
               Click to select images
             </div>
             <div className="w-full flex items-center overflow-x-scroll mb-2 py-1">
               {links.map((l, i) => (
                 <button
                   key={l.linkID}
-                  className={`flex-shrink-0 flex-grow-0 sm:w-48 sm:h-48 w-40 h-40 border-4 border-gray-900 hover:border-blue-200 focus:border-blue-200 ${
+                  className={`flex-shrink-0 flex-grow-0 lg:w-48 lg:h-48 w-40 h-40 border-4 border-gray-900 hover:border-blue-200 focus:border-blue-200 ${
                     sliderImages.includes(l.link) && 'border-yellow-400'
                   } ${i < links.length - 1 && 'sm:mr-2 mr-1'}`}
                   onClick={() => {
@@ -485,7 +485,7 @@ export default function Creator() {
                 id="image"
                 name="image"
                 accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
-                className="sm:w-2/5 w-9/20 bg-blue-300 text-blue-900 hover:bg-blue-400 focus:bg-blue-400 rounded-lg p-2 sm:text-xl text-sm overflow-hidden"
+                className="lg:w-2/5 w-9/20 bg-blue-300 text-blue-900 hover:bg-blue-400 focus:bg-blue-400 rounded-lg p-2 text-sm sm:text-lg lg:text-xl overflow-hidden"
                 onChange={(e) => {
                   e.persist();
                   alert.info('Uploading...');
@@ -499,19 +499,19 @@ export default function Creator() {
 
       <div className="h-full w-full bg-gray-800 flex flex-col justify-between items-center mt-4">
         <div className="w-full flex items-center sm:mb-2">
-          <div className="sm:text-3xl text-xl font-sans font-bold tracking-wider text-gray-300 mr-2">
+          <div className="text-xl sm:text-2xl lg:text-3xl font-sans font-bold tracking-wider text-gray-300 mr-2">
             Content
           </div>
           {!imageAdd && (
             <button
               title="Insert image"
-              className="sm:text-3xl text-xl text-gray-300 mr-2 sm:w-16 sm:h-12 w-10 h-10 rounded ri-image-add-fill bg-gray-700 hover:bg-gray-900 focus:bg-gray-900 flex items-center justify-center"
+              className="text-xl sm:text-2xl lg:text-3xl text-gray-300 mr-2 lg:w-16 lg:h-12 w-10 h-10 rounded ri-image-add-fill bg-gray-700 hover:bg-gray-900 focus:bg-gray-900 flex items-center justify-center"
               onClick={() => setImageAdd(true)}
             ></button>
           )}
           <button
             title={isPreview ? 'Unpreview' : 'Preview'}
-            className={`sm:text-2xl text-lg text-gray-300 mr-2 sm:h-12 h-10 rounded font-bold flex items-center justify-center px-2 ${
+            className={`text-lg sm:text0xl lg:text-2xl text-gray-300 mr-2 lg:h-12 h-10 rounded font-bold flex items-center justify-center px-2 ${
               isPreview
                 ? 'bg-gray-900 hover:bg-gray-700 focus:bg-gray-700'
                 : 'bg-gray-700 hover:bg-gray-900 focus:bg-gray-900'
@@ -525,7 +525,7 @@ export default function Creator() {
         {!imageAdd ? (
           !isPreview ? (
             <textarea
-              className="w-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-900 text-gray-300 p-4 placeholder-gray-500 overflow-y-scroll"
+              className="w-full lg:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-900 text-gray-300 p-4 placeholder-gray-500 overflow-y-scroll"
               value={content}
               placeholder="Write something..."
               onChange={(e) => setContent(e.target.value)}
@@ -537,7 +537,7 @@ export default function Creator() {
             />
           ) : (
             <div
-              className="w-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-700 text-gray-300 p-4 overflow-y-scroll"
+              className="w-full lg:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-700 text-gray-300 p-4 overflow-y-scroll"
               style={{
                 height: '30rem',
                 minHeight: '20rem',
@@ -546,7 +546,7 @@ export default function Creator() {
             >
               {sliderImages.length > 0 && (
                 <div className="w-full flex justify-center">
-                  <div className="sm:w-3/5 w-5/6 mb-2">
+                  <div className="lg:w-3/5 w-5/6 mb-2">
                     <Slider {...settings}>
                       {sliderImages.map((im, i) => (
                         <img
@@ -575,7 +575,7 @@ export default function Creator() {
             <div className="w-full flex items-center overflow-x-scroll h-1/2">
               {links.map((l, i) => (
                 <button
-                  className="flex-shrink-0 flex-grow-0 sm:w-48 sm:h-48 w-40 h-40 border-2 border-gray-900 hover:border-blue-200 focus:border-blue-200"
+                  className="flex-shrink-0 flex-grow-0 lg:w-48 lg:h-48 w-40 h-40 border-2 border-gray-900 hover:border-blue-200 focus:border-blue-200"
                   onClick={() => {
                     setContent(
                       (prev) => prev + `\n![](${UPLOADSURL}/${l.link})`
@@ -589,7 +589,7 @@ export default function Creator() {
                     src={`${UPLOADSURL}/${l.link}`}
                     alt="not available"
                     className={`w-full h-full object-scale-down ${
-                      i < links.length - 1 && 'sm:mr-2 mr-1'
+                      i < links.length - 1 && 'lg:mr-2 mr-1'
                     } `}
                   />
                 </button>
@@ -602,7 +602,7 @@ export default function Creator() {
                 id="image"
                 name="image"
                 accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
-                className="sm:w-2/5 w-9/20 bg-blue-300 text-blue-900 hover:bg-blue-400 focus:bg-blue-400 rounded-lg p-4 sm:text-xl text-sm overflow-hidden"
+                className="lg:w-2/5 w-9/20 bg-blue-300 text-blue-900 hover:bg-blue-400 focus:bg-blue-400 rounded-lg p-4 text-sm sm:text-base lg:text-xl overflow-hidden"
                 onChange={(e) => {
                   e.persist();
                   alert.info('Uploading...');
@@ -610,7 +610,7 @@ export default function Creator() {
                 }}
               />
               <button
-                className="sm:w-2/5 w-9/20 bg-red-300 text-red-900 hover:bg-red-400 focus:bg-red-400 rounded-lg p-4 sm:text-xl text-lg font-bold tracking-wide"
+                className="sm:w-2/5 w-9/20 bg-red-300 text-red-900 hover:bg-red-400 focus:bg-red-400 rounded-lg p-4 text-lg lg:text-xl font-bold tracking-wide"
                 onClick={() => setImageAdd(false)}
               >
                 Back
@@ -621,15 +621,8 @@ export default function Creator() {
       </div>
 
       <div className="w-full bg-gray-800 flex sm:flex-row flex-col justify-around items-center mt-4 mb-4">
-        {/* <button className="sm:w-1/4 w-5/6 p-2 font-rale tracking-wide font-sans sm:text-lg text-sm rounded-lg bg-blue-400 hover:bg-blue-500 focus:bg-blue-500">
-          Save as Draft
-        </button>
-        <button className="sm:w-1/4 w-5/6 p-2 font-rale tracking-wide font-sans sm:text-lg text-sm rounded-lg bg-green-400 hover:bg-green-500 focus:bg-green-500 sm:mt-0 mt-2">
-          Publish
-        </button> */}
-
         <button
-          className={`sm:w-1/4 w-5/6 p-2 font-rale tracking-wide font-sans sm:text-lg text-sm rounded-lg bg-green-400 ${
+          className={`w-5/6 sm:w-1/3 lg:w-1/4 p-2 tracking-wide font-sans sm:text-lg text-sm rounded-lg bg-green-400 ${
             checkValid()
               ? 'hover:bg-green-500 focus:bg-green-500'
               : 'opacity-50'
@@ -640,7 +633,7 @@ export default function Creator() {
         </button>
 
         <button
-          className="sm:w-1/4 w-5/6 p-2 font-rale tracking-wide font-sans sm:text-lg text-sm rounded-lg bg-red-400 hover:bg-red-500 focus:bg-red-500 sm:mt-0 mt-2"
+          className="w-5/6 sm:w-1/3 lg:w-1/4 p-2 tracking-wide font-sans sm:text-lg text-sm rounded-lg bg-red-400 hover:bg-red-500 focus:bg-red-500 sm:mt-0 mt-2"
           onClick={() => reset()}
         >
           Discard

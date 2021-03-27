@@ -14,7 +14,7 @@ export default function App() {
   return (
     <div className="w-full">
       <Route>
-        <div className="w-screen h-screen">
+        <div className="w-screen">
           <NavBar />
 
           <Switch>

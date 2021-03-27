@@ -107,7 +107,7 @@ export default function Search() {
       key={`${title}`}
       className="w-full flex flex-col items-center sm:px-4 mb-4"
     >
-      <div className="w-full sm:text-4xl text-xl text-blue-300 tracking-wide text-left font-bold">
+      <div className="w-full text-xl sm:text-3xl lg:text-4xl text-blue-300 tracking-wide text-left font-bold">
         {title} {`(${list ? list.length : 0})`}
       </div>
       <div className="w-full flex overflow-x-scroll py-2">
@@ -142,7 +142,7 @@ export default function Search() {
                 {post.subtitle}
               </div>
 
-              <div className="sm:text-xs text-xss tracking-wide font-normal mt-2 text-gray-200 bg-gray-900 opacity-75 rounded px-2 w-full text-left">
+              <div className="sm:text-xs text-xss tracking-wide font-normal mt-1 text-gray-200 bg-gray-900 opacity-75 rounded px-2 w-full text-left">
                 Last updated on{' '}
                 <span className="text-green-300">
                   {convertDate(post.updated_on)
@@ -172,7 +172,7 @@ export default function Search() {
       key={`${title}`}
       className="w-full flex flex-col items-center sm:px-4 mb-4"
     >
-      <div className="w-full sm:text-4xl text-xl text-blue-300 tracking-wide text-left font-bold">
+      <div className="w-full text-xl sm:text-3xl lg:text-4xl text-blue-300 tracking-wide text-left font-bold">
         {title} {`(${list ? list.length : 0})`}
       </div>
       <div className="w-full flex overflow-x-scroll py-2">
@@ -224,7 +224,7 @@ export default function Search() {
   );
 
   return (
-    <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-32 pt-24">
+    <div className="w-full flex flex-col items-center lg:px-20 px-2 pb-4 pt-24 sm:pt-28 lg:pt-32">
       <form
         className="w-full flex justify-center items-center my-4"
         onSubmit={(e) => {
@@ -235,7 +235,7 @@ export default function Search() {
           type="text"
           id="search"
           name="search"
-          className="w-4/5 rounded-lg p-2 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-4 border-gray-700 sm:text-lg text-sm"
+          className="w-full sm:w-11/12 lg:w-4/5 rounded-lg p-2 bg-gray-100 placeholder-gray-600 text-gray-900 font-open border-4 border-gray-700 text-sm sm:text-base lg:text-lg"
           placeholder="Search for an author / blog post..."
           value={search}
           onChange={(e) => {

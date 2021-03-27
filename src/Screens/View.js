@@ -571,10 +571,10 @@ export default function View() {
     blogPost !== undefined &&
     blogProfile &&
     blogProfile !== undefined ? (
-    <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-28 pt-24">
-      <div className="w-full flex sm:flex-row flex-col sm:justify-between bg-gray-900 rounded-lg p-2">
-        <div className="sm:w-3/4 w-full">
-          <div className="font-bold tracking-wider sm:text-4xl text-xl text-gray-200 sm:my-0 my-1">
+    <div className="w-full flex flex-col items-center px-2 sm:px-3 lg:px-20 pb-4 pt-24 sm:pt-26 lg:pt-28">
+      <div className="w-full flex lg:flex-row flex-col lg:justify-between bg-gray-900 rounded-lg p-2">
+        <div className="lg:w-3/4 w-full">
+          <div className="font-bold tracking-wider text-xl sm:text-3xl lg:text-4xl text-gray-200 sm:my-0 my-1">
             {blogPost.title}
           </div>
           <div className="font-open tracking-wider sm:text-xl text-base text-gray-200 bg-gray-800 rounded p-1 sm:mr-2 sm:my-0 my-1">
@@ -582,7 +582,7 @@ export default function View() {
           </div>
         </div>
 
-        <div className="sm:w-1/4 w-full h-full flex items-center bg-gray-700 rounded-lg flex p-2 border-2 border-gray-900">
+        <div className="lg:w-1/4 w-full h-full flex items-center bg-gray-700 rounded-lg p-2 border-2 border-gray-900 sm:mt-2 lg:mt-0">
           <div className="w-1/5 h-full flex justify-center items-center">
             <img
               src={
@@ -599,7 +599,7 @@ export default function View() {
           <div className="flex-col flex-1">
             <div className="w-full flex items-center">
               <button
-                className="text-left text-blue-500 font-open sm:text-base text-sm bg-gray-900 hover:bg-gray-800 focus:bg-gray-800 px-2 py-1 rounded-lg w-full"
+                className="text-left text-blue-500 font-open text-sm sm:text-lg lg:text-base bg-gray-900 hover:bg-gray-800 focus:bg-gray-800 px-2 py-1 rounded-lg w-full"
                 onClick={() => history.push(`/profile/${blogProfile.username}`)}
               >
                 {blogProfile.username.length > 12
@@ -621,14 +621,14 @@ export default function View() {
                   ></div>
                 )}
             </div>
-            <div className="w-full text-left text-blue-200 font-open text-xs ml-2 mt-1">
+            <div className="w-full text-left text-blue-200 font-open text-xs sm:text-sm lg:text-xs ml-2 mt-1">
               Posted on{' '}
               {convertDate(blogPost.created_on)
                 .split(' ')
                 .slice(0, 5)
                 .join(' ')}
             </div>
-            <div className="w-full text-left text-blue-200 font-open text-xs ml-2 mt-1">
+            <div className="w-full text-left text-blue-200 font-open text-xs sm:text-sm lg:text-xs ml-2">
               Last updated on{' '}
               {convertDate(blogPost.updated_on)
                 .split(' ')
@@ -648,7 +648,7 @@ export default function View() {
             blogPost.carousel !== undefined &&
             blogPost.carousel.length > 0 && (
               <div className="w-full flex justify-center">
-                <div className="sm:w-3/5 w-5/6 mb-2">
+                <div className="lg:w-3/5 w-5/6 mb-2">
                   <Slider {...settings}>
                     {blogPost.carousel.map((im, i) => (
                       <img
@@ -728,14 +728,14 @@ export default function View() {
 
       <div className="w-full flex flex-col my-2 bg-gray-900 sm:p-2 p-2 rounded-lg items-center">
         <div className="w-full flex items-center">
-          <div className="sm:text-3xl text-lg font-sans tracking-wider font-bold text-blue-200 ml-2 mr-4">
+          <div className="text-lg sm:text-2xl lg:text-3xl font-sans tracking-wider font-bold text-blue-200 ml-2 mr-4">
             Comments
           </div>
           {blogPost.comments &&
             blogPost.comments !== undefined &&
             blogPost.comments.length > 0 && (
               <button
-                className="p-2 sm:w-1/6 w-2/3 rounded-lg sm:text-sm text-xs bg-gray-800 hover:bg-gray-700 focus:bg-gray-700 font-open text-gray-100"
+                className="p-2 w-2/3 sm:w-1/3 lg:w-1/6 rounded-lg sm:text-sm text-xs bg-gray-800 hover:bg-gray-700 focus:bg-gray-700 font-open text-gray-100"
                 onClick={() => setShowComments((prev) => !prev)}
               >
                 {showComments ? 'Hide' : 'Show'} Comments
@@ -748,7 +748,7 @@ export default function View() {
             <div className="w-full mb-2 p-2 flex justify-between items-center">
               <textarea
                 title="CommentBox"
-                className="sm:w-5/6 w-4/5 p-2 rounded-lg bg-gray-700 text-gray-400 placeholder-gray-500 sm:text-base text-xs"
+                className="lg:w-5/6 w-4/5 p-2 rounded-lg bg-gray-700 text-gray-400 placeholder-gray-500 sm:text-base text-xs"
                 placeholder="Enter a comment..."
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
@@ -766,7 +766,11 @@ export default function View() {
               </button>
             </div>
           )}
-        <span className="w-full mb-2 sm:mt-1 mt-2 bg-blue-800 flex justify-between items-center p-1 rounded"></span>
+        <span
+          className={`w-full mb-2 ${
+            editingComment ? 'mt-4 lg:mt-3' : '-mt-2 lg:-mt-1'
+          } bg-blue-800 flex justify-between items-center p-1 rounded`}
+        ></span>
         {blogPost.comments &&
         blogPost.comments !== undefined &&
         editComment.length <= 0 &&
@@ -782,7 +786,7 @@ export default function View() {
               <div
                 className={`${
                   loggedInUser.username && loggedInUser.username !== undefined
-                    ? 'sm:w-4/5'
+                    ? 'lg:w-4/5'
                     : ''
                 } w-full flex pr-2`}
               >
@@ -799,7 +803,7 @@ export default function View() {
                 />
                 <div className="w-full flex flex-col">
                   <button
-                    className="font-open sm:text-lg text-base text-left text-blue-400 underline hover:no-underline focus:no-underline"
+                    className="font-open lg:text-lg text-base text-left text-blue-400 underline hover:no-underline focus:no-underline"
                     onClick={() =>
                       history.push(
                         `/profile/${getCommentOwner(comm.uid).username}`
@@ -836,7 +840,7 @@ export default function View() {
                checkCommentLike(comm.commentID) ? 'fill' : 'line'
              } ${
                       checkCommentLike(comm.commentID) ? 'bg-gray-700' : ''
-                    } sm:text-lg text-xs`}
+                    } text-xs sm:text-base lg:text-lg`}
                     onClick={() => likeComment(comm.commentID, comm.uid)}
                   ></button>
                   {comm.uid === loggedInUser.uid && (
@@ -847,7 +851,7 @@ export default function View() {
                editComment === comm.commentID ? 'fill' : 'line'
              } ${
                         editComment === comm.commentID ? 'bg-gray-700' : ''
-                      } sm:text-lg text-xs`}
+                      } text-xs sm:text-base lg:text-lg`}
                       onClick={() =>
                         prepareEditComment(comm.commentID, comm.comment)
                       }
@@ -855,7 +859,7 @@ export default function View() {
                   )}
                   {comm.uid === loggedInUser.uid && (
                     <button
-                      className={`w-3/10 h-full text-center rounded-lg p-2 hover:bg-gray-800 focus:bg-gray-800 text-red-300 ri-delete-bin-line sm:text-lg text-xs`}
+                      className={`w-3/10 h-full text-center rounded-lg p-2 hover:bg-gray-800 focus:bg-gray-800 text-red-300 ri-delete-bin-line text-xs sm:text-base lg:text-lg`}
                       onClick={() => deleteComment(comm.commentID)}
                     ></button>
                   )}
@@ -879,7 +883,7 @@ export default function View() {
                   editingComment.length > 0
                     ? 'hover:bg-gray-700 focus:bg-gray-700'
                     : 'opacity-50'
-                } sm:h-10 h-8 sm:text-lg text-xs font-open text-gray-400`}
+                } sm:h-10 h-8 text-xs sm:text-base lg:text-lg font-open text-gray-400`}
                 onClick={() =>
                   editingComment.length > 0 ? postComment(true) : null
                 }
@@ -888,7 +892,7 @@ export default function View() {
               </button>
               <button
                 className={`sm:w-4/5 w-full rounded-lg bg-gray-800 hover:bg-gray-700 focus:bg-gray-700
-                  } sm:h-10 h-8 sm:text-lg text-xs font-open text-gray-400 mt-2`}
+                  } sm:h-10 h-8 text-xs sm:text-base lg:text-lg font-open text-gray-400 mt-2`}
                 onClick={() =>
                   editingComment.length > 0 ? cancelEditComment() : null
                 }
@@ -898,21 +902,21 @@ export default function View() {
             </div>
           </div>
         ) : (
-          <div className="w-full text-center sm:text-xl text-base font-rale tracking-wider text-yellow-300 my-2">
+          <div className="w-full text-center text-base sm:text-lg lg:text-xl font-rale tracking-wider text-yellow-300 my-2">
             No comments yet.
           </div>
         )}
       </div>
     </div>
   ) : (
-    <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-28 pt-20">
-      <div className="w-full flex sm:flex-row flex-col sm:justify-between bg-gray-900 rounded-lg p-1">
-        <div className="sm:w-3/4 w-full mt-2">
+    <div className="w-full flex flex-col items-center px-2 sm:px-3 lg:px-20 pb-4 pt-20 sm:pt-24 lg:pt-28">
+      <div className="w-full flex lg:flex-row flex-col lg:justify-between bg-gray-900 rounded-lg pt-1 px-1 pb-2">
+        <div className="lg:w-3/4 w-full mt-2">
           <div className="sm:my-0 my-1 w-full bg-gray-800 p-6 rounded-lg sm:mr-4 animate-pulse"></div>
           <div className="w-full bg-gray-800 p-4 mt-2 rounded-lg sm:mr-4 animate-pulse"></div>
         </div>
 
-        <div className="sm:w-1/4 w-full h-full flex items-center bg-gray-700 rounded-lg p-2 border-2 border-gray-900 sm:ml-2 smLmt-0 mt-2">
+        <div className="lg:w-1/4 w-full h-full flex items-center bg-gray-700 rounded-lg p-2 border-2 border-gray-900 lg:ml-2 lg:mt-1 mt-2">
           <div className="w-1/5 h-full flex justify-center items-center">
             <div className="h-16 w-16 z-0 object-cover bg-gray-900 rounded-full animate-pulse" />
           </div>
@@ -942,13 +946,13 @@ export default function View() {
 
       <div className="w-full flex justify-start flex-wrap	">
         <div className="flex items-center rounded-lg bg-gray-900 p-1 flex-wrap	">
-          <div className="text-left text-blue-200 font-open sm:text-base text-xs mr-1 rounded py-2 px-4 bg-gray-800">
+          <div className="text-left text-blue-200 font-open text-xs sm:text-sm lg:text-base mr-1 rounded py-2 px-4 bg-gray-800">
             Views
           </div>
-          <div className="text-left text-blue-200 font-open sm:text-base text-xs mr-1 rounded py-2 px-4 bg-gray-800">
+          <div className="text-left text-blue-200 font-open text-xs sm:text-sm lg:text-base mr-1 rounded py-2 px-4 bg-gray-800">
             Likes
           </div>
-          <div className="text-left text-blue-200 font-open sm:text-base text-xs rounded py-2 px-4 bg-gray-800">
+          <div className="text-left text-blue-200 font-open text-xs sm:text-sm lg:text-base rounded py-2 px-4 bg-gray-800">
             Comments
           </div>
         </div>

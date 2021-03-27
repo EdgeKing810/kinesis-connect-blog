@@ -318,9 +318,9 @@ export default function Admin() {
 
   const LoginScreen = (
     <div className="w-full flex items-center justify-center">
-      <div className="sm:w-1/3 w-5/6 flex flex-col items-center justify-center">
+      <div className="w-5/6 sm:w-2/3 lg:w-1/3 flex flex-col items-center justify-center">
         <div className="w-full flex flex-col items-center justify-center z-50 bg-gray-900 py-8 rounded-lg border-2 border-blue-500 opacity-95">
-          <div className="sm:text-5xl text-3xl tracking-widest font-bold font-sans text-yellow-300 w-full text-center my-4">
+          <div className="text-3xl sm:text-4xl lg:text-5xl tracking-widest font-bold font-sans text-yellow-300 w-full text-center my-4">
             Login
           </div>
 
@@ -349,7 +349,7 @@ export default function Admin() {
                 type="text"
                 name="username"
                 placeholder="Enter Username..."
-                className="rounded-lg p-2 bg-gray-800 text-gray-200 placeholder-gray-300 sm:text-lg text-md w-4/5 mt-4"
+                className="rounded-lg p-2 bg-gray-800 text-gray-200 placeholder-gray-300 sm:text-lg text-base w-4/5 mt-4"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
@@ -358,13 +358,13 @@ export default function Admin() {
                 type="password"
                 name="password"
                 placeholder="Enter Password..."
-                className="rounded-lg p-2 bg-gray-800 text-gray-200 placeholder-gray-300 sm:text-lg text-md w-4/5 mt-2"
+                className="rounded-lg p-2 bg-gray-800 text-gray-200 placeholder-gray-300 sm:text-lg text-base w-4/5 mt-2"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
 
               <a
-                className="w-4/5 font-open sm:text-md text-sm mt-4 text-green-300 hover:text-yellow-300 focus:text-yellow-300"
+                className="w-4/5 font-open sm:text-base text-sm mt-4 text-green-300 hover:text-yellow-300 focus:text-yellow-300"
                 href="https://connect.kinesis.games"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -390,9 +390,9 @@ export default function Admin() {
   );
 
   const adminInterface = (
-    <div className="w-full flex flex-col items-center sm:px-16 px-4 sm:pt-28 pt-24">
+    <div className="w-full flex flex-col items-center px-4 lg:px-16 pt-20 sm:pt-24 lg:pt-28">
       <div className="w-full p-2 rounded-lg bg-gray-900 my-4 sm:mx-8">
-        <div className="sm:text-2xl  font-sans tracking-wide text-bold text-gray-300 w-full mb-2 flex items-center justify-between">
+        <div className="sm:text-xl lg:text-2xl font-sans tracking-wide text-bold text-gray-300 w-full mb-2 flex items-center justify-between">
           Manage Blog Posts {`(${myPosts.length})`}
           <button
             className="sm:text-xl text-lg ri-menu-add-fill rounded p-2 hover:bg-gray-800 focus:bg-gray-800 w-10 h-10 text-gray-100 flex items-center justify-center"
@@ -408,12 +408,12 @@ export default function Admin() {
 
               return (
                 <div
-                  className={`w-full flex justify-between flex h-full items-center py-2 ${
+                  className={`w-full flex justify-between h-full items-center py-2 ${
                     i < myPosts.length - 1 ? 'border-b-2 border-gray-700' : ''
                   }`}
                   key={post.blogID}
                 >
-                  <div className="sm:w-3/4 w-3/5 flex items-center">
+                  <div className="lg:w-3/4 w-3/5 flex items-center">
                     <button
                       className={`w-4 h-4 mr-2 rounded bg-${
                         published ? 'green' : 'yellow'
@@ -457,7 +457,7 @@ export default function Admin() {
                     <button
                       className={`sm:text-xl text-lg ri-inbox-${
                         published ? '' : 'un'
-                      }archive-line rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 text-gray-100 flex items-center justify-center text-gray-100 hover:text-${
+                      }archive-line rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 flex items-center justify-center text-gray-100 hover:text-${
                         published ? 'yellow' : 'green'
                       }-300 focus:text-${published ? 'yellow' : 'green'}-300`}
                       title={published ? 'Mark as Draft' : 'Publish'}
@@ -465,13 +465,13 @@ export default function Admin() {
                     ></button>
 
                     <button
-                      className="sm:text-xl text-lg ri-edit-2-line rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 text-gray-100 flex items-center justify-center text-gray-100 hover:text-blue-300 focus:text-blue-300"
+                      className="sm:text-xl text-lg ri-edit-2-line rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 flex items-center justify-center text-gray-100 hover:text-blue-300 focus:text-blue-300"
                       title="Edit"
                       onClick={() => history.push(`/edit/${post.blogID}`)}
                     ></button>
 
                     <button
-                      className="sm:text-xl text-lg ri-delete-bin-2-line rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 text-gray-100 flex items-center justify-center text-gray-100 hover:text-red-300 focus:text-red-300"
+                      className="sm:text-xl text-lg ri-delete-bin-2-line rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 flex items-center justify-center text-gray-100 hover:text-red-300 focus:text-red-300"
                       title="Delete"
                       onClick={() => deletePost(post.blogID)}
                     ></button>
@@ -482,7 +482,7 @@ export default function Admin() {
             {myPosts && myPosts !== undefined && limit < myPosts.length && (
               <div className="w-full flex justify-center my-2">
                 <button
-                  className="sm:w-1/3 w-4/5 p-2 bg-gray-800 hover:bg-blue-700 focus:bg-blue-700 sm:text-lg text-sm font-bold text-gray-100 rounded-lg tracking-wide font-sans"
+                  className="lg:w-1/3 w-4/5 p-2 bg-gray-800 hover:bg-blue-700 focus:bg-blue-700 text-sm sm:text-base lg:text-lg font-bold text-gray-100 rounded-lg tracking-wide font-sans"
                   onClick={() => setLimit((prev) => prev + 5)}
                 >
                   View more
@@ -491,14 +491,14 @@ export default function Admin() {
             )}
           </div>
         ) : (
-          <div className="w-full text-center rounded-lg bg-yellow-300 p-2 sm:text-md text-sm tracking-wide text-gray-900 flex sm:flex-row flex-col items-center justify-center">
+          <div className="w-full text-center rounded-lg bg-yellow-300 p-2 sm:text-base text-sm tracking-wide text-gray-900 flex lg:flex-row flex-col items-center justify-center">
             No blog posts created yet...
           </div>
         )}
       </div>
 
       <div className="w-full p-2 rounded-lg bg-gray-900 my-4 sm:mx-8">
-        <div className="sm:text-2xl  font-sans tracking-wide text-bold text-gray-300 w-full mb-2 flex items-center justify-between">
+        <div className="sm:text-xl lg:text-2xl font-sans tracking-wide text-bold text-gray-300 w-full mb-2 flex items-center justify-between">
           Manage Notifications{' '}
           {`(${
             loggedInUser.notifications &&
@@ -511,7 +511,7 @@ export default function Admin() {
         {loggedInUser.notifications &&
         loggedInUser.notifications !== undefined &&
         loggedInUser.notifications.length > 0 ? (
-          <div className="w-full border-2 px-2 border-gray-700">
+          <div className="w-full border-2 px-2 pb-2 border-gray-700">
             {loggedInUser.notifications
               .slice(0, notificationLimit)
               .map((notification, i) => {
@@ -550,9 +550,9 @@ export default function Admin() {
                 }
 
                 const description = (
-                  <div className="w-full h-full flex items-center">
+                  <div className="w-full h-full flex items-center sm:py-1">
                     <div
-                      className={`sm:w-16 sm:h-16 w-12 h-10 rounded-full ml-1 mr-2 flex items-center justify-center sm:text-2xl text-sm ${imgEvenType(
+                      className={`w-12 h-8 sm:w-14 sm:h-12 lg:w-18 lg:h-16 rounded-full ml-1 mr-2 flex items-center justify-center sm:text-2xl text-sm ${imgEvenType(
                         notification.type
                       )} bg-gray-${notification.seen ? '900' : '700'}`}
                     />
@@ -576,7 +576,7 @@ export default function Admin() {
 
                 return (
                   <div
-                    className={`w-full flex justify-between flex h-full items-center p-2 mt-2 bg-gray-${
+                    className={`w-full flex justify-between h-full items-center p-2 mt-2 bg-gray-${
                       notification.seen ? '900' : '700'
                     } ${
                       i < loggedInUser.notifications.length - 1
@@ -600,11 +600,11 @@ export default function Admin() {
                       </button>
                     </div>
 
-                    <div className="sm:w-1/6 w-1/5 bg-gray-800 rounded-lg flex justify-end p-2">
+                    <div className="w-1/5 sm:w-1/6 bg-gray-800 rounded-lg flex justify-end p-2">
                       <button
                         className={`sm:text-xl text-lg ri-checkbox-${
                           notification.seen ? 'line' : 'blank-line'
-                        } rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 text-gray-100 flex items-center justify-center text-gray-100 hover:text-${
+                        } rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 flex items-center justify-center text-gray-100 hover:text-${
                           notification.seen ? 'green' : 'blue'
                         }-300 focus:text-${
                           notification.seen ? 'green' : 'blue'
@@ -619,7 +619,7 @@ export default function Admin() {
                       ></button>
 
                       <button
-                        className="sm:text-xl text-lg ri-delete-bin-2-line rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 text-gray-100 flex items-center justify-center text-gray-100 hover:text-red-300 focus:text-red-300"
+                        className="sm:text-xl text-lg ri-delete-bin-2-line rounded p-2 hover:bg-gray-900 focus:bg-gray-900 sm:w-10 w-6 sm:h-10 h-6 flex items-center justify-center text-gray-100 hover:text-red-300 focus:text-red-300"
                         title="Delete notification"
                         onClick={() =>
                           deleteNotification(notification.notificationID)
@@ -634,7 +634,7 @@ export default function Admin() {
               limit < notificationLimit.length && (
                 <div className="w-full flex justify-center my-2">
                   <button
-                    className="sm:w-1/3 w-4/5 p-2 bg-gray-800 hover:bg-blue-700 focus:bg-blue-700 sm:text-lg text-sm font-bold text-gray-100 rounded-lg tracking-wide font-sans"
+                    className="lg:w-1/3 w-4/5 p-2 bg-gray-800 hover:bg-blue-700 focus:bg-blue-700 sm:text-lg text-sm font-bold text-gray-100 rounded-lg tracking-wide font-sans"
                     onClick={() => setNotificationLimit((prev) => prev + 5)}
                   >
                     View more
@@ -643,7 +643,7 @@ export default function Admin() {
               )}
           </div>
         ) : (
-          <div className="w-full text-center rounded-lg bg-yellow-300 p-2 sm:text-md text-sm tracking-wide text-gray-900 flex sm:flex-row flex-col items-center justify-center">
+          <div className="w-full text-center rounded-lg bg-yellow-300 p-2 sm:text-base text-sm tracking-wide text-gray-900 flex sm:flex-row flex-col items-center justify-center">
             No notifications
           </div>
         )}
@@ -654,7 +654,7 @@ export default function Admin() {
   return loggedInUser.username && loggedInUser.username !== undefined ? (
     adminInterface
   ) : (
-    <div className="h-11/12 w-full bg-admin-bg bg-cover bg-center flex justify-center items-center h-screen sm:pt-28 pt-24">
+    <div className="w-full bg-admin-bg bg-cover bg-center flex justify-center items-center h-screen pt-24 sm:pt-0 lg:pt-28">
       {LoginScreen}
     </div>
   );

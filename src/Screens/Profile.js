@@ -384,9 +384,9 @@ export default function View() {
   };
 
   return (
-    <div className="w-full flex flex-col items-center sm:px-20 px-2 pb-4 sm:pt-28 pt-24">
+    <div className="w-full flex flex-col items-center px-2 sm:px-3 lg:px-20 pb-4 pt-24 sm:pt-26 lg:pt-28">
       <div
-        className="w-full flex flex-col items-center rounded-lg mt-2 flex p-2 border-2 border-gray-900 bg-gradient-to-r from-pink-400 via-indigo-500 to-purple-700"
+        className="w-full flex flex-col items-center rounded-lg mt-2 p-2 border-2 border-gray-900 bg-gradient-to-r from-pink-400 via-indigo-500 to-purple-700"
         style={
           blogProfile.banner_img && blogProfile.banner_img.length > 8
             ? {
@@ -400,7 +400,7 @@ export default function View() {
         {loggedInUser.username &&
           loggedInUser.username !== undefined &&
           blogProfile.uid === loggedInUser.uid && (
-            <div className="absolute rounded-full p-1 left-0 border-2 border-gray-200 sm:ml-24 ml-4 flex items-center bg-gray-900 text-gray-100 sm:text-lg text-xsss sm:w-1/8 w-3/10 justify-between">
+            <div className="absolute rounded-full p-1 left-0 border-2 border-gray-200 ml-4 sm:ml-8 lg:ml-24 flex items-center bg-gray-900 text-gray-100 sm:text-lg text-xsss w-3/10 sm:w-2/8 lg:w-1/8 justify-between">
               Change banner image
               <div className="sm:w-10 sm:h-10 w-4 h-4 bg-blue-400 ml-2 rounded-full">
                 <input
@@ -408,7 +408,7 @@ export default function View() {
                   id="preview"
                   name="preview"
                   accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
-                  className="w-full h-full sm:text-md text-sm opacity-0"
+                  className="w-full h-full sm:text-base text-sm opacity-0"
                   onChange={(e) => {
                     e.persist();
                     uploadImage(e, true);
@@ -421,7 +421,7 @@ export default function View() {
         {loggedInUser.username &&
           loggedInUser.username !== undefined &&
           blogProfile.uid === loggedInUser.uid && (
-            <div className="absolute rounded-full p-1 left-0 border-2 border-gray-200 sm:ml-24 ml-4 flex items-center bg-gray-900 text-gray-100 sm:text-lg text-xsss sm:w-1/8 w-3/10 justify-between sm:mt-16 mt-8">
+            <div className="absolute rounded-full p-1 left-0 border-2 border-gray-200 ml-4 sm:ml-8 lg:ml-24 flex items-center bg-gray-900 text-gray-100 sm:text-lg text-xsss sm:w-1/8 w-3/10 justify-between mt-8 sm:mt-14 lg:mt-16">
               Change profile picture
               <div className="sm:w-10 sm:h-10 w-4 h-4 bg-yellow-400 ml-2 rounded-full">
                 <input
@@ -429,7 +429,7 @@ export default function View() {
                   id="preview"
                   name="preview"
                   accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
-                  className="w-full h-full sm:text-md text-sm opacity-0"
+                  className="w-full h-full sm:text-base text-sm opacity-0"
                   onChange={(e) => {
                     e.persist();
                     uploadImage(e, false);
@@ -449,11 +449,11 @@ export default function View() {
                 : tmpAvatar
             }
             alt="p.pic"
-            className="sm:h-40 sm:w-40 h-24 w-24 border-4 rounded-full border-dotted p-1 border-gray-900 object-scale-down"
+            className="h-24 w-24 sm:h-32 sm:w-32 lg:h-40 lg:w-40 border-4 rounded-full border-dotted p-1 border-gray-900 object-scale-down"
           />
         </div>
 
-        <div className="w-full flex justify-center mt-4 font-bold sm:text-2xl text-lg text-blue-500 tracking-wide font-sans bg-gray-900 opacity-75 rounded-lg p-2">
+        <div className="w-full flex justify-center mt-4 font-bold text-lg sm:text-xl lg:text-2xl text-blue-500 tracking-wide font-sans bg-gray-900 opacity-75 rounded-lg p-2">
           {blogProfile.name && blogProfile.name}{' '}
           <span className="text-yellow-500 ml-1">
             {`(${
@@ -464,54 +464,52 @@ export default function View() {
           </span>
         </div>
 
-        {blogProfile.blog_description &&
-        blogProfile.blog_description.length > 0 ? (
-          isEditingBio ? (
-            <div className="w-full flex justify-center items-center my-2">
-              <textarea
-                className="sm:w-2/3 w-4/5 flex justify-center p-2 bg-gray-400 sm:text-lg text-xs placeholder-gray-600 rounded-lg text-gray-800 tracking-wide font-sans"
-                placeholder="Enter something..."
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                style={{ minHeight: '4rem', maxHeight: '6rem' }}
-              />
+        {isEditingBio ? (
+          <div className="w-full flex justify-center items-center mt-2">
+            <textarea
+              className="lg:w-2/3 w-4/5 flex justify-center p-2 bg-gray-400 text-xs sm:text-base lg:text-lg placeholder-gray-600 rounded-lg text-gray-800 tracking-wide font-sans"
+              placeholder="Enter something..."
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              style={{ minHeight: '4rem', maxHeight: '6rem' }}
+            />
 
-              <button
-                title="Discard"
-                className={`sm:w-12 sm:h-12 w-10 h-10 ml-2 p-2 sm:text-2xl text-md rounded-full ri-close-line bg-gray-600 hover:bg-gray-900 focus:bg-gray-900 flex justify-center items-center text-red-300`}
-                onClick={() => cancelBio()}
-              />
+            <button
+              title="Discard"
+              className={`sm:w-12 sm:h-12 w-10 h-10 ml-2 p-2 text-base sm:text-xl lg:text-2xl rounded-full ri-close-line bg-gray-700 hover:bg-gray-900 focus:bg-gray-900 flex justify-center items-center text-red-300`}
+              onClick={() => cancelBio()}
+            />
 
-              <button
-                title="Save"
-                className={`sm:w-12 sm:h-12 w-10 h-10 ml-2 p-2 sm:text-2xl text-md rounded-full ri-check-line bg-gray-600 ${
-                  bio.length > 0
-                    ? 'hover:bg-gray-900 focus:bg-gray-900'
-                    : 'opacity-50'
-                } flex justify-center items-center text-green-300`}
-                onClick={() => (bio.length > 0 ? submitBio() : null)}
-              />
-            </div>
-          ) : (
-            <div className="w-full flex justify-center items-center my-2">
-              <div className="sm:w-2/3 w-4/5 flex justify-center py-2 bg-gray-400 sm:text-lg text-xs rounded-lg text-gray-800 tracking-wide font-sans">
-                {blogProfile.blog_description}
-              </div>
-              {loggedInUser.username &&
-                loggedInUser.username !== undefined &&
-                loggedInUser.uid === blogProfile.uid && (
-                  <button
-                    title="Edit bio"
-                    className={`sm:w-12 sm:h-12 w-10 h-10 ml-2 p-2 sm:text-2xl text-md rounded-full ri-pencil-line bg-gray-600 hover:bg-gray-900 focus:bg-gray-900 flex justify-center items-center text-yellow-300`}
-                    onClick={() =>
-                      prepareEditingBio(blogProfile.blog_description)
-                    }
-                  />
-                )}
-            </div>
-          )
+            <button
+              title="Save"
+              className={`sm:w-12 sm:h-12 w-10 h-10 ml-2 p-2 text-base sm:text-xl lg:text-2xl rounded-full ri-check-line bg-gray-700 ${
+                bio.length > 0
+                  ? 'hover:bg-gray-900 focus:bg-gray-900'
+                  : 'opacity-50'
+              } flex justify-center items-center text-green-300`}
+              onClick={() => (bio.length > 0 ? submitBio() : null)}
+            />
+          </div>
         ) : (
-          ''
+          <div className="w-full flex justify-center items-center mt-2">
+            {blogProfile.blog_description &&
+              blogProfile.blog_description.length > 0 && (
+                <div className="sm:w-2/3 w-4/5 flex justify-center py-2 bg-gray-400 sm:text-lg text-xs rounded-lg text-gray-800 tracking-wide font-sans">
+                  {blogProfile.blog_description}
+                </div>
+              )}
+            {loggedInUser.username &&
+              loggedInUser.username !== undefined &&
+              loggedInUser.uid === blogProfile.uid && (
+                <button
+                  title="Edit bio"
+                  className={`sm:w-12 sm:h-12 w-10 h-10 ml-2 p-2 sm:text-2xl text-base rounded-full ri-pencil-line bg-gray-700 hover:bg-gray-900 focus:bg-gray-900 flex justify-center items-center text-yellow-300`}
+                  onClick={() =>
+                    prepareEditingBio(blogProfile.blog_description)
+                  }
+                />
+              )}
+          </div>
         )}
 
         {loggedInUser.username &&
@@ -519,9 +517,9 @@ export default function View() {
           blogProfile.uid !== loggedInUser.uid && (
             <div className="w-full flex justify-center">
               <button
-                className={`sm:w-1/5 w-4/5 my-2 flex items-center justify-center mx-2 sm:text-lg text-sm text-${
+                className={`w-4/5 sm:w-2/5 lg:w-1/5 my-2 flex items-center justify-center mx-2 sm:text-lg text-sm text-${
                   followingAuthor ? 'red' : 'blue'
-                }-400 hover:bg-gray-900 focus:bg-gray-900 bg-gray-800 p-2 rounded-full`}
+                }-400 hover:bg-gray-900 focus:bg-gray-900 bg-gray-800 sm:p-3 p-2 rounded-full`}
                 onClick={() => followUser(blogProfile.uid)}
               >
                 <div>{followingAuthor ? 'Unfollow user' : 'Follow user'}</div>
@@ -537,13 +535,13 @@ export default function View() {
           )}
 
         <div className="w-full flex justify-between mt-2">
-          <div className="w-3/10 p-2 rounded-lg bg-gray-900 text-center sm:text-lg text-xs font-open text-gray-200 flex items-center justify-center">
+          <div className="w-3/10 p-2 rounded-lg bg-gray-900 text-center text-xs sm:text-base lg:text-lg font-open text-gray-200 flex items-center justify-center">
             Followers:{' '}
             {blogProfile.blog_followers_amount
               ? blogProfile.blog_followers_amount
               : 0}
           </div>
-          <div className="w-3/10 p-2 rounded-lg bg-gray-900 text-center sm:text-lg text-xs font-open text-gray-200 flex items-center justify-center">
+          <div className="w-3/10 p-2 rounded-lg bg-gray-900 text-center text-xs sm:text-base lg:text-lg font-open text-gray-200 flex items-center justify-center">
             Following:{' '}
             {blogProfile.blog_following_amount
               ? blogProfile.blog_following_amount
@@ -553,7 +551,7 @@ export default function View() {
           loggedInUser.username !== undefined &&
           loggedInUser.uid === blogProfile.uid ? (
             <button
-              className="w-3/10 p-2 rounded-lg bg-gray-900 text-center sm:text-lg text-xs font-open text-gray-200 hover:bg-gray-800 focus:bg-gray-800 flex items-center justify-center"
+              className="w-3/10 p-2 rounded-lg bg-gray-900 text-center text-xs sm:text-base lg:text-lg font-open text-gray-200 hover:bg-gray-800 focus:bg-gray-800 flex items-center justify-center"
               onClick={() => history.push('/admin')}
             >
               Access Admin Interface
@@ -572,7 +570,7 @@ export default function View() {
       </div>
 
       {currentPosts && currentPosts.length > 0 ? (
-        <div className="w-full sm:text-4xl text-lg text-gray-100 font-bold tracking-widest mt-4 ">
+        <div className="w-full text-lg sm:text-3xl lg:text-4xl text-gray-100 font-bold tracking-widest mt-4 ">
           Blog Posts {`(${currentPosts.length})`}
           {currentPosts.slice(0, limit).map((post) => (
             <button
@@ -600,7 +598,7 @@ export default function View() {
                 {post.subtitle}
               </div>
 
-              <div className="sm:text-sm text-xs tracking-wide font-normal mt-2 text-gray-200 bg-gray-900 opacity-75 rounded px-2 w-full text-left">
+              <div className="sm:text-sm text-xs tracking-wide font-normal mt-1 text-gray-200 bg-gray-900 opacity-75 rounded px-2 w-full text-left">
                 Last updated on{' '}
                 <span className="text-green-300">
                   {convertDate(post.updated_on)
@@ -614,7 +612,7 @@ export default function View() {
           {limit < myPosts.length && (
             <div className="w-full flex justify-center mt-4">
               <button
-                className="sm:w-1/3 w-4/5 p-2 bg-gray-900 hover:bg-blue-700 focus:bg-blue-700 sm:text-lg text-sm font-bold text-gray-100 rounded-lg tracking-wide font-sans"
+                className="lg:w-1/3 w-4/5 p-2 bg-gray-900 hover:bg-blue-700 focus:bg-blue-700 sm:text-lg text-sm font-bold text-gray-100 rounded-lg tracking-wide font-sans"
                 onClick={() => setLimit((prev) => prev + 5)}
               >
                 View more
