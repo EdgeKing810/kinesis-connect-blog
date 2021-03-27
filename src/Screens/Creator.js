@@ -36,6 +36,7 @@ export default function Creator() {
   const [sliderImages, setSliderImages] = useState([]);
 
   const [imageAdd, setImageAdd] = useState(false);
+  const [isPreview, setIsPreview] = useState(false);
 
   const history = useHistory();
   const alert = useAlert();
@@ -496,22 +497,33 @@ export default function Creator() {
         </div>
       </div>
 
-      <div className="h-full w-full bg-gray-800 flex sm:flex-row flex-col justify-between items-center mt-4">
-        <div className="sm:w-49/100 w-full">
-          <div className="w-full flex items-center sm:mb-2">
-            <div className="sm:text-3xl text-xl font-sans font-bold tracking-wider text-gray-300 mr-2">
-              Content
-            </div>
-            {!imageAdd && (
-              <button
-                title="Insert image"
-                className="sm:text-3xl text-xl text-gray-300 mr-2 sm:w-16 sm:h-12 w-10 h-10 rounded ri-image-add-fill bg-gray-700 hover:bg-gray-900 focus:bg-gray-900 flex items-center justify-center"
-                onClick={() => setImageAdd(true)}
-              ></button>
-            )}
+      <div className="h-full w-full bg-gray-800 flex flex-col justify-between items-center mt-4">
+        <div className="w-full flex items-center sm:mb-2">
+          <div className="sm:text-3xl text-xl font-sans font-bold tracking-wider text-gray-300 mr-2">
+            Content
           </div>
+          {!imageAdd && (
+            <button
+              title="Insert image"
+              className="sm:text-3xl text-xl text-gray-300 mr-2 sm:w-16 sm:h-12 w-10 h-10 rounded ri-image-add-fill bg-gray-700 hover:bg-gray-900 focus:bg-gray-900 flex items-center justify-center"
+              onClick={() => setImageAdd(true)}
+            ></button>
+          )}
+          <button
+            title={isPreview ? 'Unpreview' : 'Preview'}
+            className={`sm:text-2xl text-lg text-gray-300 mr-2 sm:h-12 h-10 rounded font-bold flex items-center justify-center px-2 ${
+              isPreview
+                ? 'bg-gray-900 hover:bg-gray-700 focus:bg-gray-700'
+                : 'bg-gray-700 hover:bg-gray-900 focus:bg-gray-900'
+            }`}
+            onClick={() => setIsPreview((prev) => !prev)}
+          >
+            Preview
+          </button>
+        </div>
 
-          {!imageAdd ? (
+        {!imageAdd ? (
+          !isPreview ? (
             <textarea
               className="w-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-900 text-gray-300 p-4 placeholder-gray-500 overflow-y-scroll"
               value={content}
@@ -525,89 +537,87 @@ export default function Creator() {
             />
           ) : (
             <div
-              className="w-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-900 text-gray-300 p-4 placeholder-gray-500 flex flex-col justify-around"
-              style={{ height: '30rem' }}
+              className="w-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-700 text-gray-300 p-4 overflow-y-scroll"
+              style={{
+                height: '30rem',
+                minHeight: '20rem',
+                maxHeight: '40rem',
+              }}
             >
-              <div className="sm:text-xl text-lg font-sans tracking-wider text-blue-300 w-full text-center ">
-                Click on an image to insert it
-              </div>
-              <div className="w-full flex items-center overflow-x-scroll h-1/2">
-                {links.map((l, i) => (
-                  <button
-                    className="flex-shrink-0 flex-grow-0 sm:w-48 sm:h-48 w-40 h-40 border-2 border-gray-900 hover:border-blue-200 focus:border-blue-200"
-                    onClick={() => {
-                      setContent(
-                        (prev) => prev + `\n![](${UPLOADSURL}/${l.link})`
-                      );
-                      setImageAdd(false);
-                    }}
-                  >
-                    <img
-                      key={l.linkID}
-                      title={l.link}
-                      src={`${UPLOADSURL}/${l.link}`}
-                      alt="not available"
-                      className={`w-full h-full object-scale-down ${
-                        i < links.length - 1 && 'sm:mr-2 mr-1'
-                      } `}
-                    />
-                  </button>
-                ))}
-              </div>
-              <div className="w-full flex items-center justify-around">
-                <input
-                  type="file"
-                  title="Upload a new image"
-                  id="image"
-                  name="image"
-                  accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
-                  className="sm:w-2/5 w-9/20 bg-blue-300 text-blue-900 hover:bg-blue-400 focus:bg-blue-400 rounded-lg p-4 sm:text-xl text-sm overflow-hidden"
-                  onChange={(e) => {
-                    e.persist();
-                    alert.info('Uploading...');
-                    uploadImage(e, false, true);
-                  }}
-                />
-                <button
-                  className="sm:w-2/5 w-9/20 bg-red-300 text-red-900 hover:bg-red-400 focus:bg-red-400 rounded-lg p-4 sm:text-xl text-lg font-bold tracking-wide"
-                  onClick={() => setImageAdd(false)}
-                >
-                  Back
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="sm:w-49/100 w-full">
-          <div className="w-full sm:text-3xl text-xl font-sans font-bold tracking-wider text-gray-300 sm:mb-2">
-            Preview
-          </div>
-
-          <div
-            className="w-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-700 text-gray-300 p-4 overflow-y-scroll"
-            style={{ height: '30rem', minHeight: '20rem', maxHeight: '40rem' }}
-          >
-            {sliderImages.length > 0 && (
-              <div className="w-full flex justify-center">
-                <div className="sm:w-3/5 w-5/6 mb-2">
-                  <Slider {...settings}>
-                    {sliderImages.map((im, i) => (
-                      <img
-                        src={`${UPLOADSURL}/${im}`}
-                        alt={`slider-${i}`}
-                        key={`slider-${i}`}
-                        className="sm:h-80 h-60 object-scale-down"
-                      />
-                    ))}
-                  </Slider>
+              {sliderImages.length > 0 && (
+                <div className="w-full flex justify-center">
+                  <div className="sm:w-3/5 w-5/6 mb-2">
+                    <Slider {...settings}>
+                      {sliderImages.map((im, i) => (
+                        <img
+                          src={`${UPLOADSURL}/${im}`}
+                          alt={`slider-${i}`}
+                          key={`slider-${i}`}
+                          className="sm:h-80 h-60 object-scale-down"
+                        />
+                      ))}
+                    </Slider>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <Parser content={content} />
+              <Parser content={content} />
+            </div>
+          )
+        ) : (
+          <div
+            className="w-full sm:my-0 my-2 rounded-lg sm:text-sm text-xs bg-gray-900 text-gray-300 p-4 placeholder-gray-500 flex flex-col justify-around"
+            style={{ height: '30rem' }}
+          >
+            <div className="sm:text-xl text-lg font-sans tracking-wider text-blue-300 w-full text-center ">
+              Click on an image to insert it
+            </div>
+            <div className="w-full flex items-center overflow-x-scroll h-1/2">
+              {links.map((l, i) => (
+                <button
+                  className="flex-shrink-0 flex-grow-0 sm:w-48 sm:h-48 w-40 h-40 border-2 border-gray-900 hover:border-blue-200 focus:border-blue-200"
+                  onClick={() => {
+                    setContent(
+                      (prev) => prev + `\n![](${UPLOADSURL}/${l.link})`
+                    );
+                    setImageAdd(false);
+                  }}
+                >
+                  <img
+                    key={l.linkID}
+                    title={l.link}
+                    src={`${UPLOADSURL}/${l.link}`}
+                    alt="not available"
+                    className={`w-full h-full object-scale-down ${
+                      i < links.length - 1 && 'sm:mr-2 mr-1'
+                    } `}
+                  />
+                </button>
+              ))}
+            </div>
+            <div className="w-full flex items-center justify-around">
+              <input
+                type="file"
+                title="Upload a new image"
+                id="image"
+                name="image"
+                accept=".jpg,.jpeg,.png,.svg,.gif,.bmp"
+                className="sm:w-2/5 w-9/20 bg-blue-300 text-blue-900 hover:bg-blue-400 focus:bg-blue-400 rounded-lg p-4 sm:text-xl text-sm overflow-hidden"
+                onChange={(e) => {
+                  e.persist();
+                  alert.info('Uploading...');
+                  uploadImage(e, false, true);
+                }}
+              />
+              <button
+                className="sm:w-2/5 w-9/20 bg-red-300 text-red-900 hover:bg-red-400 focus:bg-red-400 rounded-lg p-4 sm:text-xl text-lg font-bold tracking-wide"
+                onClick={() => setImageAdd(false)}
+              >
+                Back
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="w-full bg-gray-800 flex sm:flex-row flex-col justify-around items-center mt-4 mb-4">
