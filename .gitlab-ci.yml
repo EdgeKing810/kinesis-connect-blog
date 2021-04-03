@@ -14,4 +14,4 @@ deploy:
     - chmod 644 ~/.ssh/known_hosts
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
-    - ssh ubuntu@kinesis.games "cd /var/www/kinesis-blog/ && sudo bash buildScript.sh"
+    - ssh edgeking810@kinesis.games "cd /var/www/kinesis-blog/ && sudo bash buildScript.sh"
