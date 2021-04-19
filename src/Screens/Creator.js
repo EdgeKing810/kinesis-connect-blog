@@ -14,6 +14,7 @@ export default function Creator() {
   const {
     APIURL,
     UPLOADSURL,
+    UPLOADERURL,
     loggedInUser,
     setPosts,
     myPosts,
@@ -122,14 +123,14 @@ export default function Creator() {
         const data = new FormData();
         data.append('file', e.target.files[0]);
 
-        axios.post(`${APIURL}/api/user/upload`, data).then((res) => {
+        axios.post(`${UPLOADERURL}/api/upload`, data).then((res) => {
           if (isPreview) {
-            setPreviewImage(`${UPLOADSURL}/${res.data.url}`);
+            setPreviewImage(`${UPLOADSURL}/${res.data.path}`);
           }
 
           const postData = {
             uid: loggedInUser.uid,
-            link: res.data.url,
+            link: res.data.path,
             linkID: v4(),
           };
 
@@ -152,7 +153,7 @@ export default function Creator() {
 
                 if (addToContent) {
                   setContent(
-                    (prev) => prev + `\n![](${UPLOADSURL}/${res.data.url})`
+                    (prev) => prev + `\n![](${UPLOADSURL}/${res.data.path})`
                   );
                   setImageAdd(false);
                 }

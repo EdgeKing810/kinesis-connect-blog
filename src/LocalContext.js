@@ -7,6 +7,7 @@ const LocalContext = React.createContext();
 function LocalContextProvider({ children }) {
   const APIURL = 'https://api.connect.kinesis.games';
   const UPLOADSURL = 'https://uploads.connect.kinesis.games';
+  const UPLOADERURL = 'https://backend.kinesis.games';
 
   const [posts, setPosts] = useState([]);
   const [myPosts, setMyPosts] = useState([]);
@@ -119,6 +120,7 @@ function LocalContextProvider({ children }) {
       value={{
         APIURL,
         UPLOADSURL,
+        UPLOADERURL,
         posts,
         setPosts,
         myPosts,

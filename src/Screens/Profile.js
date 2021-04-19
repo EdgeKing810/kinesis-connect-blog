@@ -14,6 +14,7 @@ export default function View() {
   const {
     APIURL,
     UPLOADSURL,
+    UPLOADERURL,
     loggedInUser,
     setLoggedInUser,
     posts,
@@ -158,14 +159,14 @@ export default function View() {
         const data = new FormData();
         data.append('file', e.target.files[0]);
 
-        axios.post(`${APIURL}/api/user/upload`, data).then((res) => {
+        axios.post(`${UPLOADERURL}/api/upload`, data).then((res) => {
           setLoggedInUser((prev) => {
             let update = { ...prev };
 
             if (isBanner) {
-              update.banner_img = res.data.url;
+              update.banner_img = res.data.path;
             } else {
-              update.profile_pic = res.data.url;
+              update.profile_pic = res.data.path;
             }
 
             return update;
@@ -177,9 +178,9 @@ export default function View() {
                 let update = { ...p };
 
                 if (isBanner) {
-                  update.banner_img = res.data.url;
+                  update.banner_img = res.data.path;
                 } else {
-                  update.profile_pic = res.data.url;
+                  update.profile_pic = res.data.path;
                 }
 
                 return { ...update };
@@ -193,9 +194,9 @@ export default function View() {
             let update = { ...prev };
 
             if (isBanner) {
-              update.banner_img = res.data.url;
+              update.banner_img = res.data.path;
             } else {
-              update.profile_pic = res.data.url;
+              update.profile_pic = res.data.path;
             }
 
             return update;
@@ -203,7 +204,7 @@ export default function View() {
 
           const postData = {
             uid: loggedInUser.uid,
-            link: res.data.url,
+            link: res.data.path,
             linkID: v4(),
           };
 
@@ -230,7 +231,7 @@ export default function View() {
             const bannerData = {
               uid: loggedInUser.uid,
               profileID: loggedInUser.uid,
-              banner_img: res.data.url,
+              banner_img: res.data.path,
             };
 
             axios
@@ -248,7 +249,7 @@ export default function View() {
             axios
               .post(
                 `${APIURL}/api/profile/pic`,
-                { uid: loggedInUser.uid, profile_pic_url: res.data.url },
+                { uid: loggedInUser.uid, profile_pic_url: res.data.path },
                 { headers: { Authorization: `Bearer ${loggedInUser.jwt}` } }
               )
               .then((response) => {
