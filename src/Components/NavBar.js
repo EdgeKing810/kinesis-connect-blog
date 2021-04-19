@@ -13,6 +13,7 @@ export default function NavBar() {
     loggedInUser,
     setLoggedInUser,
     setMyPosts,
+    setLinks,
     width,
   } = useContext(LocalContext);
 
@@ -75,6 +76,7 @@ export default function NavBar() {
                   onClick={() => {
                     setLoggedInUser({});
                     setMyPosts([]);
+                    setLinks([]);
 
                     alert.success('Signed out!');
                     localStorage.clear();
