@@ -29,7 +29,7 @@
   "author": "Kishan Takoordyal <kihan@kinesis.games> (https://hub.kinesis.games)",
   "license": "MIT",
   "scripts": {
-    "build:css": "npx tailwindcss build public/tailwind.css -o public/styles.css",
+    "build:css": "NODE_ENV=production npx tailwindcss build public/tailwind.css -o public/styles.css",
     "start": "npm run build:css && react-scripts start",
     "build": "npm run build:css && react-scripts build",
     "test": "react-scripts test",
