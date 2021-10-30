@@ -1,17 +1,36 @@
+image: docker:19.03.12
+
 stages:
+  - build
   - deploy
 
-deploy:
+docker-build:
+  image: docker:19.03.12
+  stage: build
+  services:
+    - docker:19.03.12-dind
+  before_script:
+    - docker info
+    - echo $CI_BUILD_TOKEN | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+  script:
+    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    - docker push "$CI_REGISTRY_IMAGE"
+
+deployment:
   stage: deploy
   image: node:latest
+  variables:
+    PROJECT_ID: blog
   before_script:
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
+    - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )"
     - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - echo "$K8S_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - ssh-keyscan repo.kinesis.games >> ~/.ssh/known_hosts
+    - ssh-keyscan k8s.kinesis.site >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
-    - ssh edgeking810@kinesis.games "cd /var/www/kinesis-blog/ && sudo bash buildScript.sh"
+    - scp deployment.yml root@k8s.kinesis.site:/tmp/deployment-${PROJECT_ID}.yml
+    - ssh root@k8s.kinesis.site "kubectl apply -f /tmp/deployment-${PROJECT_ID}.yml"

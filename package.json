@@ -26,12 +26,12 @@
   "bin": {
     "create-react-app": "./install.js"
   },
-  "author": "Kishan Takoordyal <kihan@kinesis.games> (https://hub.kinesis.games)",
+  "author": "Kishan Takoordyal <kishan@kinesis.games> (https://hub.kinesis.games)",
   "license": "MIT",
   "scripts": {
     "build:css": "npx tailwindcss build public/tailwind.css -o public/styles.css",
     "start": "npm run build:css && react-scripts start",
-    "build": "NODE_ENV=production npm run build:css && react-scripts build",
+    "build": "npm run build:css && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
