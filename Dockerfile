@@ -1,4 +1,4 @@
-FROM nginx:1.21.3-alpine
+FROM alpine:latest
 
 RUN apk update && \
     apk add nodejs npm
@@ -9,7 +9,8 @@ COPY . /app/
 
 RUN npm install
 RUN npm run build
-RUN rm -rf /usr/share/nginx/html/*
-RUN cp -r /app/build/* /usr/share/nginx/html/
 
-EXPOSE 80
+RUN npm i -g serve
+
+EXPOSE 5000
+CMD ["serve", "-s", "/app/build/"]

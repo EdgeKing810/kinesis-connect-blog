@@ -24,7 +24,7 @@ spec:
         - image: repo.kinesis.games:5050/react/blog:latest
           name: blog-web
           ports:
-            - containerPort: 80
+            - containerPort: 5000
           imagePullPolicy: Always
 #          resources:
 #            requests:
@@ -55,7 +55,7 @@ spec:
   type: NodePort
   ports:
     - port: 8080
-      targetPort: 80
+      targetPort: 5000
       nodePort: 30003
       protocol: TCP
   selector:
