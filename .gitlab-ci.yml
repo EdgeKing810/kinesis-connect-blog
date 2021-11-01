@@ -28,9 +28,9 @@ deployment:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - ssh-keyscan repo.kinesis.games >> ~/.ssh/known_hosts
-    - ssh-keyscan k8s.kinesis.site >> ~/.ssh/known_hosts
+    - ssh-keyscan k8s.konnect.dev >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
-    - scp deployment.yml root@k8s.kinesis.site:/tmp/deployment-${PROJECT_ID}.yml
-    - ssh root@k8s.kinesis.site "kubectl apply -f /tmp/deployment-${PROJECT_ID}.yml"
+    - scp deployment.yml root@k8s.konnect.dev:/tmp/deployment-${PROJECT_ID}.yml
+    - ssh root@k8s.konnect.dev "kubectl apply -f /tmp/deployment-${PROJECT_ID}.yml"
